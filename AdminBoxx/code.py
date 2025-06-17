@@ -13,10 +13,11 @@ num_columns = 8
 heartbeat_timeout = 2
 
 # Color constants
-white = (16, 16, 16)
-black = (0, 0, 0)
-red = (16, 0, 0)
-yellow = (16, 16, 0)
+disabled = (0, 0, 0)
+dark_white = (16, 16, 16)
+dark_red = (16, 0, 0)
+dark_yellow = (16, 16, 0)
+dark_green = (0, 16, 0)
 
 # Initialize I2C and trellis
 i2c_bus = busio.I2C(board.SCL, board.SDA)
@@ -31,16 +32,19 @@ def set_all_leds(color):
 
 
 # Indicate startup
-set_all_leds(white)
+set_all_leds(dark_white)
+set_all_leds(disabled)
+set_all_leds(dark_white)
+set_all_leds(disabled)
+set_all_leds(dark_white)
 print("Starting up.")
 
 # Buffer for storing incoming data
 buffer = bytearray()
 usb_was_connected = True
 app_was_connected = True
-turn_off_screen = False
 force_update_leds = True
-last_command_time = time.monotonic()
+last_command_time = 0
 
 # Send a message to the PC app
 def send_to_pc(message):
@@ -49,21 +53,34 @@ def send_to_pc(message):
 
 # Callback function for button presses
 def on_press(x, y, edge):
-    global app_was_connected, turn_off_screen, force_update_leds
+    global app_was_connected, force_update_leds
+    if edge and not app_was_connected:
+        force_update_leds = True
 
-    if edge:
 
-        if app_was_connected:
-            send_to_pc(f":{y},{x}")
+def non_blocking_sleep(duration):
+    start = time.monotonic()
+    while time.monotonic() - start < duration:
+        if usb_cdc.data.in_waiting:
+            return
+        time.sleep(0.01)
 
-        else:
-            turn_off_screen = not turn_off_screen
 
-            if turn_off_screen:
-                set_all_leds(black)
+# Function to flash the entire LED array 3 times
+def flash_led(x, y, color, leave_on):
+    trellis.color(x, y, color)
+    non_blocking_sleep(0.25)
+    trellis.color(x, y, disabled)
+    non_blocking_sleep(0.25)
+    trellis.color(x, y, color)
+    non_blocking_sleep(0.25)
+    trellis.color(x, y, disabled)
+    non_blocking_sleep(0.25)
+    trellis.color(x, y, color)
+    non_blocking_sleep(0.25)
 
-            else:
-                force_update_leds = True
+    if not leave_on:
+        trellis.color(x, y, disabled)
 
 
 # Set callback on all buttons
@@ -74,7 +91,7 @@ for y in range(num_rows):
 
 # Successful startup
 print("Started up OK.")
-set_all_leds(black)
+set_all_leds(disabled)
 
 # Main loop
 while True:
@@ -122,15 +139,15 @@ while True:
     usb_changed = usb_connected != usb_was_connected
     app_changed = app_connected != app_was_connected
 
-    if usb_changed or app_changed or force_update_leds:
+    if usb_changed or (app_changed and not app_connected) or force_update_leds:
+        set_all_leds(disabled)
+        flash_led(1, 0, dark_red, True)
         force_update_leds = False
-        turn_off_screen = False
 
-        if not usb_connected:
-            set_all_leds(red)
-
-        elif not app_connected:
-            set_all_leds(yellow)
+        if usb_connected:
+            flash_led(2, 0, dark_yellow, True)
+        non_blocking_sleep(10)
+        set_all_leds(disabled)
 
     usb_was_connected = usb_connected
     app_was_connected = app_connected
