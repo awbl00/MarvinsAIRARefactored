@@ -57,26 +57,26 @@ public partial class AdminBoxx
 
 	private static readonly Color[,] _playbackDisabledColors = new Color[ _numRows, _numColumns ]
 	{
-		{ Green, Disabled, Disabled, Disabled, Cyan,     Cyan,     Green,    Green    },
-		{ Green, Disabled, Disabled, Disabled, Cyan,     Cyan,     Cyan,     Cyan     },
-		{ Green, Disabled, Disabled, Disabled, Green,    Disabled, Disabled, Disabled },
-		{ Green, Disabled, Disabled, Disabled, Disabled, Disabled, Disabled, Disabled }
+		{ Green, Red, Red, Red, Cyan,  Cyan, Green, Green },
+		{ Green, Red, Red, Red, Cyan,  Cyan, Cyan,  Cyan  },
+		{ Green, Red, Red, Red, Green, Red,  Red,   Red   },
+		{ Green, Red, Red, Red, Red,   Red,  Red,   Red   }
 	};
 
 	private static readonly Color[,] _playbackEnabledColors = new Color[ _numRows, _numColumns ]
 	{
-		{ Green, Disabled, Disabled, Disabled, Cyan,    Cyan,    Green,   Green   },
-		{ Green, Disabled, Disabled, Disabled, Cyan,    Cyan,    Cyan,    Cyan    },
-		{ Green, Disabled, Disabled, Disabled, Green,   Magenta, Magenta, Magenta },
-		{ Green, Disabled, Disabled, Disabled, Magenta, Magenta, Magenta, Magenta }
+		{ Green, Red, Red, Red, Cyan,     Cyan,     Green,    Green    },
+		{ Green, Red, Red, Red, Cyan,     Cyan,     Cyan,     Cyan     },
+		{ Green, Red, Red, Red, Green,    Disabled, Cyan,     Cyan     },
+		{ Green, Red, Red, Red, Disabled, Disabled, Disabled, Disabled }
 	};
 
 	private static readonly Color[,] _numpadEnabledColors = new Color[ _numRows, _numColumns ]
 	{
-		{ Disabled, Cyan, Cyan, Cyan,  Disabled, Disabled, Disabled, Disabled },
-		{ Disabled, Cyan, Cyan, Cyan,  Disabled, Disabled, Disabled, Disabled },
-		{ Disabled, Cyan, Cyan, Cyan,  Disabled, Disabled, Disabled, Disabled },
-		{ Disabled, Red,  Cyan, Green, Disabled, Disabled, Disabled, Disabled }
+		{ Red, Cyan,   Cyan, Cyan,  Red, Red, Red, Red },
+		{ Red, Cyan,   Cyan, Cyan,  Red, Red, Red, Red },
+		{ Red, Cyan,   Cyan, Cyan,  Red, Red, Red, Red },
+		{ Red, Yellow, Cyan, Green, Red, Red, Red, Red }
 	};
 
 	private static readonly Regex ButtonPressRegex = MyRegex();
@@ -85,11 +85,15 @@ public partial class AdminBoxx
 	private HashSet<string> _driverChatDisabled = [];
 
 	private bool _inNumpadMode = false;
+	private bool _replayEnabled = false;
 	private bool _blackFlagDriveThrough = false;
 	private bool _singleFilePaceMode = false;
 	private bool _carNumberIsRequired = false;
 
 	private bool _shownYellowFlag = false;
+	private bool _shownOneLapToGreenFlag = false;
+	private bool _shownStartReadyFlag = false;
+	private bool _shownStartSetFlag = false;
 	private bool _shownGreenFlag = false;
 	private bool _shownWhiteFlag = false;
 	private bool _shownCheckeredFlag = false;
@@ -97,7 +101,11 @@ public partial class AdminBoxx
 	private bool _shownBlueFlag = false;
 	private bool _shownRedFlag = false;
 
+	private int _connectCounter = 0;
+	private int _connectState = 0;
+
 	private int _wavingFlagCounter = 0;
+	private int _wavingFlagNumberOfTimes = 0;
 	private int _wavingFlagState = 0;
 	private Color _wavingFlagColor = Disabled;
 	private bool _wavingFlagCheckered = false;
@@ -153,8 +161,6 @@ public partial class AdminBoxx
 			if ( IsConnected )
 			{
 				_pingCounter = 100;
-
-				SetAllLEDsToColor( White, _blueNoiseLedOrder, true );
 
 				UpdateColors( _blueNoiseLedOrder, true );
 			}
@@ -253,7 +259,14 @@ public partial class AdminBoxx
 
 	public void ReplayPlayingChanged()
 	{
-		UpdateColors( _blueNoiseLedOrder, false );
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			_replayEnabled = ( app.Simulator.IsReplayPlaying );
+
+			UpdateColors( _blueNoiseLedOrder, false );
+		}
 	}
 
 	public void SessionFlagsChanged()
@@ -262,13 +275,15 @@ public partial class AdminBoxx
 
 		if ( app != null )
 		{
+			// yellow flag / caution flag
+
 			if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Yellow | IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
 			{
 				if ( !_shownYellowFlag )
 				{
 					_shownYellowFlag = true;
 
-					WaveFlag( Yellow );
+					WaveFlag( Yellow, 2 );
 				}
 			}
 			else
@@ -276,13 +291,63 @@ public partial class AdminBoxx
 				_shownYellowFlag = false;
 			}
 
+			// one lap to green
+
+			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.OneLapToGreen ) != 0 )
+			{
+				if ( !_shownOneLapToGreenFlag )
+				{
+					_shownOneLapToGreenFlag = true;
+
+					WaveFlag( Yellow, 1 );
+				}
+			}
+			else
+			{
+				_shownOneLapToGreenFlag = false;
+			}
+
+			// start ready
+
+			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartReady ) != 0 )
+			{
+				if ( !_shownStartReadyFlag )
+				{
+					_shownStartReadyFlag = true;
+
+					WaveFlag( Red, 1 );
+				}
+			}
+			else
+			{
+				_shownStartReadyFlag = false;
+			}
+
+			// start set
+
+			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartSet ) != 0 )
+			{
+				if ( !_shownStartSetFlag )
+				{
+					_shownStartSetFlag = true;
+
+					WaveFlag( Yellow, 1 );
+				}
+			}
+			else
+			{
+				_shownStartSetFlag = false;
+			}
+
+			// start go / green flag
+
 			if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Green | IRacingSdkEnum.Flags.StartGo ) ) != 0 )
 			{
 				if ( !_shownGreenFlag )
 				{
 					_shownGreenFlag = true;
 
-					WaveFlag( Green );
+					WaveFlag( Green, 1 );
 				}
 			}
 			else
@@ -290,13 +355,15 @@ public partial class AdminBoxx
 				_shownGreenFlag = false;
 			}
 
+			// white flag
+
 			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.White ) != 0 )
 			{
 				if ( !_shownWhiteFlag )
 				{
 					_shownWhiteFlag = true;
 
-					WaveFlag( White );
+					WaveFlag( White, 3 );
 				}
 			}
 			else
@@ -304,19 +371,23 @@ public partial class AdminBoxx
 				_shownWhiteFlag = false;
 			}
 
+			// checkered flag
+
 			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Checkered ) != 0 )
 			{
 				if ( !_shownCheckeredFlag )
 				{
 					_shownCheckeredFlag = true;
 
-					WaveFlag( White, true );
+					WaveFlag( White, 5, true );
 				}
 			}
 			else
 			{
 				_shownCheckeredFlag = false;
 			}
+
+			// black flag
 
 			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Black ) != 0 )
 			{
@@ -338,7 +409,7 @@ public partial class AdminBoxx
 				{
 					_shownBlueFlag = true;
 
-					WaveFlag( Blue );
+					WaveFlag( Blue, 1 );
 				}
 			}
 			else
@@ -352,7 +423,7 @@ public partial class AdminBoxx
 				{
 					_shownRedFlag = true;
 
-					WaveFlag( Red );
+					WaveFlag( Red, 3 );
 				}
 			}
 			else
@@ -366,19 +437,18 @@ public partial class AdminBoxx
 	{
 		var color = new Color( DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagR, DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagG, DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagB );
 
-		WaveFlag( color );
+		WaveFlag( color, 3 );
 	}
 
-	private void WaveFlag( Color color, bool checkered = false )
+	private void WaveFlag( Color color, int numberOfTimes, bool checkered = false )
 	{
-		_wavingFlagCounter = 30;
+		_brightness = 1f;
+
 		_wavingFlagState = 0;
 		_wavingFlagColor = color;
 		_wavingFlagCheckered = checkered;
-
-		_brightness = 1f;
-
-		SetAllLEDsToColor( color, _wavingFlagLedOrder, true, _wavingFlagCheckered, 0 );
+		_wavingFlagNumberOfTimes = numberOfTimes;
+		_wavingFlagCounter = 1;
 	}
 
 	private void SetLEDToColor( int y, int x, Color color, bool forceUpdate )
@@ -408,7 +478,13 @@ public partial class AdminBoxx
 		{
 			if ( !app.Simulator.IsConnected )
 			{
-				SetAllLEDsToColor( Green, pattern, forceUpdate );
+				SetAllLEDsToColor( Disabled, _wavingFlagLedOrder, forceUpdate );
+
+				SetLEDToColor( 0, 1, Red, forceUpdate );
+				SetLEDToColor( 0, 2, Yellow, forceUpdate );
+
+				_connectState = 0;
+				_connectCounter = 15;
 			}
 			else
 			{
@@ -418,7 +494,7 @@ public partial class AdminBoxx
 				}
 				else
 				{
-					if ( app.Simulator.IsReplayPlaying )
+					if ( _replayEnabled )
 					{
 						SetAllLEDsToColorArray( _playbackEnabledColors, pattern, forceUpdate );
 					}
@@ -703,7 +779,7 @@ public partial class AdminBoxx
 			{
 				EnterNumpadMode( BlackFlagCallback );
 
-				SetLEDToColor( 0, 4, Red, false );
+				SetLEDToColor( 0, 4, Cyan, false );
 
 				PlayAudio( "black_flag_stop_and_go" );
 			}
@@ -1085,7 +1161,7 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoLive >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				app.Simulator.IRSDK.ReplaySetPlayPosition( IRacingSdkEnum.RpyPosMode.End, 0 );
 				app.Simulator.IRSDK.ReplaySetPlaySpeed( 16, false );
@@ -1105,7 +1181,7 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoGoToPreviousIncident >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.PrevIncident );
 
@@ -1124,7 +1200,7 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoGoToNextIncident >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.NextIncident );
 
@@ -1162,13 +1238,13 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoSlowMotion >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
 				if ( !app.Simulator.ReplayPlaySlowMotion )
 				{
-					if ( app.Simulator.ReplayPlaySpeed > 0 )
+					if ( app.Simulator.ReplayPlaySpeed >= 0 )
 					{
 						replayPlaySpeed = 1;
 					}
@@ -1179,7 +1255,7 @@ public partial class AdminBoxx
 				}
 				else
 				{
-					if ( app.Simulator.ReplayPlaySpeed > 0 )
+					if ( app.Simulator.ReplayPlaySpeed >= 0 )
 					{
 						replayPlaySpeed++;
 					}
@@ -1206,7 +1282,7 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoReverse >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
@@ -1236,7 +1312,7 @@ public partial class AdminBoxx
 		{
 			app.Logger.WriteLine( "[AdminBoxx] DoForward >>>" );
 
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
@@ -1266,15 +1342,15 @@ public partial class AdminBoxx
 
 		if ( app != null )
 		{
-			if ( !_inNumpadMode )
+			if ( !_inNumpadMode && _replayEnabled )
 			{
 				app.Logger.WriteLine( "[AdminBoxx] DoFastForward >>>" );
 
 				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
-				if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed < 0 ) )
+				if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed <= 0 ) )
 				{
-					replayPlaySpeed = 1;
+					replayPlaySpeed = 2;
 				}
 				else
 				{
@@ -1336,35 +1412,63 @@ public partial class AdminBoxx
 
 	public void Tick( App app )
 	{
-		if ( _wavingFlagCounter > 0 )
+		if ( _connectCounter > 0 )
 		{
-			if ( Interlocked.Decrement( ref _wavingFlagCounter ) == 0 )
+			if ( Interlocked.Decrement( ref _connectCounter ) == 0 )
 			{
-				switch ( Interlocked.Increment( ref _wavingFlagState ) )
-				{
-					case 0:
-					case 2:
-						_brightness = 1f;
-						_wavingFlagCounter = 30;
-						SetAllLEDsToColor( _wavingFlagColor, _wavingFlagLedOrder, true, _wavingFlagCheckered, 0 );
-						break;
+				_connectCounter = 15;
 
+				switch ( Interlocked.Increment( ref _connectState ) )
+				{
 					case 1:
 					case 3:
-						_brightness = 0.25f;
-						_wavingFlagCounter = 30;
-						SetAllLEDsToColor( _wavingFlagColor, _wavingFlagLedOrder, true, _wavingFlagCheckered, 1 );
+					case 5:
+						SetLEDToColor( 0, 3, Green, false );
 						break;
 
+					case 2:
 					case 4:
-						_brightness = 1f;
-						UpdateColors( _wavingFlagLedOrder, true );
+						SetLEDToColor( 0, 3, Disabled, false );
+						break;
+
+					case 6:
+						_connectCounter = 0;
 						break;
 				}
 			}
 		}
+		else if ( _wavingFlagCounter > 0 )
+		{
+			if ( Interlocked.Decrement( ref _wavingFlagCounter ) == 0 )
+			{
+				var wavingFlagState = Interlocked.Increment( ref _wavingFlagState );
 
-		if ( _testCounter > 0 )
+				if ( ( wavingFlagState & 1 ) == 1 )
+				{
+					_brightness = 1f;
+
+					if ( wavingFlagState / 2 >= _wavingFlagNumberOfTimes )
+					{
+						UpdateColors( _wavingFlagLedOrder, true );
+					}
+					else
+					{
+						SetAllLEDsToColor( _wavingFlagColor, _wavingFlagLedOrder, true, _wavingFlagCheckered, 0 );
+
+						_wavingFlagCounter = 30;
+					}
+				}
+				else
+				{
+					_brightness = 0.25f;
+
+					SetAllLEDsToColor( _wavingFlagColor, _wavingFlagLedOrder, true, _wavingFlagCheckered, 1 );
+
+					_wavingFlagCounter = 30;
+				}
+			}
+		}
+		else if ( _testCounter > 0 )
 		{
 			if ( Interlocked.Decrement( ref _testCounter ) == 0 )
 			{
@@ -1373,32 +1477,32 @@ public partial class AdminBoxx
 				switch ( Interlocked.Increment( ref _testState ) )
 				{
 					case 1:
-						WaveFlag( Yellow );
+						WaveFlag( Yellow, 2 );
 						break;
 
 					case 2:
-						WaveFlag( Green );
+						WaveFlag( Green, 2 );
 						break;
 
 					case 3:
-						WaveFlag( White );
+						WaveFlag( White, 2 );
 						break;
 
 					case 4:
-						WaveFlag( White, true );
+						WaveFlag( White, 2, true );
 						break;
 
 					case 5:
 						var color = new Color( DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagR, DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagG, DataContext.DataContext.Instance.Settings.AdminBoxxBlackFlagB );
-						WaveFlag( color );
+						WaveFlag( color, 2 );
 						break;
 
 					case 6:
-						WaveFlag( Blue );
+						WaveFlag( Blue, 2 );
 						break;
 
 					case 7:
-						WaveFlag( Red );
+						WaveFlag( Red, 2 );
 						break;
 
 					case 8:
@@ -1415,10 +1519,18 @@ public partial class AdminBoxx
 
 					case 11:
 						_testCounter = 0;
-						UpdateColors(_blueNoiseLedOrder, false);
+						UpdateColors( _blueNoiseLedOrder, false );
 						break;
 				}
 			}
+		}
+		else if ( _replayEnabled && !_inNumpadMode )
+		{
+			SetLEDToColor( 2, 5, ( app.Simulator.ReplayFrameNumEnd == 1 ) ? Cyan : Disabled, false );
+			SetLEDToColor( 3, 4, app.Simulator.ReplayPlaySlowMotion ? Cyan : Disabled, false );
+			SetLEDToColor( 3, 5, ( app.Simulator.ReplayPlaySpeed < 0 ) ? Cyan : Disabled, false );
+			SetLEDToColor( 3, 6, ( app.Simulator.ReplayPlaySpeed == 1 ) || ( app.Simulator.ReplayPlaySlowMotion && ( app.Simulator.ReplayPlaySpeed > 1 ) ) ? Cyan : Disabled, false );
+			SetLEDToColor( 3, 7, ( app.Simulator.ReplayPlaySpeed > 1 ) && !app.Simulator.ReplayPlaySlowMotion ? Cyan : Disabled, false );
 		}
 	}
 }

@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 using SharpDX.DirectInput;
 
-using Image = System.Windows.Controls.Image;
-
-using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Controls;
 
 namespace MarvinsAIRARefactored.Components;
@@ -47,20 +44,6 @@ public class DirectInput
 	private Joystick? _forceFeedbackJoystick = null;
 	private EffectParameters? _forceFeedbackEffectParameters = null;
 	private Effect? _forceFeedbackEffect = null;
-
-	private readonly Graph _outputTorqueGraph;
-	private readonly Statistics _outputTorqueStatistics = new( 500 );
-
-	public DirectInput( Image outputTorqueGraphImage )
-	{
-		var app = App.Instance;
-
-		app?.Logger.WriteLine( $"[DirectInput] Constructor >>>" );
-
-		_outputTorqueGraph = new Graph( outputTorqueGraphImage );
-
-		app?.Logger.WriteLine( $"[DirectInput] <<< Constructor" );
-	}
 
 	public void Initialize()
 	{
@@ -345,38 +328,11 @@ public class DirectInput
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public void UpdateForceFeedbackEffect( float magnitude )
 	{
-		var app = App.Instance;
-
-		if ( app != null )
+		if ( _forceFeedbackEffectParameters != null )
 		{
-			if ( app.MainWindow.GraphsTabItemIsVisible )
-			{
-				_outputTorqueStatistics.Update( magnitude );
+			( (ConstantForce) _forceFeedbackEffectParameters.Parameters ).Magnitude = (int) Math.Clamp( magnitude * DI_FFNOMINALMAX, -DI_FFNOMINALMAX, DI_FFNOMINALMAX );
 
-				var red = (uint) 0;
-				var green = (uint) 0;
-				var blue = (uint) 0;
-
-				if ( MathF.Abs( magnitude ) <= 1f )
-				{
-					green = 255;
-					blue = 255;
-				}
-				else
-				{
-					red = 255;
-				}
-
-				_outputTorqueGraph.DrawGradientLine( magnitude, red, green, blue );
-				_outputTorqueGraph.Advance();
-			}
-
-			if ( _forceFeedbackEffectParameters != null )
-			{
-				( (ConstantForce) _forceFeedbackEffectParameters.Parameters ).Magnitude = (int) Math.Clamp( magnitude * DI_FFNOMINALMAX, -DI_FFNOMINALMAX, DI_FFNOMINALMAX );
-
-				_forceFeedbackEffect?.SetParameters( _forceFeedbackEffectParameters, EffectParameterFlags.TypeSpecificParameters | EffectParameterFlags.Start );
-			}
+			_forceFeedbackEffect?.SetParameters( _forceFeedbackEffectParameters, EffectParameterFlags.TypeSpecificParameters | EffectParameterFlags.Start );
 		}
 	}
 
@@ -387,6 +343,9 @@ public class DirectInput
 		if ( app != null )
 		{
 			app.Logger.WriteLine( "[DirectInput] EnumerateDevices >>>" );
+
+			_joystickInfoList.Clear();
+			_forceFeedbackDeviceList.Clear();
 
 			var deviceInstanceList = _directInput.GetDevices( DeviceClass.All, DeviceEnumerationFlags.AttachedOnly );
 
@@ -478,17 +437,6 @@ public class DirectInput
 			}
 
 			app.Logger.WriteLine( "[DirectInput] <<< EnumerateDevices" );
-		}
-	}
-
-	public void Tick( App app )
-	{
-		if ( app.MainWindow.GraphsTabItemIsVisible )
-		{
-			_outputTorqueGraph.UpdateImage();
-
-			app.MainWindow.Graphs_OutputTorque_MinMaxAvg.Content = $"{_outputTorqueStatistics.MinimumValue,5:F2} {_outputTorqueStatistics.MaximumValue,5:F2} {_outputTorqueStatistics.AverageValue,5:F2}";
-			app.MainWindow.Graphs_OutputTorque_VarStdDev.Content = $"{_outputTorqueStatistics.Variance,5:F2} {_outputTorqueStatistics.StandardDeviation,5:F2}";
 		}
 	}
 }

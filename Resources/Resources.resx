@@ -149,8 +149,8 @@
     <value>Friction</value>
     <comment>Racing wheel</comment>
   </data>
-  <data name="Graphs" xml:space="preserve">
-    <value>Graphs</value>
+  <data name="Graph" xml:space="preserve">
+    <value>Graph</value>
     <comment>Tab item</comment>
   </data>
   <data name="HeaderData" xml:space="preserve">
@@ -173,25 +173,13 @@
     <value>Max Force</value>
     <comment>Racing wheel</comment>
   </data>
-  <data name="MultimediaTimerJitter" xml:space="preserve">
-    <value>Multimedia Timer Jitter</value>
-    <comment>Graphs</comment>
-  </data>
   <data name="Native60Hz" xml:space="preserve">
     <value>Native 60 Hz</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
-  <data name="Native60HzTorque" xml:space="preserve">
-    <value>Native 60 Hz Torque</value>
-    <comment>Graphs</comment>
-  </data>
   <data name="Native360Hz" xml:space="preserve">
     <value>Native 360 Hz</value>
     <comment>Racing wheel algorithms list</comment>
-  </data>
-  <data name="Native360HzTorque" xml:space="preserve">
-    <value>Native 360 Hz Torque</value>
-    <comment>Graphs</comment>
   </data>
   <data name="NoFFBDevicesFound" xml:space="preserve">
     <value>[No Force Feedback Devices Found]</value>
@@ -203,7 +191,7 @@
   </data>
   <data name="Output500HzTorque" xml:space="preserve">
     <value>Output 500 Hz Torque</value>
-    <comment>Graphs</comment>
+    <comment>Graph</comment>
   </data>
   <data name="ParkedStrength" xml:space="preserve">
     <value>Parked Strength</value>
@@ -455,11 +443,11 @@
   </data>
   <data name="Minimum" xml:space="preserve">
     <value>Minimum</value>
-    <comment>Racing wheel, Pedals</comment>
+    <comment>Racing wheel, Pedals, Graph</comment>
   </data>
   <data name="Maximum" xml:space="preserve">
     <value>Maximum</value>
-    <comment>Racing wheel, Pedals</comment>
+    <comment>Racing wheel, Pedals, Graph</comment>
   </data>
   <data name="Curve" xml:space="preserve">
     <value>Curve</value>
@@ -475,10 +463,6 @@
   </data>
   <data name="SteeringEffects" xml:space="preserve">
     <value>Steering Effects</value>
-    <comment>Pedal effects list</comment>
-  </data>
-  <data name="ABSEngaged" xml:space="preserve">
-    <value>ABS Engaged</value>
     <comment>Pedal effects list</comment>
   </data>
   <data name="WheelLock" xml:space="preserve">
@@ -617,12 +601,44 @@
     <value>LFE Recording Device</value>
     <comment>Racing wheel</comment>
   </data>
-  <data name="LowFrequencyEffects" xml:space="preserve">
-    <value>Low Frequency Effects</value>
-    <comment>Graphs</comment>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
+    <comment>Graph</comment>
   </data>
-  <data name="NoLFEDevicesFound" xml:space="preserve">
-    <value>[No Audio Recording Devices Found]</value>
+  <data name="Variance" xml:space="preserve">
+    <value>Variance</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="StandardDeviation" xml:space="preserve">
+    <value>Standard Deviation</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="TorqueInput60Hz" xml:space="preserve">
+    <value>60 Hz Torque Input</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="TorqueInput500Hz" xml:space="preserve">
+    <value>500 Hz Torque Input</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="TorqueOutput500Hz" xml:space="preserve">
+    <value>500 Hz Torque Output</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="TimerJitter500Hz" xml:space="preserve">
+    <value>500 Hz Timer Jitter</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="LFEInput500Hz" xml:space="preserve">
+    <value>500 Hz LFE Input</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="ABSEngaged" xml:space="preserve">
+    <value>ABS Engaged</value>
+    <comment>Pedal effects list</comment>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>[Disabled]</value>
     <comment>LFE device list</comment>
   </data>
 </root>

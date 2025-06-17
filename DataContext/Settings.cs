@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 using MarvinsAIRARefactored.Classes;
-using MarvinsAIRARefactored.Enums;
+using MarvinsAIRARefactored.Components;
 
 namespace MarvinsAIRARefactored.DataContext;
 
@@ -318,9 +318,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Racing wheel - Algorithm
 
-	private RacingWheelAlgorithmEnum _racingWheelAlgorithm = RacingWheelAlgorithmEnum.DetailBooster;
+	private RacingWheel.Algorithm _racingWheelAlgorithm = RacingWheel.Algorithm.DetailBooster;
 
-	public RacingWheelAlgorithmEnum RacingWheelAlgorithm
+	public RacingWheel.Algorithm RacingWheelAlgorithm
 	{
 		get => _racingWheelAlgorithm;
 
@@ -1637,9 +1637,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Clutch effect 1
 
-	private PedalEffectEnum _pedalsClutchEffect1 = PedalEffectEnum.GearChange;
+	private Pedals.Effect _pedalsClutchEffect1 = Pedals.Effect.GearChange;
 
-	public PedalEffectEnum PedalsClutchEffect1
+	public Pedals.Effect PedalsClutchEffect1
 	{
 		get => _pedalsClutchEffect1;
 
@@ -1707,9 +1707,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Clutch effect 2
 
-	private PedalEffectEnum _pedalsClutchEffect2 = PedalEffectEnum.ClutchSlip;
+	private Pedals.Effect _pedalsClutchEffect2 = Pedals.Effect.ClutchSlip;
 
-	public PedalEffectEnum PedalsClutchEffect2
+	public Pedals.Effect PedalsClutchEffect2
 	{
 		get => _pedalsClutchEffect2;
 
@@ -1777,9 +1777,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Clutch effect 3
 
-	private PedalEffectEnum _pedalsClutchEffect3 = PedalEffectEnum.SteeringEffects;
+	private Pedals.Effect _pedalsClutchEffect3 = Pedals.Effect.SteeringEffects;
 
-	public PedalEffectEnum PedalsClutchEffect3
+	public Pedals.Effect PedalsClutchEffect3
 	{
 		get => _pedalsClutchEffect3;
 
@@ -1847,9 +1847,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Brake effect 1
 
-	private PedalEffectEnum _pedalsBrakeEffect1 = PedalEffectEnum.ABSEngaged;
+	private Pedals.Effect _pedalsBrakeEffect1 = Pedals.Effect.ABSEngaged;
 
-	public PedalEffectEnum PedalsBrakeEffect1
+	public Pedals.Effect PedalsBrakeEffect1
 	{
 		get => _pedalsBrakeEffect1;
 
@@ -1917,9 +1917,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Brake effect 2
 
-	private PedalEffectEnum _pedalsBrakeEffect2 = PedalEffectEnum.WheelLock;
+	private Pedals.Effect _pedalsBrakeEffect2 = Pedals.Effect.WheelLock;
 
-	public PedalEffectEnum PedalsBrakeEffect2
+	public Pedals.Effect PedalsBrakeEffect2
 	{
 		get => _pedalsBrakeEffect2;
 
@@ -1987,9 +1987,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Brake effect 3
 
-	private PedalEffectEnum _pedalsBrakeEffect3 = PedalEffectEnum.SteeringEffects;
+	private Pedals.Effect _pedalsBrakeEffect3 = Pedals.Effect.SteeringEffects;
 
-	public PedalEffectEnum PedalsBrakeEffect3
+	public Pedals.Effect PedalsBrakeEffect3
 	{
 		get => _pedalsBrakeEffect3;
 
@@ -2057,9 +2057,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Throttle effect 1
 
-	private PedalEffectEnum _pedalsThrottleEffect1 = PedalEffectEnum.WheelSpin;
+	private Pedals.Effect _pedalsThrottleEffect1 = Pedals.Effect.WheelSpin;
 
-	public PedalEffectEnum PedalsThrottleEffect1
+	public Pedals.Effect PedalsThrottleEffect1
 	{
 		get => _pedalsThrottleEffect1;
 
@@ -2127,9 +2127,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Throttle effect 2
 
-	private PedalEffectEnum _pedalsThrottleEffect2 = PedalEffectEnum.NarrowRPM;
+	private Pedals.Effect _pedalsThrottleEffect2 = Pedals.Effect.NarrowRPM;
 
-	public PedalEffectEnum PedalsThrottleEffect2
+	public Pedals.Effect PedalsThrottleEffect2
 	{
 		get => _pedalsThrottleEffect2;
 
@@ -2197,9 +2197,9 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Throttle effect 3
 
-	private PedalEffectEnum _pedalsThrottleEffect3 = PedalEffectEnum.None;
+	private Pedals.Effect _pedalsThrottleEffect3 = Pedals.Effect.None;
 
-	public PedalEffectEnum PedalsThrottleEffect3
+	public Pedals.Effect PedalsThrottleEffect3
 	{
 		get => _pedalsThrottleEffect3;
 
@@ -2513,6 +2513,132 @@ public class Settings : INotifyPropertyChanged
 
 	public ButtonMappings AdminBoxxVolumePlusButtonMappings { get; set; } = new();
 	public ButtonMappings AdminBoxxVolumeMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Graph - Statistics
+
+	private Graph.LayerIndex _graphStatisticsLayerIndex = Graph.LayerIndex.OutputTorque500Hz;
+
+	public Graph.LayerIndex GraphStatisticsLayerIndex
+	{
+		get => _graphStatisticsLayerIndex;
+
+		set
+		{
+			if ( value != _graphStatisticsLayerIndex )
+			{
+				_graphStatisticsLayerIndex = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - 60 Hz torque input
+
+	private bool _graphTorqueInput60Hz = false;
+
+	public bool GraphTorqueInput60Hz
+	{
+		get => _graphTorqueInput60Hz;
+
+		set
+		{
+			if ( value != _graphTorqueInput60Hz )
+			{
+				_graphTorqueInput60Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - 500 Hz torque input
+
+	private bool _graphTorqueInput500Hz = false;
+
+	public bool GraphTorqueInput500Hz
+	{
+		get => _graphTorqueInput500Hz;
+
+		set
+		{
+			if ( value != _graphTorqueInput500Hz )
+			{
+				_graphTorqueInput500Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - 500 Hz LFE input
+
+	private bool _graphLFEInput500Hz = false;
+
+	public bool GraphLFEInput500Hz
+	{
+		get => _graphLFEInput500Hz;
+
+		set
+		{
+			if ( value != _graphLFEInput500Hz )
+			{
+				_graphLFEInput500Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - 500 Hz torque output
+
+	private bool _graphTorqueOutput500Hz = false;
+
+	public bool GraphTorqueOutput500Hz
+	{
+		get => _graphTorqueOutput500Hz;
+
+		set
+		{
+			if ( value != _graphTorqueOutput500Hz )
+			{
+				_graphTorqueOutput500Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - 500 Hz timer jitter
+
+	private bool _graphTimerJitter500Hz = false;
+
+	public bool GraphTimerJitter500Hz
+	{
+		get => _graphTimerJitter500Hz;
+
+		set
+		{
+			if ( value != _graphTimerJitter500Hz )
+			{
+				_graphTimerJitter500Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
 
 	#endregion
 

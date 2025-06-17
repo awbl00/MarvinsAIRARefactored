@@ -1,9 +1,6 @@
 ﻿
 using System.Diagnostics;
 
-using Image = System.Windows.Controls.Image;
-
-using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.PInvoke;
 
 namespace MarvinsAIRARefactored.Components;
@@ -54,20 +51,6 @@ public class MultimediaTimer
 
 	private bool _running = true;
 
-	private readonly Graph _jitterGraph;
-	private readonly Statistics _jitterStatistics = new( 500 );
-
-	public MultimediaTimer( Image jitterGraphImage )
-	{
-		var app = App.Instance;
-
-		app?.Logger.WriteLine( "[MultimediaTimer] Constructor >>>" );
-
-		_jitterGraph = new Graph( jitterGraphImage );
-
-		app?.Logger.WriteLine( "[MultimediaTimer] <<< Constructor" );
-	}
-
 	public void Initialize()
 	{
 		var app = App.Instance;
@@ -75,6 +58,8 @@ public class MultimediaTimer
 		if ( app != null )
 		{
 			app.Logger.WriteLine( "[MultimediaTimer] Initialize >>>" );
+
+			app.Graph.SetLayerColors( Graph.LayerIndex.TimerJitter500Hz, 0.25f, 1f, 0.25f, 1f, 0.25f, 0.25f );
 
 			_stopwatch.Start();
 
@@ -180,22 +165,15 @@ public class MultimediaTimer
 
 						// update jitter statistics and graph
 
-						if ( app.MainWindow.GraphsTabItemIsVisible )
-						{
-							var jitterMilliseconds = deltaMilliseconds - 2f;
+						var jitterMilliseconds = deltaMilliseconds - 2f;
 
-							multimediaTimer._jitterStatistics.Update( jitterMilliseconds );
+						var y = Math.Clamp( jitterMilliseconds / 2f, -1f, 1f );
 
-							var y = Math.Clamp( jitterMilliseconds / 2f, -1f, 1f );
+						app.Graph.UpdateLayer( Graph.LayerIndex.TimerJitter500Hz, jitterMilliseconds, y );
 
-							var absY = MathF.Abs( y );
+						// update the graph
 
-							var colorRed = (uint) ( absY * 255 );
-							var colorGreen = (uint) ( ( 1f - absY ) * 255 );
-
-							multimediaTimer._jitterGraph.DrawGradientLine( y, colorRed, colorGreen, 0 );
-							multimediaTimer._jitterGraph.Advance();
-						}
+						app.Graph.Update();
 					}
 				}
 			}
@@ -215,14 +193,6 @@ public class MultimediaTimer
 					SuspendTimerNow();
 				}
 			}
-		}
-
-		if ( app.MainWindow.GraphsTabItemIsVisible )
-		{
-			_jitterGraph.UpdateImage();
-
-			app.MainWindow.Graphs_MultimediaTimerJitter_MinMaxAvg.Content = $"{_jitterStatistics.MinimumValue,5:F2} {_jitterStatistics.MaximumValue,5:F2} {_jitterStatistics.AverageValue,5:F2}";
-			app.MainWindow.Graphs_MultimediaTimerJitter_VarStdDev.Content = $"{_jitterStatistics.Variance,5:F2} {_jitterStatistics.StandardDeviation,5:F2}";
 		}
 	}
 }

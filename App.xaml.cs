@@ -22,12 +22,13 @@ public partial class App : Application
 
 	public Logger Logger { get; private set; }
 	public CloudService CloudService { get; private set; }
-	public RacingWheel RacingWheel { get; private set; }
 	public Pedals Pedals { get; private set; }
 	public SettingsFile SettingsFile { get; private set; }
 	public AdminBoxx AdminBoxx { get; private set; }
 	public Debug Debug { get; private set; }
 	public new MainWindow MainWindow { get; private set; }
+	public Graph Graph { get; private set; }
+	public RacingWheel RacingWheel { get; private set; }
 	public ChatQueue ChatQueue { get; private set; }
 	public AudioManager AudioManager { get; private set; }
 	public DirectInput DirectInput { get; private set; }
@@ -52,18 +53,19 @@ public partial class App : Application
 
 		Logger = new();
 		CloudService = new();
-		RacingWheel = new();
 		Pedals = new();
 		SettingsFile = new();
 		AdminBoxx = new();
 		Debug = new();
 		MainWindow = new();
+		Graph = new();
+		RacingWheel = new();
 		ChatQueue = new();
 		AudioManager = new();
-		DirectInput = new( MainWindow.Graphs_OutputTorque_Image );
-		LFE = new( MainWindow.Graphs_LFE_Image );
-		MultimediaTimer = new( MainWindow.Graphs_MultimediaTimerJitter_Image );
-		Simulator = new( MainWindow.Graphs_Native60HzTorque_Image, MainWindow.Graphs_Native360HzTorque_Image );
+		DirectInput = new();
+		LFE = new();
+		MultimediaTimer = new();
+		Simulator = new();
 
 		_timer.Elapsed += OnTimer;
 	}
@@ -90,6 +92,8 @@ public partial class App : Application
 		Pedals.Initialize();
 		SettingsFile.Initialize();
 		AdminBoxx.Initialize();
+		Graph.Initialize();
+		RacingWheel.Initialize();
 		AudioManager.Initialize();
 		DirectInput.Initialize();
 		LFE.Initialize();
@@ -741,10 +745,9 @@ public partial class App : Application
 					app.Debug.Tick( app );
 					app.ChatQueue.Tick( app );
 					app.MainWindow.Tick( app );
-					app.DirectInput.Tick( app );
-					app.LFE.Tick( app );
 					app.MultimediaTimer.Tick( app );
 					app.Simulator.Tick( app );
+					app.Graph.Tick( app );
 				} );
 			}
 		}

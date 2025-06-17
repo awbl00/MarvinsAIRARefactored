@@ -1,14 +1,26 @@
 ﻿
+using Simagic;
+
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Controls;
-using MarvinsAIRARefactored.Enums;
-using Simagic;
-using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace MarvinsAIRARefactored.Components;
 
 public class Pedals
 {
+	public enum Effect
+	{
+		None,
+		GearChange,
+		ABSEngaged,
+		WideRPM,
+		NarrowRPM,
+		SteeringEffects,
+		WheelLock,
+		WheelSpin,
+		ClutchSlip
+	};
+
 	private const float deltaSeconds = 1f / 20f;
 
 	private const float _gearChangeTimeNeutral = 0.025f;
@@ -72,19 +84,19 @@ public class Pedals
 		{
 			app.Logger.WriteLine( "[Pedals] SetMairaComboBoxItemsSource >>>" );
 
-			var selectedItem = mairaComboBox.SelectedItem as KeyValuePair<PedalEffectEnum, string>?;
+			var selectedItem = mairaComboBox.SelectedItem as KeyValuePair<Pedals.Effect, string>?;
 
-			var dictionary = new Dictionary<PedalEffectEnum, string>
+			var dictionary = new Dictionary<Pedals.Effect, string>
 			{
-				{ PedalEffectEnum.None, DataContext.DataContext.Instance.Localization[ "None" ] },
-				{ PedalEffectEnum.GearChange, DataContext.DataContext.Instance.Localization[ "GearChange" ] },
-				{ PedalEffectEnum.ABSEngaged, DataContext.DataContext.Instance.Localization[ "ABSEngaged" ] },
-				{ PedalEffectEnum.WideRPM, DataContext.DataContext.Instance.Localization[ "WideRPM" ] },
-				{ PedalEffectEnum.NarrowRPM, DataContext.DataContext.Instance.Localization[ "NarrowRPM" ] },
-				{ PedalEffectEnum.SteeringEffects, DataContext.DataContext.Instance.Localization[ "SteeringEffects" ] },
-				{ PedalEffectEnum.WheelLock, DataContext.DataContext.Instance.Localization[ "WheelLock" ] },
-				{ PedalEffectEnum.WheelSpin, DataContext.DataContext.Instance.Localization[ "WheelSpin" ] },
-				{ PedalEffectEnum.ClutchSlip, DataContext.DataContext.Instance.Localization[ "ClutchSlip" ] },
+				{ Pedals.Effect.None, DataContext.DataContext.Instance.Localization[ "None" ] },
+				{ Pedals.Effect.GearChange, DataContext.DataContext.Instance.Localization[ "GearChange" ] },
+				{ Pedals.Effect.ABSEngaged, DataContext.DataContext.Instance.Localization[ "ABSEngaged" ] },
+				{ Pedals.Effect.WideRPM, DataContext.DataContext.Instance.Localization[ "WideRPM" ] },
+				{ Pedals.Effect.NarrowRPM, DataContext.DataContext.Instance.Localization[ "NarrowRPM" ] },
+				{ Pedals.Effect.SteeringEffects, DataContext.DataContext.Instance.Localization[ "SteeringEffects" ] },
+				{ Pedals.Effect.WheelLock, DataContext.DataContext.Instance.Localization[ "WheelLock" ] },
+				{ Pedals.Effect.WheelSpin, DataContext.DataContext.Instance.Localization[ "WheelSpin" ] },
+				{ Pedals.Effect.ClutchSlip, DataContext.DataContext.Instance.Localization[ "ClutchSlip" ] },
 			};
 
 			mairaComboBox.ItemsSource = dictionary;

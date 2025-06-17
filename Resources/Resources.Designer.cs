@@ -160,6 +160,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Average.
+        /// </summary>
+        internal static string Average {
+            get {
+                return ResourceManager.GetString("Average", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Black Flag B.
         /// </summary>
         internal static string BlackFlagB {
@@ -448,6 +457,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [Disabled].
+        /// </summary>
+        internal static string Disabled {
+            get {
+                return ResourceManager.GetString("Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display.
         /// </summary>
         internal static string Display {
@@ -547,11 +565,11 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Graphs.
+        ///   Looks up a localized string similar to Graph.
         /// </summary>
-        internal static string Graphs {
+        internal static string Graph {
             get {
-                return ResourceManager.GetString("Graphs", resourceCulture);
+                return ResourceManager.GetString("Graph", resourceCulture);
             }
         }
         
@@ -601,20 +619,20 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 500 Hz LFE Input.
+        /// </summary>
+        internal static string LFEInput500Hz {
+            get {
+                return ResourceManager.GetString("LFEInput500Hz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LFE Recording Device.
         /// </summary>
         internal static string LFERecordingDevice {
             get {
                 return ResourceManager.GetString("LFERecordingDevice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Low Frequency Effects.
-        /// </summary>
-        internal static string LowFrequencyEffects {
-            get {
-                return ResourceManager.GetString("LowFrequencyEffects", resourceCulture);
             }
         }
         
@@ -646,15 +664,6 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multimedia Timer Jitter.
-        /// </summary>
-        internal static string MultimediaTimerJitter {
-            get {
-                return ResourceManager.GetString("MultimediaTimerJitter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to RPM (Narrow).
         /// </summary>
         internal static string NarrowRPM {
@@ -673,29 +682,11 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Native 360 Hz Torque.
-        /// </summary>
-        internal static string Native360HzTorque {
-            get {
-                return ResourceManager.GetString("Native360HzTorque", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Native 60 Hz.
         /// </summary>
         internal static string Native60Hz {
             get {
                 return ResourceManager.GetString("Native60Hz", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Native 60 Hz Torque.
-        /// </summary>
-        internal static string Native60HzTorque {
-            get {
-                return ResourceManager.GetString("Native60HzTorque", resourceCulture);
             }
         }
         
@@ -723,15 +714,6 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string NoFFBDevicesFound {
             get {
                 return ResourceManager.GetString("NoFFBDevicesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [No Audio Recording Devices Found].
-        /// </summary>
-        internal static string NoLFEDevicesFound {
-            get {
-                return ResourceManager.GetString("NoLFEDevicesFound", resourceCulture);
             }
         }
         
@@ -1033,6 +1015,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Standard Deviation.
+        /// </summary>
+        internal static string StandardDeviation {
+            get {
+                return ResourceManager.GetString("StandardDeviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Steering Device.
         /// </summary>
         internal static string SteeringDevice {
@@ -1105,11 +1096,47 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 500 Hz Timer Jitter.
+        /// </summary>
+        internal static string TimerJitter500Hz {
+            get {
+                return ResourceManager.GetString("TimerJitter500Hz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Topmost Window.
         /// </summary>
         internal static string TopmostWindow {
             get {
                 return ResourceManager.GetString("TopmostWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 500 Hz Torque Input.
+        /// </summary>
+        internal static string TorqueInput500Hz {
+            get {
+                return ResourceManager.GetString("TorqueInput500Hz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 60 Hz Torque Input.
+        /// </summary>
+        internal static string TorqueInput60Hz {
+            get {
+                return ResourceManager.GetString("TorqueInput60Hz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 500 Hz Torque Output.
+        /// </summary>
+        internal static string TorqueOutput500Hz {
+            get {
+                return ResourceManager.GetString("TorqueOutput500Hz", resourceCulture);
             }
         }
         
@@ -1128,6 +1155,15 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string UpdateButtonMappings {
             get {
                 return ResourceManager.GetString("UpdateButtonMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variance.
+        /// </summary>
+        internal static string Variance {
+            get {
+                return ResourceManager.GetString("Variance", resourceCulture);
             }
         }
         

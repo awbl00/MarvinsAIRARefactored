@@ -11,7 +11,6 @@ using TabControl = System.Windows.Controls.TabControl;
 
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Components;
-using MarvinsAIRARefactored.Enums;
 using MarvinsAIRARefactored.PInvoke;
 
 namespace MarvinsAIRARefactored.Windows;
@@ -19,7 +18,7 @@ namespace MarvinsAIRARefactored.Windows;
 public partial class MainWindow : Window
 {
 	public nint WindowHandle { get; private set; } = 0;
-	public bool GraphsTabItemIsVisible { get; private set; } = false;
+	public bool GraphTabItemIsVisible { get; private set; } = false;
 	public bool DebugTabItemIsVisible { get; private set; } = false;
 
 	private string? _installerFilePath = null;
@@ -83,6 +82,8 @@ public partial class MainWindow : Window
 				app.DirectInput.SetMairaComboBoxItemsSource( RacingWheel_SteeringDevice_ComboBox );
 
 				app.LFE.SetMairaComboBoxItemsSource( RacingWheel_LFERecordingDevice_ComboBox );
+
+				Graph.SetMairaComboBoxItemsSource( Graph_Statistics_ComboBox );
 
 				RacingWheel.SetMairaComboBoxItemsSource( RacingWheel_Algorithm_ComboBox );
 
@@ -170,21 +171,21 @@ public partial class MainWindow : Window
 
 			switch ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm )
 			{
-				case RacingWheelAlgorithmEnum.DetailBooster:
-				case RacingWheelAlgorithmEnum.DetailBoosterOn60Hz:
+				case RacingWheel.Algorithm.DetailBooster:
+				case RacingWheel.Algorithm.DetailBoosterOn60Hz:
 					racingWheelDetailBoostKnobControlVisibility = Visibility.Visible;
 					racingWheelDetailBoostBiasKnobControlVisibility = Visibility.Visible;
 					racingWheelCurbProtectionGroupBoxVisibility = Visibility.Visible;
 					break;
 
-				case RacingWheelAlgorithmEnum.DeltaLimiter:
-				case RacingWheelAlgorithmEnum.DeltaLimiterOn60Hz:
+				case RacingWheel.Algorithm.DeltaLimiter:
+				case RacingWheel.Algorithm.DeltaLimiterOn60Hz:
 					racingWheelDeltaLimitKnobControlVisibility = Visibility.Visible;
 					racingWheelDeltaLimiterBiasKnobControlVisibility = Visibility.Visible;
 					racingWheelCurbProtectionGroupBoxVisibility = Visibility.Visible;
 					break;
 
-				case RacingWheelAlgorithmEnum.ZeAlanLeTwist:
+				case RacingWheel.Algorithm.ZeAlanLeTwist:
 					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
 					racingWheelDeltaLimitKnobControlVisibility = Visibility.Visible;
 					racingWheelDeltaLimiterBiasKnobControlVisibility = Visibility.Visible;
@@ -270,7 +271,7 @@ public partial class MainWindow : Window
 		{
 			if ( tabControl.SelectedItem is TabItem selectedTab )
 			{
-				GraphsTabItemIsVisible = ( selectedTab == Graphs_TabItem );
+				GraphTabItemIsVisible = ( selectedTab == Graph_TabItem );
 				DebugTabItemIsVisible = ( selectedTab == Debug_TabItem );
 			}
 		}

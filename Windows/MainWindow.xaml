@@ -41,7 +41,7 @@
                 <DataTrigger Binding="{Binding ElementName=TabControl, Path=SelectedIndex}" Value="1">
                     <Setter Property="Background" Value="{StaticResource PedalsTabBackground}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding ElementName=TabControl, Path=SelectedIndex}" Value="4">
+                <DataTrigger Binding="{Binding ElementName=TabControl, Path=SelectedIndex}" Value="2">
                     <Setter Property="Background" Value="{StaticResource AdminBoxxTabBackground}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding ElementName=TabControl, Path=SelectedIndex}" Value="5">
@@ -82,7 +82,7 @@
 
             <TabItem x:Name="RacingWheel_TabItem" Header="{Binding Localization[RacingWheel]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
                     <GroupBox Header="{Binding Localization[Device]}">
 
@@ -310,7 +310,7 @@
 
             <TabItem x:Name="Pedals_TabItem" Header="{Binding Localization[Pedals]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
                     <GroupBox Header="{Binding Localization[Device]}">
 
@@ -521,7 +521,7 @@
 
             <TabItem x:Name="AdminBoxx_TabItem" Header="{Binding Localization[AdminBoxx]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
                     <GroupBox Header="{Binding Localization[Connection]}" Margin="0,10,0,0">
 
@@ -599,111 +599,74 @@
 
             </TabItem>
 
-            <TabItem x:Name="Graphs_TabItem" Header="{Binding Localization[Graphs]}">
+            <TabItem x:Name="Graph_TabItem" Header="{Binding Localization[Graph]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
-                    <Grid Margin="0,10,0,10">
+                    <Border Grid.Column="2" Margin="0,10,0,0" BorderThickness="1" BorderBrush="Gray" Background="#80000000">
+                        <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right"/>
+                    </Border>
+
+                    <Grid Margin="0,10,0,0">
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Label Content="{Binding Localization[Native60HzTorque]}" HorizontalAlignment="Center"/>
-                            <Label x:Name="Graphs_Native60HzTorque_MinMaxAvg" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                            <Label x:Name="Graphs_Native60HzTorque_VarStdDev" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
+                        <controls:MairaComboBox Grid.Column="0" x:Name="Graph_Statistics_ComboBox" SelectedValue="{Binding Settings.GraphStatisticsLayerIndex, Mode=TwoWay}" VerticalContentAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1">
+                            <Label Content="{Binding Localization[Minimum]}" HorizontalAlignment="Center" FontSize="11"/>
+                            <Label x:Name="Graph_Minimum_Label" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22" Content="0.00"/>
                         </StackPanel>
-
-                        <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="#D0000000">
-                            <Image x:Name="Graphs_Native60HzTorque_Image" Height="201" Width="3840" HorizontalAlignment="Right"/>
-                        </Border>
-
-                        <Label Grid.Column="2" x:Name="Graphs_Native60HzTorque_SimulatorNotRunning_Label" Content="{Binding Localization[SimulatorNotRunning]}" HorizontalContentAlignment="Center" Foreground="#FFFF6A6A"/>
+                        <StackPanel Grid.Column="2">
+                            <Label Content="{Binding Localization[Maximum]}" HorizontalAlignment="Center" FontSize="11"/>
+                            <Label x:Name="Graph_Maximum_Label" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22" Content="0.00"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <Label Content="{Binding Localization[Average]}" HorizontalAlignment="Center" FontSize="11"/>
+                            <Label x:Name="Graph_Average_Label" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22" Content="0.00"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="4">
+                            <Label Content="{Binding Localization[Variance]}" HorizontalAlignment="Center" FontSize="11"/>
+                            <Label x:Name="Graph_Variance_Label" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22" Content="0.00"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="5">
+                            <Label Content="{Binding Localization[StandardDeviation]}" HorizontalAlignment="Center" FontSize="11"/>
+                            <Label x:Name="Graph_StandardDeviation_Label" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22" Content="0.00"/>
+                        </StackPanel>
 
                     </Grid>
 
-                    <Grid Margin="0,10,0,10">
+                    <Grid Margin="0,20,0,0">
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Label Content="{Binding Localization[Native360HzTorque]}" HorizontalAlignment="Center"/>
-                            <Label x:Name="Graphs_Native360HzTorque_MinMaxAvg" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                            <Label x:Name="Graphs_Native360HzTorque_VarStdDev" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="#D0000000">
-                            <Image x:Name="Graphs_Native360HzTorque_Image" Height="201" Width="3840" HorizontalAlignment="Right"/>
-                        </Border>
-
-                        <Label Grid.Column="2" x:Name="Graphs_Native360HzTorque_SimulatorNotRunning_Label" Content="{Binding Localization[SimulatorNotRunning]}" HorizontalContentAlignment="Center" Foreground="#FFFF6A6A"/>
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphTorqueInput60Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueInput60Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphTorqueInput500Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueInput500Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="2" IsOn="{Binding Settings.GraphLFEInput500Hz, Mode=TwoWay}" Title="{Binding Localization[LFEInput500Hz]}"/>
 
                     </Grid>
 
-                    <Grid Margin="0,10,0,10">
+                    <Grid Margin="0,10,0,0">
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Label Content="{Binding Localization[Output500HzTorque]}" HorizontalAlignment="Center"/>
-                            <Label x:Name="Graphs_OutputTorque_MinMaxAvg" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                            <Label x:Name="Graphs_OutputTorque_VarStdDev" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="#D0000000">
-                            <Image x:Name="Graphs_OutputTorque_Image" Height="201" Width="3840" HorizontalAlignment="Right"/>
-                        </Border>
-
-                    </Grid>
-
-                    <Grid Margin="0,10,0,10">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Label Content="{Binding Localization[LowFrequencyEffects]}" HorizontalAlignment="Center"/>
-                            <Label x:Name="Graphs_LFE_MinMaxAvg" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                            <Label x:Name="Graphs_LFE_VarStdDev" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="#D0000000">
-                            <Image x:Name="Graphs_LFE_Image" Height="201" Width="3840" HorizontalAlignment="Right"/>
-                        </Border>
-
-                    </Grid>
-
-                    <Grid Margin="0,10,0,10">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <Label Content="{Binding Localization[MultimediaTimerJitter]}" HorizontalAlignment="Center"/>
-                            <Label x:Name="Graphs_MultimediaTimerJitter_MinMaxAvg" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                            <Label x:Name="Graphs_MultimediaTimerJitter_VarStdDev" HorizontalAlignment="Center" FontFamily="Cascadia Mono" FontSize="22"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="#D0000000">
-                            <Image x:Name="Graphs_MultimediaTimerJitter_Image" Height="201" Width="3840" HorizontalAlignment="Right"/>
-                        </Border>
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphTorqueOutput500Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueOutput500Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphTimerJitter500Hz, Mode=TwoWay}" Title="{Binding Localization[TimerJitter500Hz]}"/>
 
                     </Grid>
 
@@ -713,77 +676,71 @@
 
             <TabItem x:Name="Simulator_TabItem" Header="{Binding Localization[Simulator]}">
 
-                <Grid>
+                <TabControl TabStripPlacement="Top" Background="{x:Null}">
 
-                    <TabControl TabStripPlacement="Top" Margin="2" Background="{x:Null}">
+                    <TabItem x:Name="Simulator_HeaderData_TabItem" Header="{Binding Localization[HeaderData]}" Padding="24,2,24,2">
 
-                        <TabItem x:Name="Simulator_HeaderData_TabItem" Header="{Binding Localization[HeaderData]}" Padding="24,2,24,2">
+                        <Grid>
 
-                            <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                            <viewers:HeaderDataViewer Grid.Column="0" x:Name="Simulator_HeaderData_HeaderDataViewer" MouseWheel="Simulator_HeaderData_HeaderDataViewer_MouseWheel" ClipToBounds="True"/>
+                            <ScrollBar Grid.Column="1" x:Name="Simulator_HeaderData_ScrollBar" Scroll="Simulator_HeaderData_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
 
-                                <viewers:HeaderDataViewer Grid.Column="0" x:Name="Simulator_HeaderData_HeaderDataViewer" MouseWheel="Simulator_HeaderData_HeaderDataViewer_MouseWheel" ClipToBounds="True"/>
-                                <ScrollBar Grid.Column="1" x:Name="Simulator_HeaderData_ScrollBar" Scroll="Simulator_HeaderData_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
+                        </Grid>
 
-                            </Grid>
+                    </TabItem>
 
-                        </TabItem>
+                    <TabItem x:Name="Simulator_SessionInfo_TabItem" Header="{Binding Localization[SessionInformation]}" Padding="24,2,24,2">
 
-                        <TabItem x:Name="Simulator_SessionInfo_TabItem" Header="{Binding Localization[SessionInformation]}" Padding="24,2,24,2">
+                        <Grid>
 
-                            <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                            <viewers:SessionInfoViewer Grid.Column="0" x:Name="Simulator_SessionInfo_SessionInfoViewer" MouseWheel="Simulator_SessionInfo_SessionInfoViewer_MouseWheel" ClipToBounds="True"/>
+                            <ScrollBar Grid.Column="1" x:Name="Simulator_SessionInfo_ScrollBar" Scroll="Simulator_SessionInfo_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
 
-                                <viewers:SessionInfoViewer Grid.Column="0" x:Name="Simulator_SessionInfo_SessionInfoViewer" MouseWheel="Simulator_SessionInfo_SessionInfoViewer_MouseWheel" ClipToBounds="True"/>
-                                <ScrollBar Grid.Column="1" x:Name="Simulator_SessionInfo_ScrollBar" Scroll="Simulator_SessionInfo_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
+                        </Grid>
 
-                            </Grid>
+                    </TabItem>
 
-                        </TabItem>
+                    <TabItem x:Name="Simulator_TelemetryData_TabItem" Header="{Binding Localization[TelemetryData]}" Padding="24,2,24,2">
 
-                        <TabItem x:Name="Simulator_TelemetryData_TabItem" Header="{Binding Localization[TelemetryData]}" Padding="24,2,24,2">
+                        <Grid>
 
-                            <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                            <viewers:TelemetryDataViewer Grid.Column="0" x:Name="Simulator_TelemetryData_TelemetryDataViewer" MouseWheel="Simulator_TelemetryData_TelemetryDataViewer_MouseWheel" ClipToBounds="True"/>
+                            <ScrollBar Grid.Column="1" x:Name="Simulator_TelemetryData_ScrollBar" Scroll="Simulator_TelemetryData_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
 
-                                <viewers:TelemetryDataViewer Grid.Column="0" x:Name="Simulator_TelemetryData_TelemetryDataViewer" MouseWheel="Simulator_TelemetryData_TelemetryDataViewer_MouseWheel" ClipToBounds="True"/>
-                                <ScrollBar Grid.Column="1" x:Name="Simulator_TelemetryData_ScrollBar" Scroll="Simulator_TelemetryData_ScrollBar_Scroll" SmallChange="1" LargeChange="5" Maximum="0"/>
+                        </Grid>
 
-                            </Grid>
+                    </TabItem>
 
-                        </TabItem>
-
-                    </TabControl>
-
-                    <Label x:Name="Simulator_SimulatorNotRunning_Label" Margin="0,30,0,0" Content="{Binding Localization[SimulatorNotRunning]}" HorizontalContentAlignment="Center" Foreground="#FFFF6A6A"/>
-
-                </Grid>
+                </TabControl>
 
             </TabItem>
 
             <TabItem x:Name="App_TabItem" Header="{Binding Localization[App]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
-                    <Grid Margin="0,10,0,10">
+                    <Grid Margin="0,10,0,0">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Grid Grid.Column="0" Margin="10,0,10,0">
+                        <Grid Grid.Column="0">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -798,9 +755,9 @@
 
                     </Grid>
 
-                    <controls:MairaSwitch Margin="0,10,0,10" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
-                    <controls:MairaSwitch Margin="0,10,0,10" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}"/>
-                    <controls:MairaSwitch Margin="0,10,0,10" IsOn="{Binding Settings.AppAutomaticallyDownloadUpdates, Mode=TwoWay}" Title="{Binding Localization[AutomaticallyDownloadUpdates]}"/>
+                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
+                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}"/>
+                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppAutomaticallyDownloadUpdates, Mode=TwoWay}" Title="{Binding Localization[AutomaticallyDownloadUpdates]}"/>
 
                 </StackPanel>
 
@@ -808,9 +765,9 @@
 
             <TabItem x:Name="Debug_TabItem" Header="{Binding Localization[Debug]}">
 
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,10,10,20">
 
-                    <GroupBox Header="Marvin's Test Variables" Margin="0,10,0,10">
+                    <GroupBox Header="Marvin's Test Variables" Margin="0,10,0,0">
 
                         <StackPanel>
 
@@ -829,7 +786,7 @@
 
                     </GroupBox>
 
-                    <GroupBox Header="Alan Le's Super Special Buttons" Margin="0,10,0,10">
+                    <GroupBox Header="Alan Le's Super Special Buttons" Margin="0,10,0,0">
 
                         <StackPanel Orientation="Horizontal">
 

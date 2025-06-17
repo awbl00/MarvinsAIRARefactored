@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Http;
 using System.Net.NetworkInformation;
-using System.Windows;
 
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Windows;

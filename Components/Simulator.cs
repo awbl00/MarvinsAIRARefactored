@@ -1,13 +1,7 @@
 ﻿
-using System.Windows;
-
-using Image = System.Windows.Controls.Image;
-
 using PInvoke;
 
 using IRSDKSharper;
-
-using MarvinsAIRARefactored.Classes;
 
 namespace MarvinsAIRARefactored.Components;
 
@@ -39,6 +33,7 @@ public class Simulator
 	public int NumForwardGears { get; private set; } = 0;
 	public IRacingSdkEnum.PaceMode PaceMode { get; private set; } = IRacingSdkEnum.PaceMode.NotPacing;
 	public IRacingSdkEnum.TrkLoc PlayerTrackSurface { get; private set; } = IRacingSdkEnum.TrkLoc.NotInWorld;
+	public int ReplayFrameNumEnd { get; private set; } = 1;
 	public bool ReplayPlaySlowMotion { get; private set; } = false;
 	public int ReplayPlaySpeed { get; private set; } = 1;
 	public float[] RFShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
@@ -83,6 +78,7 @@ public class Simulator
 	private IRacingSdkDatum? _lrShockVel_STDatum = null;
 	private IRacingSdkDatum? _paceModeDatum = null;
 	private IRacingSdkDatum? _playerTrackSurfaceDatum = null;
+	private IRacingSdkDatum? _replayFrameNumEndDatum = null;
 	private IRacingSdkDatum? _replayPlaySlowMotionDatum = null;
 	private IRacingSdkDatum? _replayPlaySpeedDatum = null;
 	private IRacingSdkDatum? _rfShockVel_STDatum = null;
@@ -97,25 +93,6 @@ public class Simulator
 	private IRacingSdkDatum? _velocityXDatum = null;
 	private IRacingSdkDatum? _velocityYDatum = null;
 	private IRacingSdkDatum? _weatherDeclaredWetDatum = null;
-
-
-	private readonly Graph _native60HzTorqueGraph;
-	private readonly Statistics _native60HzTorqueStatistics = new( 60 );
-
-	private readonly Graph _native360HzTorqueGraph;
-	private readonly Statistics _native360HzTorqueStatistics = new( 360 );
-
-	public Simulator( Image native60HzGraphImage, Image native360HzGraphImage )
-	{
-		var app = App.Instance;
-
-		app?.Logger.WriteLine( "[Simulator] Constructor >>>" );
-
-		_native60HzTorqueGraph = new Graph( native60HzGraphImage );
-		_native360HzTorqueGraph = new Graph( native360HzGraphImage );
-
-		app?.Logger.WriteLine( "[Simulator] <<< Constructor" );
-	}
 
 	public void Initialize()
 	{
@@ -147,6 +124,11 @@ public class Simulator
 			app.Logger.WriteLine( "[Simulator] Stopping IRSDKSharper" );
 
 			_irsdk.Stop();
+
+			while ( _irsdk.IsStarted )
+			{
+				Thread.Sleep( 0 );
+			}
 
 			app.Logger.WriteLine( "[Simulator] <<< Shutdown" );
 		}
@@ -182,13 +164,6 @@ public class Simulator
 
 			app.AdminBoxx.SimulatorConnected();
 
-			app.Dispatcher.BeginInvoke( () =>
-			{
-				app.MainWindow.Graphs_Native60HzTorque_SimulatorNotRunning_Label.Visibility = Visibility.Hidden;
-				app.MainWindow.Graphs_Native360HzTorque_SimulatorNotRunning_Label.Visibility = Visibility.Hidden;
-				app.MainWindow.Simulator_SimulatorNotRunning_Label.Visibility = Visibility.Hidden;
-			} );
-
 			app.Logger.WriteLine( "[Simulator] <<< OnConnected" );
 		}
 	}
@@ -218,12 +193,7 @@ public class Simulator
 
 			app.AdminBoxx.SimulatorDisconnected();
 
-			app.Dispatcher.BeginInvoke( () =>
-			{
-				app.MainWindow.Graphs_Native60HzTorque_SimulatorNotRunning_Label.Visibility = Visibility.Visible;
-				app.MainWindow.Graphs_Native360HzTorque_SimulatorNotRunning_Label.Visibility = Visibility.Visible;
-				app.MainWindow.Simulator_SimulatorNotRunning_Label.Visibility = Visibility.Visible;
-			} );
+			app.MainWindow.UpdateStatus();
 
 			app.Logger.WriteLine( "[Simulator] <<< OnDisconnected" );
 		}
@@ -231,35 +201,35 @@ public class Simulator
 
 	private void OnSessionInfo()
 	{
-		var sessionInfo = _irsdk.Data.SessionInfo;
-
-		NumForwardGears = sessionInfo.DriverInfo.DriverCarGearNumForward;
-		ShiftLightsShiftRPM = sessionInfo.DriverInfo.DriverCarSLShiftRPM;
-		SimMode = sessionInfo.WeekendInfo.SimMode;
-
-		foreach ( var driver in _irsdk.Data.SessionInfo.DriverInfo.Drivers )
-		{
-			if ( driver.CarIdx == _irsdk.Data.SessionInfo.DriverInfo.DriverCarIdx )
-			{
-				CarScreenName = driver.CarScreenName ?? string.Empty;
-				break;
-			}
-		}
-
-		TrackDisplayName = _irsdk.Data.SessionInfo.WeekendInfo.TrackDisplayName ?? string.Empty;
-		TrackConfigName = _irsdk.Data.SessionInfo.WeekendInfo.TrackConfigName ?? string.Empty;
-
-		if ( _needToUpdateFromContextSettings )
-		{
-			DataContext.DataContext.Instance.Settings.UpdateFromContextSettings();
-
-			_needToUpdateFromContextSettings = false;
-		}
-
 		var app = App.Instance;
 
 		if ( app != null )
 		{
+			var sessionInfo = _irsdk.Data.SessionInfo;
+
+			NumForwardGears = sessionInfo.DriverInfo.DriverCarGearNumForward;
+			ShiftLightsShiftRPM = sessionInfo.DriverInfo.DriverCarSLShiftRPM;
+			SimMode = sessionInfo.WeekendInfo.SimMode;
+
+			foreach ( var driver in _irsdk.Data.SessionInfo.DriverInfo.Drivers )
+			{
+				if ( driver.CarIdx == _irsdk.Data.SessionInfo.DriverInfo.DriverCarIdx )
+				{
+					CarScreenName = driver.CarScreenName ?? string.Empty;
+					break;
+				}
+			}
+
+			TrackDisplayName = _irsdk.Data.SessionInfo.WeekendInfo.TrackDisplayName ?? string.Empty;
+			TrackConfigName = _irsdk.Data.SessionInfo.WeekendInfo.TrackConfigName ?? string.Empty;
+
+			if ( _needToUpdateFromContextSettings )
+			{
+				DataContext.DataContext.Instance.Settings.UpdateFromContextSettings();
+
+				_needToUpdateFromContextSettings = false;
+			}
+
 			app.MainWindow.UpdateStatus();
 		}
 	}
@@ -282,6 +252,7 @@ public class Simulator
 				_isReplayPlayingDatum = _irsdk.Data.TelemetryDataProperties[ "IsReplayPlaying" ];
 				_paceModeDatum = _irsdk.Data.TelemetryDataProperties[ "PaceMode" ];
 				_playerTrackSurfaceDatum = _irsdk.Data.TelemetryDataProperties[ "PlayerTrackSurface" ];
+				_replayFrameNumEndDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayFrameNumEnd" ];
 				_replayPlaySlowMotionDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayPlaySlowMotion" ];
 				_replayPlaySpeedDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayPlaySpeed" ];
 				_rpmDatum = _irsdk.Data.TelemetryDataProperties[ "RPM" ];
@@ -391,6 +362,7 @@ public class Simulator
 
 			// get the replay play status
 
+			ReplayFrameNumEnd = _irsdk.Data.GetInt( _replayFrameNumEndDatum );
 			ReplayPlaySlowMotion = _irsdk.Data.GetBool( _replayPlaySlowMotionDatum );
 			ReplayPlaySpeed = _irsdk.Data.GetInt( _replayPlaySpeedDatum );
 
@@ -531,28 +503,6 @@ public class Simulator
 				app.Pedals.Update( app );
 			}
 
-			// update statistics and graphs
-
-			if ( app.MainWindow.GraphsTabItemIsVisible )
-			{
-				_native60HzTorqueStatistics.Update( SteeringWheelTorque_ST[ 5 ] );
-
-				var y60Hz = SteeringWheelTorque_ST[ 5 ] / DataContext.DataContext.Instance.Settings.RacingWheelMaxForce;
-
-				_native60HzTorqueGraph.DrawGradientLine( y60Hz, 255, 0, 0 );
-				_native60HzTorqueGraph.Advance();
-
-				for ( var i = 0; i < SteeringWheelTorque_ST.Length; i++ )
-				{
-					_native360HzTorqueStatistics.Update( SteeringWheelTorque_ST[ i ] );
-
-					var y360Hz = SteeringWheelTorque_ST[ i ] / DataContext.DataContext.Instance.Settings.RacingWheelMaxForce;
-
-					_native360HzTorqueGraph.DrawGradientLine( y360Hz, 255, 0, 0 );
-					_native360HzTorqueGraph.Advance();
-				}
-			}
-
 			// temporary code for Alan Le
 
 			for ( var i = 0; i < SteeringWheelTorque_ST.Length; i++ )
@@ -576,18 +526,5 @@ public class Simulator
 	public void Tick( App app )
 	{
 		app.MainWindow.RacingWheel_CurrentForce_Label.Content = $"{MathF.Abs( SteeringWheelTorque_ST[ 5 ] ):F2}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
-
-		if ( app.MainWindow.GraphsTabItemIsVisible )
-		{
-			_native60HzTorqueGraph.UpdateImage();
-
-			app.MainWindow.Graphs_Native60HzTorque_MinMaxAvg.Content = $"{_native60HzTorqueStatistics.MinimumValue,5:F2} {_native60HzTorqueStatistics.MaximumValue,5:F2} {_native60HzTorqueStatistics.AverageValue,5:F2}";
-			app.MainWindow.Graphs_Native60HzTorque_VarStdDev.Content = $"{_native60HzTorqueStatistics.Variance,5:F2} {_native60HzTorqueStatistics.StandardDeviation,5:F2}";
-
-			_native360HzTorqueGraph.UpdateImage();
-
-			app.MainWindow.Graphs_Native360HzTorque_MinMaxAvg.Content = $"{_native360HzTorqueStatistics.MinimumValue,5:F2} {_native360HzTorqueStatistics.MaximumValue,5:F2} {_native360HzTorqueStatistics.AverageValue,5:F2}";
-			app.MainWindow.Graphs_Native360HzTorque_VarStdDev.Content = $"{_native360HzTorqueStatistics.Variance,5:F2} {_native360HzTorqueStatistics.StandardDeviation,5:F2}";
-		}
 	}
 }
