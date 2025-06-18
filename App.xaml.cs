@@ -106,8 +106,8 @@ public partial class App : Application
 
 		MainWindow.Resources = Current.Resources;
 
-		MainWindow.Show();
 		MainWindow.Initialize();
+		MainWindow.Show();
 
 		if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
 		{

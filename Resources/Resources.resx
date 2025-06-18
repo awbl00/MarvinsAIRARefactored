@@ -641,4 +641,8 @@
     <value>[Disabled]</value>
     <comment>LFE device list</comment>
   </data>
+  <data name="RememberWindowPositionAndSize" xml:space="preserve">
+    <value>Remember Window Position and Size</value>
+    <comment>App</comment>
+  </data>
 </root>

@@ -23,6 +23,8 @@ public partial class MainWindow : Window
 
 	private string? _installerFilePath = null;
 
+	private bool _initialized = false;
+
 	public MainWindow()
 	{
 		var app = App.Instance;
@@ -53,8 +55,6 @@ public partial class MainWindow : Window
 		{
 			app.Logger.WriteLine( "[MainWindow] Initialize >>>" );
 
-			WindowHandle = new WindowInteropHelper( this ).Handle;
-
 			var value = UXTheme.ShouldSystemUseDarkMode() ? 1 : 0;
 
 			DWMAPI.DwmSetWindowAttribute( WindowHandle, (uint) DWMAPI.cbAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref value, (uint) System.Runtime.InteropServices.Marshal.SizeOf( value ) );
@@ -64,6 +64,22 @@ public partial class MainWindow : Window
 			UpdateStatus();
 
 			Misc.ForcePropertySetters( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings );
+
+			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+
+			if ( settings.AppRememberWindowPositionAndSize )
+			{
+				var rectangle = settings.AppWindowPositionAndSize;
+
+				Left = rectangle.Location.X;
+				Top = rectangle.Location.Y;
+				Width = rectangle.Size.Width;
+				Height = rectangle.Size.Height;
+
+				WindowStartupLocation = WindowStartupLocation.Manual;
+			}
+
+			_initialized = true;
 
 			app.Logger.WriteLine( "[MainWindow] <<< Initialize" );
 		}
@@ -96,6 +112,46 @@ public partial class MainWindow : Window
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_1 );
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_2 );
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_3 );
+			}
+		} );
+	}
+
+	public void UpdateStatus()
+	{
+		Dispatcher.BeginInvoke( () =>
+		{
+			var app = App.Instance;
+
+			if ( app != null )
+			{
+				if ( app.Simulator.IsConnected )
+				{
+					Status_Border.Background = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.1f, 0.1f, 0.1f ) );
+
+					Status_Car_Label.Content = app.Simulator.CarScreenName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.CarScreenName;
+					Status_Track_Label.Content = app.Simulator.TrackDisplayName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackDisplayName;
+					Status_TrackConfiguration_Label.Content = app.Simulator.TrackConfigName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackConfigName;
+					Status_WetDry_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ app.Simulator.WeatherDeclaredWet ? "Wet" : "Dry" ];
+
+					Status_Car_Label.Visibility = Visibility.Visible;
+					Status_Track_Label.Visibility = Visibility.Visible;
+					Status_TrackConfiguration_Label.Visibility = Visibility.Visible;
+					Status_WetDry_Label.Visibility = Visibility.Visible;
+				}
+				else
+				{
+					Status_Border.Background = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.3f, 0f, 0f ) );
+
+					Status_Car_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "SimulatorNotRunning" ];
+					Status_Track_Label.Content = string.Empty;
+					Status_TrackConfiguration_Label.Content = string.Empty;
+					Status_WetDry_Label.Content = string.Empty;
+
+					Status_Car_Label.Visibility = Visibility.Visible;
+					Status_Track_Label.Visibility = Visibility.Collapsed;
+					Status_TrackConfiguration_Label.Visibility = Visibility.Collapsed;
+					Status_WetDry_Label.Visibility = Visibility.Collapsed;
+				}
 			}
 		} );
 	}
@@ -202,47 +258,47 @@ public partial class MainWindow : Window
 		} );
 	}
 
-	public void UpdateStatus()
-	{
-		Dispatcher.BeginInvoke( () =>
-		{
-			var app = App.Instance;
-
-			if ( app != null )
-			{
-				if ( app.Simulator.IsConnected )
-				{
-					Status_Car_Label.Content = app.Simulator.CarScreenName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.CarScreenName;
-					Status_Track_Label.Content = app.Simulator.TrackDisplayName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackDisplayName;
-					Status_TrackConfiguration_Label.Content = app.Simulator.TrackConfigName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackConfigName;
-					Status_WetDry_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ app.Simulator.WeatherDeclaredWet ? "Wet" : "Dry" ];
-
-					Status_Car_Label.Visibility = Visibility.Visible;
-					Status_Track_Label.Visibility = Visibility.Visible;
-					Status_TrackConfiguration_Label.Visibility = Visibility.Visible;
-					Status_WetDry_Label.Visibility = Visibility.Visible;
-				}
-				else
-				{
-					Status_Car_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "SimulatorNotRunning" ];
-					Status_Track_Label.Content = string.Empty;
-					Status_TrackConfiguration_Label.Content = string.Empty;
-					Status_WetDry_Label.Content = string.Empty;
-
-					Status_Car_Label.Visibility = Visibility.Visible;
-					Status_Track_Label.Visibility = Visibility.Collapsed;
-					Status_TrackConfiguration_Label.Visibility = Visibility.Collapsed;
-					Status_WetDry_Label.Visibility = Visibility.Collapsed;
-				}
-			}
-		} );
-	}
-
 	public void CloseAndLaunchInstaller( string installerFilePath )
 	{
 		_installerFilePath = installerFilePath;
 
 		Close();
+	}
+
+	private void Window_ContentRendered( object sender, EventArgs e )
+	{
+		if ( WindowHandle == 0 )
+		{
+			WindowHandle = new WindowInteropHelper( this ).Handle;
+		}
+	}
+
+	private void Window_LocationChanged( object sender, EventArgs e )
+	{
+		if ( _initialized )
+		{
+			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+
+			var rectangle = settings.AppWindowPositionAndSize;
+
+			rectangle.Location = new System.Drawing.Point( (int) Left, (int) Top );
+
+			settings.AppWindowPositionAndSize = rectangle;
+		}
+	}
+
+	private void Window_SizeChanged( object sender, SizeChangedEventArgs e )
+	{
+		if ( _initialized )
+		{
+			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+
+			var rectangle = settings.AppWindowPositionAndSize;
+
+			rectangle.Size = new System.Drawing.Size( (int) Width, (int) Height );
+
+			settings.AppWindowPositionAndSize = rectangle;
+		}
 	}
 
 	private void Window_Closed( object sender, EventArgs e )

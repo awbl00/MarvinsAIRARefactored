@@ -916,6 +916,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remember Window Position and Size.
+        /// </summary>
+        internal static string RememberWindowPositionAndSize {
+            get {
+                return ResourceManager.GetString("RememberWindowPositionAndSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
         internal static string Reset {

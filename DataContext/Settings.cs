@@ -2699,6 +2699,48 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Remember window position and size
+
+	private bool _appRememberWindowPositionAndSize = false;
+
+	public bool AppRememberWindowPositionAndSize
+	{
+		get => _appRememberWindowPositionAndSize;
+
+		set
+		{
+			if ( value != _appRememberWindowPositionAndSize )
+			{
+				_appRememberWindowPositionAndSize = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region App - Window position and size
+
+	private Rectangle _appWindowPositionAndSize = Rectangle.Empty;
+
+	public Rectangle AppWindowPositionAndSize
+	{
+		get => _appWindowPositionAndSize;
+
+		set
+		{
+			if ( value != _appWindowPositionAndSize )
+			{
+				_appWindowPositionAndSize = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
 	#region App - Check for updates
 
 	private bool _appCheckForUpdates = true;
