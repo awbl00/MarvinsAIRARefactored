@@ -69,7 +69,7 @@ public class Misc
 		}
 		else
 		{
-			return 1f - curve * 0.75f;
+			return 1f + curve * 0.75f;
 		}
 	}
 

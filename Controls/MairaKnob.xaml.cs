@@ -2,10 +2,13 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -17,15 +20,22 @@ namespace MarvinsAIRARefactored.Controls;
 
 public partial class MairaKnob : UserControl
 {
+	private const int ResetHoldMilliseconds = 1000;
+
 	private Point _lastMousePosition;
 	private bool _isDragging = false;
 	private readonly RotateTransform _knobRotation = new( 0, 0.5, 0.5 );
+	private readonly DispatcherTimer _holdTimer = new() { Interval = TimeSpan.FromMilliseconds( 20 ) };
+	private DateTime _rightClickStartTime;
+	private bool _isRightClickHeld;
 
 	public MairaKnob()
 	{
 		InitializeComponent();
 
 		KnobImage.RenderTransform = _knobRotation;
+
+		_holdTimer.Tick += HoldTimer_Tick;
 
 		UpdateLabelVisual();
 	}
@@ -126,6 +136,29 @@ public partial class MairaKnob : UserControl
 		set => SetValue( MinusButtonMappingsProperty, value );
 	}
 
+	public static readonly DependencyProperty ShowCurveProperty = DependencyProperty.Register( nameof( ShowCurve ), typeof( bool ), typeof( MairaKnob ), new PropertyMetadata( false, OnShowCurveChanged ) );
+
+	public bool ShowCurve
+	{
+		get => (bool) GetValue( ShowCurveProperty );
+		set => SetValue( ShowCurveProperty, value );
+	}
+
+	private static void OnShowCurveChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+	{
+		var control = (MairaKnob) d;
+
+		control.UpdateKnobVisual( control.Value, control.Value );
+	}
+
+	public static readonly DependencyProperty DefaultValueProperty = DependencyProperty.Register( nameof( DefaultValue ), typeof( float? ), typeof( MairaKnob ), new PropertyMetadata( null ) );
+
+	public float? DefaultValue
+	{
+		get => (float?) GetValue( DefaultValueProperty );
+		set => SetValue( DefaultValueProperty, value );
+	}
+
 	#endregion
 
 	#region Event Handlers
@@ -190,6 +223,28 @@ public partial class MairaKnob : UserControl
 		}
 	}
 
+	private void Value_Label_PreviewMouseRightButtonDown( object sender, MouseButtonEventArgs e )
+	{
+		if ( ( Keyboard.Modifiers != ModifierKeys.None ) || ( DefaultValue == null ) )
+		{
+			return;
+		}
+
+		e.Handled = true;
+
+		_rightClickStartTime = DateTime.Now;
+		_isRightClickHeld = true;
+
+		_holdTimer.Start();
+
+		Mouse.OverrideCursor = Cursors.None;
+
+		CursorCountdownOverlay.Start();
+	}
+
+	private void Value_Label_PreviewMouseRightButtonUp( object sender, MouseButtonEventArgs e ) => CancelHold();
+	private void Value_Label_MouseLeave( object sender, MouseEventArgs e ) => CancelHold();
+
 	#endregion
 
 	#region Logic
@@ -221,6 +276,104 @@ public partial class MairaKnob : UserControl
 		float delta = newValue - oldValue;
 
 		_knobRotation.Angle += delta * RotationMultiplier * 50f;
+
+		if ( ShowCurve )
+		{
+			var imageWidth = (int) CurveImage.Width;
+			var imageHeight = (int) CurveImage.Height;
+
+			var power = Misc.CurveToPower( Value );
+
+			var dv = new DrawingVisual();
+
+			using ( var dc = dv.RenderOpen() )
+			{
+				var darkGray = new SolidColorBrush( System.Windows.Media.Color.FromRgb( 48, 48, 48 ) );
+
+				dc.DrawRectangle( darkGray, null, new Rect( 0, 0, imageWidth, imageHeight ) );
+
+				var penGrid = new Pen( new SolidColorBrush( System.Windows.Media.Color.FromRgb( 0, 0, 0 ) ), 1 );
+
+				for ( var x = imageWidth / 4; x < imageWidth; x += imageWidth / 4 )
+				{
+					dc.DrawLine( penGrid, new Point( x, 0 ), new Point( x, imageHeight ) );
+				}
+
+				for ( var y = imageWidth / 4; y < imageHeight; y += imageHeight / 4 )
+				{
+					dc.DrawLine( penGrid, new Point( 0, y ), new Point( imageWidth, y ) );
+				}
+
+				var geometry = new StreamGeometry();
+
+				using ( var ctx = geometry.Open() )
+				{
+					for ( var x = 0; x < imageWidth; x++ )
+					{
+						float xf = x / (float) ( imageWidth - 1 );
+						float yf = MathF.Pow( xf, power );
+
+						int y = imageHeight - 1 - (int) ( yf * ( imageHeight - 1 ) );
+
+						if ( x == 0 )
+						{
+							ctx.BeginFigure( new Point( x, y ), false, false );
+						}
+						else
+						{
+							ctx.LineTo( new Point( x, y ), true, false );
+						}
+					}
+				}
+
+				dc.DrawGeometry( null, new Pen( System.Windows.Media.Brushes.White, 1.5f ), geometry );
+			}
+
+			var renderTargetBitmap = new RenderTargetBitmap( imageWidth, imageHeight, 96, 96, PixelFormats.Pbgra32 );
+
+			renderTargetBitmap.Render( dv );
+
+			CurveImage.Source = renderTargetBitmap;
+			CurveImage.Visibility = Visibility.Visible;
+		}
+		else
+		{
+			CurveImage.Visibility = Visibility.Collapsed;
+		}
+	}
+
+	private void HoldTimer_Tick( object? sender, EventArgs e )
+	{
+		if ( !_isRightClickHeld )
+		{
+			return;
+		}
+
+		var elapsed = ( DateTime.Now - _rightClickStartTime ).TotalMilliseconds;
+		var progress = 1 - Math.Min( 1, elapsed / ResetHoldMilliseconds );
+
+		CursorCountdownOverlay.UpdateProgress( progress );
+
+		if ( elapsed >= ResetHoldMilliseconds )
+		{
+			if ( DefaultValue != null )
+			{
+				Value = (float) DefaultValue;
+			}
+
+			CancelHold();
+		}
+	}
+
+	private void CancelHold()
+	{
+		_isRightClickHeld = false;
+
+		_holdTimer.Stop();
+
+		CursorCountdownOverlay.Stop();
+
+		Mouse.OverrideCursor = null;
 	}
 
 	#endregion

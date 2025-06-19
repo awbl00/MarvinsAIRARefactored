@@ -76,7 +76,7 @@ public class Graph
 		{
 			app.Logger.WriteLine( "[Graph] SetMairaComboBoxItemsSource >>>" );
 
-			var selectedItem = mairaComboBox.SelectedValue as KeyValuePair<LayerIndex, string>?;
+			var selectedLayerIndex = mairaComboBox.SelectedValue as LayerIndex?;
 
 			var dictionary = new Dictionary<LayerIndex, string>
 			{
@@ -89,9 +89,13 @@ public class Graph
 
 			mairaComboBox.ItemsSource = dictionary;
 
-			if ( selectedItem.HasValue )
+			if ( selectedLayerIndex != null )
 			{
-				mairaComboBox.SelectedValue = dictionary.FirstOrDefault( keyValuePair => keyValuePair.Key.Equals( selectedItem.Value.Key ) );
+				mairaComboBox.SelectedValue = selectedLayerIndex;
+			}
+			else
+			{
+				mairaComboBox.SelectedValue = LayerIndex.OutputTorque500Hz;
 			}
 
 			app.Logger.WriteLine( "[Graph] <<< SetMairaComboBoxItemsSource" );

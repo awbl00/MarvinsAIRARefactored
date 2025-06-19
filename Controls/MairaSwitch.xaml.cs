@@ -121,7 +121,8 @@ public partial class MairaSwitch : UserControl
 				LayoutRoot.RowDefinitions.Add( new RowDefinition { Height = GridLength.Auto } );
 
 				TextBlock.TextAlignment = TextAlignment.Center;
-				TextBlock.Margin = new Thickness( 0, 0, 0, 10 );
+				TextBlock.Margin = new Thickness( 0, 0, 0, 7 );
+				TextBlock.Padding = new Thickness( 5 );
 			}
 			else
 			{

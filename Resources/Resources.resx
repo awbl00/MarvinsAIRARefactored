@@ -473,12 +473,8 @@
     <value>Wheel Spin</value>
     <comment>Pedal effects list</comment>
   </data>
-  <data name="NarrowRPM" xml:space="preserve">
-    <value>RPM (Narrow)</value>
-    <comment>Pedal effects list</comment>
-  </data>
-  <data name="WideRPM" xml:space="preserve">
-    <value>RPM (Wide)</value>
+  <data name="RPM" xml:space="preserve">
+    <value>RPM</value>
     <comment>Pedal effects list</comment>
   </data>
   <data name="None" xml:space="preserve">
@@ -644,5 +640,37 @@
   <data name="RememberWindowPositionAndSize" xml:space="preserve">
     <value>Remember Window Position and Size</value>
     <comment>App</comment>
+  </data>
+  <data name="FadeWithBrake" xml:space="preserve">
+    <value>Fade With Brake</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="StartingRPM" xml:space="preserve">
+    <value>Starting RPM</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="VibrateInTopGear" xml:space="preserve">
+    <value>Vibrate In Top Gear</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="FadeWithThrottle" xml:space="preserve">
+    <value>Fade With Throttle</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="StartingPoint" xml:space="preserve">
+    <value>Starting Point</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="EndingPoint" xml:space="preserve">
+    <value>Ending Point</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="GearChangeShiftIntoGear" xml:space="preserve">
+    <value>Gear Change - Shift Into Gear</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="GearChangeShiftIntoNeutral" xml:space="preserve">
+    <value>Gear Change - Shift Into Neutral</value>
+    <comment>Pedals</comment>
   </data>
 </root>

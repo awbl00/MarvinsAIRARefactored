@@ -502,11 +502,38 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ending Point.
+        /// </summary>
+        internal static string EndingPoint {
+            get {
+                return ResourceManager.GetString("EndingPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fade force feedback when entering or exiting car.
         /// </summary>
         internal static string FadeForceFeedback {
             get {
                 return ResourceManager.GetString("FadeForceFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade With Brake.
+        /// </summary>
+        internal static string FadeWithBrake {
+            get {
+                return ResourceManager.GetString("FadeWithBrake", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade With Throttle.
+        /// </summary>
+        internal static string FadeWithThrottle {
+            get {
+                return ResourceManager.GetString("FadeWithThrottle", resourceCulture);
             }
         }
         
@@ -543,6 +570,24 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string GearChange {
             get {
                 return ResourceManager.GetString("GearChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gear Change - Shift Into Gear.
+        /// </summary>
+        internal static string GearChangeShiftIntoGear {
+            get {
+                return ResourceManager.GetString("GearChangeShiftIntoGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gear Change - Shift Into Neutral.
+        /// </summary>
+        internal static string GearChangeShiftIntoNeutral {
+            get {
+                return ResourceManager.GetString("GearChangeShiftIntoNeutral", resourceCulture);
             }
         }
         
@@ -660,15 +705,6 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string Minimum {
             get {
                 return ResourceManager.GetString("Minimum", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to RPM (Narrow).
-        /// </summary>
-        internal static string NarrowRPM {
-            get {
-                return ResourceManager.GetString("NarrowRPM", resourceCulture);
             }
         }
         
@@ -934,6 +970,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RPM.
+        /// </summary>
+        internal static string RPM {
+            get {
+                return ResourceManager.GetString("RPM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run installer?.
         /// </summary>
         internal static string RunInstaller {
@@ -1029,6 +1074,24 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string StandardDeviation {
             get {
                 return ResourceManager.GetString("StandardDeviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting Point.
+        /// </summary>
+        internal static string StartingPoint {
+            get {
+                return ResourceManager.GetString("StartingPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting RPM.
+        /// </summary>
+        internal static string StartingRPM {
+            get {
+                return ResourceManager.GetString("StartingRPM", resourceCulture);
             }
         }
         
@@ -1177,6 +1240,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vibrate In Top Gear.
+        /// </summary>
+        internal static string VibrateInTopGear {
+            get {
+                return ResourceManager.GetString("VibrateInTopGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Volume.
         /// </summary>
         internal static string Volume {
@@ -1227,15 +1299,6 @@ namespace MarvinsAIRARefactored.Resources {
         internal static string WheelSpin {
             get {
                 return ResourceManager.GetString("WheelSpin", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to RPM (Wide).
-        /// </summary>
-        internal static string WideRPM {
-            get {
-                return ResourceManager.GetString("WideRPM", resourceCulture);
             }
         }
         

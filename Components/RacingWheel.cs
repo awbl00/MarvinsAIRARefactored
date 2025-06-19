@@ -85,8 +85,6 @@ public class RacingWheel
 		{
 			app.Logger.WriteLine( "[RacingWheel] SetMairaComboBoxItemsSource >>>" );
 
-			var selectedItem = mairaComboBox.SelectedValue as KeyValuePair<Algorithm, string>?;
-
 			var dictionary = new Dictionary<Algorithm, string>
 			{
 				{ Algorithm.Native60Hz, DataContext.DataContext.Instance.Localization[ "Native60Hz" ] },
@@ -95,15 +93,11 @@ public class RacingWheel
 				{ Algorithm.DeltaLimiter, DataContext.DataContext.Instance.Localization[ "DeltaLimiter" ] },
 				{ Algorithm.DetailBoosterOn60Hz, DataContext.DataContext.Instance.Localization[ "DetailBoosterOn60Hz" ] },
 				{ Algorithm.DeltaLimiterOn60Hz, DataContext.DataContext.Instance.Localization[ "DeltaLimiterOn60Hz" ] },
-				{ Algorithm.ZeAlanLeTwist, DataContext.DataContext.Instance.Localization[ "ZeAlanLeTwist" ] }
+//				{ Algorithm.ZeAlanLeTwist, DataContext.DataContext.Instance.Localization[ "ZeAlanLeTwist" ] }
 			};
 
 			mairaComboBox.ItemsSource = dictionary;
-
-			if ( selectedItem.HasValue )
-			{
-				mairaComboBox.SelectedValue = dictionary.FirstOrDefault( keyValuePair => keyValuePair.Key.Equals( selectedItem.Value.Key ) );
-			}
+			mairaComboBox.SelectedValue = DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm;
 
 			app.Logger.WriteLine( "[RacingWheel] <<< SetMairaComboBoxItemsSource" );
 		}
@@ -347,7 +341,7 @@ public class RacingWheel
 					_crashProtectionTimerMS -= deltaMilliseconds;
 				}
 
-				app.Debug.Label_4 = $"crashProtectionScale = {crashProtectionScale * 100:F0}";
+				app.Debug.Label_4 = $"crashProtectionScale = {crashProtectionScale * 100f:F0}";
 
 				// update curb protection
 
@@ -369,7 +363,7 @@ public class RacingWheel
 					_curbProtectionTimerMS -= deltaMilliseconds;
 				}
 
-				app.Debug.Label_10 = $"curbProtectionLerpFactor = {curbProtectionLerpFactor * 100:F0}%";
+				app.Debug.Label_10 = $"curbProtectionLerpFactor = {curbProtectionLerpFactor * 100f:F0}%";
 
 				// grab the next LFE magnitude
 
@@ -560,7 +554,7 @@ public class RacingWheel
 					{
 						var fadeScale = _fadeTimerMS / _fadeInTimeMS;
 
-						app.Debug.Label_7 = $"fadeScale = {fadeScale * 100:F2}% (fading in)";
+						app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F2}% (fading in)";
 
 						outputTorque *= 1f - fadeScale;
 					}
@@ -568,7 +562,7 @@ public class RacingWheel
 					{
 						var fadeScale = _fadeTimerMS / _fadeOutTimeMS;
 
-						app.Debug.Label_7 = $"fadeScale = {fadeScale * 100:F0}% (fading out)";
+						app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F0}% (fading out)";
 
 						outputTorque = _lastUnfadedOutputTorque * fadeScale;
 					}
@@ -596,6 +590,10 @@ public class RacingWheel
 				app.Graph.UpdateLayer( Graph.LayerIndex.InputTorque500Hz, steeringWheelTorque500Hz, steeringWheelTorque500Hz / settings.RacingWheelMaxForce );
 				app.Graph.UpdateLayer( Graph.LayerIndex.InputLFE500Hz, inputLFEMagnitude, inputLFEMagnitude );
 				app.Graph.UpdateLayer( Graph.LayerIndex.OutputTorque500Hz, outputTorque, outputTorque );
+
+				// update alan le dump
+
+				app.Debug.AddFFBSample( deltaMilliseconds, steeringWheelTorque60Hz, steeringWheelTorque500Hz, inputLFEMagnitude, outputTorque );
 			}
 			catch ( Exception exception )
 			{

@@ -28,6 +28,7 @@ public class Simulator
 	public bool IsConnected { get => _irsdk.IsConnected; }
 	public bool IsOnTrack { get; private set; } = false;
 	public bool IsReplayPlaying { get; private set; } = false;
+	public float LapDistPct { get; private set; } = 0f;
 	public float[] LFShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
 	public float[] LRShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
 	public int NumForwardGears { get; private set; } = 0;
@@ -74,6 +75,7 @@ public class Simulator
 	private IRacingSdkDatum? _gearDatum = null;
 	private IRacingSdkDatum? _isOnTrackDatum = null;
 	private IRacingSdkDatum? _isReplayPlayingDatum = null;
+	private IRacingSdkDatum? _lapDistPctDatum = null;
 	private IRacingSdkDatum? _lfShockVel_STDatum = null;
 	private IRacingSdkDatum? _lrShockVel_STDatum = null;
 	private IRacingSdkDatum? _paceModeDatum = null;
@@ -250,6 +252,7 @@ public class Simulator
 				_gearDatum = _irsdk.Data.TelemetryDataProperties[ "Gear" ];
 				_isOnTrackDatum = _irsdk.Data.TelemetryDataProperties[ "IsOnTrack" ];
 				_isReplayPlayingDatum = _irsdk.Data.TelemetryDataProperties[ "IsReplayPlaying" ];
+				_lapDistPctDatum = _irsdk.Data.TelemetryDataProperties[ "LapDistPct" ];
 				_paceModeDatum = _irsdk.Data.TelemetryDataProperties[ "PaceMode" ];
 				_playerTrackSurfaceDatum = _irsdk.Data.TelemetryDataProperties[ "PlayerTrackSurface" ];
 				_replayFrameNumEndDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayFrameNumEnd" ];
@@ -334,6 +337,10 @@ public class Simulator
 			}
 
 			_isReplayPlayingLastFrame = IsReplayPlaying;
+
+			// update lap dist pct
+
+			LapDistPct = _irsdk.Data.GetFloat( _lapDistPctDatum );
 
 			// suspend racing wheel force feedback if iracing ffb is enabled
 
@@ -501,13 +508,6 @@ public class Simulator
 				_lastPedalUpdateFrame = _irsdk.Data.TickCount;
 
 				app.Pedals.Update( app );
-			}
-
-			// temporary code for Alan Le
-
-			for ( var i = 0; i < SteeringWheelTorque_ST.Length; i++ )
-			{
-				app.Debug.AddFFBSample( _irsdk.Data.TickCount * 6 + i, SteeringWheelTorque_ST[ i ] );
 			}
 
 			// trigger the app worker thread
