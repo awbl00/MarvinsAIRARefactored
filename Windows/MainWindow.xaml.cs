@@ -165,8 +165,8 @@ public partial class MainWindow : Window
 			var racingWheelBiasKnobControlVisibility = Visibility.Hidden;
 			var racingWheelTimeToMaxTorqueVisibility = Visibility.Hidden;
 			var racingWheelTorqueAccelScaleVisibility = Visibility.Hidden;
-            var racingWheelTotalTorqueThresholdVisibility = Visibility.Hidden;
-            var racingWheelTotalTorqueScaleVisibility = Visibility.Hidden;
+			var racingWheelTotalTorqueThresholdVisibility = Visibility.Hidden;
+			var racingWheelTotalTorqueScaleVisibility = Visibility.Hidden;
 			var racingWheelCurbProtectionGroupBoxVisibility = Visibility.Collapsed;
 
 			switch ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm )

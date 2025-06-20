@@ -482,151 +482,151 @@ public class Settings : INotifyPropertyChanged
 	public ButtonMappings RacingWheelBiasPlusButtonMappings { get; set; } = new();
 	public ButtonMappings RacingWheelBiasMinusButtonMappings { get; set; } = new();
 
-    #endregion
+	#endregion
 
-    #region Racing wheel - Time to Max Torque
+	#region Racing wheel - Time to Max Torque
 
-    private float _racingWheelTimeToMaxTorque = 0.5f;
-    public float RacingWheelTimeToMaxTorque
-    {
-        get => _racingWheelTimeToMaxTorque;
+	private float _racingWheelTimeToMaxTorque = 0.5f;
+	public float RacingWheelTimeToMaxTorque
+	{
+		get => _racingWheelTimeToMaxTorque;
 
-        set
-        {
-            value = Math.Clamp(value, 0f, 1000f);
+		set
+		{
+			value = Math.Clamp(value, 0f, 1000f);
 
-            if (value != _racingWheelTimeToMaxTorque)
-            {
-                _racingWheelTimeToMaxTorque = value;
+			if (value != _racingWheelTimeToMaxTorque)
+			{
+				_racingWheelTimeToMaxTorque = value;
 
-                OnPropertyChanged();
-            }
+				OnPropertyChanged();
+			}
 
-            RacingWheelTimeToMaxTorqueString = $"{_racingWheelTimeToMaxTorque:F0} ms";
-        }
-    }
+			RacingWheelTimeToMaxTorqueString = $"{_racingWheelTimeToMaxTorque:F0} ms";
+		}
+	}
 
-    private string _racingWheelTimeToMaxTorqueString = string.Empty;
+	private string _racingWheelTimeToMaxTorqueString = string.Empty;
 
-    [XmlIgnore]
-    public string RacingWheelTimeToMaxTorqueString
-    {
-        get => _racingWheelTimeToMaxTorqueString;
+	[XmlIgnore]
+	public string RacingWheelTimeToMaxTorqueString
+	{
+		get => _racingWheelTimeToMaxTorqueString;
 
-        set
-        {
-            if (value != _racingWheelTimeToMaxTorqueString)
-            {
-                _racingWheelTimeToMaxTorqueString = value;
+		set
+		{
+			if (value != _racingWheelTimeToMaxTorqueString)
+			{
+				_racingWheelTimeToMaxTorqueString = value;
 
-                OnPropertyChanged();
-            }
-        }
-    }
+				OnPropertyChanged();
+			}
+		}
+	}
 
-    public ContextSwitches RacingWheelTimeToMaxTorqueContextSwitches { get; set; } = new(true, true, false, false, false);
-    public ButtonMappings RacingWheelTimeToMaxTorquePlusButtonMappings { get; set; } = new();
-    public ButtonMappings RacingWheelTimeToMaxTorqueMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTimeToMaxTorqueContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelTimeToMaxTorquePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTimeToMaxTorqueMinusButtonMappings { get; set; } = new();
 
-    #endregion
+	#endregion
 
-    #region Racing wheel - Torque Acceleration Scale
+	#region Racing wheel - Torque Acceleration Scale
 
-    private float _racingWheelTorqueAccelScale = 0.35f;
+	private float _racingWheelTorqueAccelScale = 0.35f;
 
-    public float RacingWheelTorqueAccelScale
-    {
-        get => _racingWheelTorqueAccelScale;
+	public float RacingWheelTorqueAccelScale
+	{
+		get => _racingWheelTorqueAccelScale;
 
-        set
-        {
-            value = Math.Clamp(value, 0f, 1f);
+		set
+		{
+			value = Math.Clamp(value, 0f, 1f);
 
-            if (value != _racingWheelTorqueAccelScale)
-            {
-                _racingWheelTorqueAccelScale = value;
+			if (value != _racingWheelTorqueAccelScale)
+			{
+				_racingWheelTorqueAccelScale = value;
 
-                OnPropertyChanged();
-            }
+				OnPropertyChanged();
+			}
 
-            RacingWheelTorqueAccelScaleString = $"{_racingWheelTorqueAccelScale * 100f:F0}%";
-        }
-    }
+			RacingWheelTorqueAccelScaleString = $"{_racingWheelTorqueAccelScale * 100f:F0}%";
+		}
+	}
 
-    private string _racingWheelTorqueAccelScaleString = string.Empty;
+	private string _racingWheelTorqueAccelScaleString = string.Empty;
 
-    [XmlIgnore]
-    public string RacingWheelTorqueAccelScaleString
-    {
-        get => _racingWheelTorqueAccelScaleString;
+	[XmlIgnore]
+	public string RacingWheelTorqueAccelScaleString
+	{
+		get => _racingWheelTorqueAccelScaleString;
 
-        set
-        {
-            if (value != _racingWheelTorqueAccelScaleString)
-            {
-                _racingWheelTorqueAccelScaleString = value;
+		set
+		{
+			if (value != _racingWheelTorqueAccelScaleString)
+			{
+				_racingWheelTorqueAccelScaleString = value;
 
-                OnPropertyChanged();
-            }
-        }
-    }
+				OnPropertyChanged();
+			}
+		}
+	}
 
-    public ContextSwitches RacingWheelTorqueAccelScaleContextSwitches { get; set; } = new(true, true, false, false, false);
-    public ButtonMappings RacingWheelTorqueAccelScalePlusButtonMappings { get; set; } = new();
-    public ButtonMappings RacingWheelTorqueAccelScaleMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTorqueAccelScaleContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelTorqueAccelScalePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTorqueAccelScaleMinusButtonMappings { get; set; } = new();
 
-    #endregion
+	#endregion
 
-    #region Racing wheel - Total Torque Threshold
+	#region Racing wheel - Total Torque Threshold
 
-    private float _racingWheelTotalTorqueThreshold = 1f;
+	private float _racingWheelTotalTorqueThreshold = 1f;
 
-    public float RacingWheelTotalTorqueThreshold
-    {
-        get => _racingWheelTotalTorqueThreshold;
+	public float RacingWheelTotalTorqueThreshold
+	{
+		get => _racingWheelTotalTorqueThreshold;
 
-        set
-        {
-            value = Math.Clamp(value, 0f, 1f);
+		set
+		{
+			value = Math.Clamp(value, 0f, 1f);
 
-            if (value != _racingWheelTotalTorqueThreshold)
-            {
-                _racingWheelTotalTorqueThreshold = value;
+			if (value != _racingWheelTotalTorqueThreshold)
+			{
+				_racingWheelTotalTorqueThreshold = value;
 
-                OnPropertyChanged();
-            }
+				OnPropertyChanged();
+			}
 
-            RacingWheelTotalTorqueThresholdString = $"{_racingWheelTotalTorqueThreshold * 100f:F0}%";
-        }
-    }
+			RacingWheelTotalTorqueThresholdString = $"{_racingWheelTotalTorqueThreshold * 100f:F0}%";
+		}
+	}
 
-    private string _racingWheelTotalTorqueThresholdString = string.Empty;
+	private string _racingWheelTotalTorqueThresholdString = string.Empty;
 
-    [XmlIgnore]
-    public string RacingWheelTotalTorqueThresholdString
-    {
-        get => _racingWheelTotalTorqueThresholdString;
+	[XmlIgnore]
+	public string RacingWheelTotalTorqueThresholdString
+	{
+		get => _racingWheelTotalTorqueThresholdString;
 
-        set
-        {
-            if (value != _racingWheelTotalTorqueThresholdString)
-            {
-                _racingWheelTotalTorqueThresholdString = value;
+		set
+		{
+			if (value != _racingWheelTotalTorqueThresholdString)
+			{
+				_racingWheelTotalTorqueThresholdString = value;
 
-                OnPropertyChanged();
-            }
-        }
-    }
+				OnPropertyChanged();
+			}
+		}
+	}
 
-    public ContextSwitches RacingWheelTotalTorqueThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
-    public ButtonMappings RacingWheelTotalTorqueThresholdPlusButtonMappings { get; set; } = new();
-    public ButtonMappings RacingWheelTotalTorqueThresholdMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTotalTorqueThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelTotalTorqueThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalTorqueThresholdMinusButtonMappings { get; set; } = new();
 
-    #endregion
+	#endregion
 
-    #region Racing wheel - Total Torque Scale
+	#region Racing wheel - Total Torque Scale
 
-    private float _racingWheelTotalTorqueScale = 0.75f;
+	private float _racingWheelTotalTorqueScale = 0.75f;
 
 	public float RacingWheelTotalTorqueScale
 	{
