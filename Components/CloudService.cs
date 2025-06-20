@@ -174,6 +174,8 @@ public class CloudService
 			{
 				app.Logger.WriteLine( $"[CloudService] Failed trying to check for updates: {exception.Message.Trim()}" );
 			}
+
+			app.Logger.WriteLine( "[CloudService] <<< CheckForUpdates" );
 		}
 	}
 }
