@@ -9,6 +9,8 @@ using System.Windows.Media;
 using ScrollEventArgs = System.Windows.Controls.Primitives.ScrollEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
 
+using Simagic;
+
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Components;
 using MarvinsAIRARefactored.PInvoke;
@@ -39,8 +41,6 @@ public partial class MainWindow : Window
 
 			app.Logger.WriteLine( $"[MainWindow] Version is {version}" );
 
-			RefreshWindow();
-
 			Components.Localization.SetLanguageComboBoxItemsSource( App_Language_ComboBox );
 
 			AdminBoxx_TabItem.Visibility = Visibility.Collapsed;
@@ -63,7 +63,8 @@ public partial class MainWindow : Window
 
 			UpdateRacingWheelPowerButton();
 			UpdateRacingWheelForceFeedbackButtons();
-			UpdateStatus();
+
+			RefreshWindow();
 
 			Misc.ForcePropertySetters( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings );
 
@@ -114,6 +115,9 @@ public partial class MainWindow : Window
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_1 );
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_2 );
 				Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_3 );
+
+				UpdateStatus();
+				UpdatePedalsDevice();
 			}
 		} );
 	}
@@ -258,6 +262,34 @@ public partial class MainWindow : Window
 			RacingWheel_DeltaLimiterBias_KnobControl.Visibility = racingWheelDeltaLimiterBiasKnobControlVisibility;
 			RacingWheel_CurbProtection_GroupBox.Visibility = racingWheelCurbProtectionGroupBoxVisibility;
 		} );
+	}
+
+	public void UpdatePedalsDevice()
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			Dispatcher.BeginInvoke( () =>
+			{
+				var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
+
+				switch ( app.Pedals.PedalsDevice )
+				{
+					case HPR.PedalsDevice.None:
+						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsNone" ];
+						break;
+
+					case HPR.PedalsDevice.P1000:
+						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsP1000" ];
+						break;
+
+					case HPR.PedalsDevice.P2000:
+						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsP2000" ];
+						break;
+				}
+			} );
+		}
 	}
 
 	public void CloseAndLaunchInstaller( string installerFilePath )

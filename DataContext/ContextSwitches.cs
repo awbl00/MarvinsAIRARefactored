@@ -12,27 +12,36 @@ public class ContextSwitches : INotifyPropertyChanged
 
 	#endregion
 
+	#region Initializing
+
+	private bool _initializing = true;
+
+	#endregion
+
 	#region INotifyProperty stuff
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public void OnPropertyChanged( [CallerMemberName] string? propertyName = null )
 	{
-		var app = App.Instance;
-
-		if ( app != null )
+		if ( !_initializing )
 		{
-			if ( propertyName != null && !propertyName.EndsWith( "String" ) )
+			var app = App.Instance;
+
+			if ( app != null )
 			{
-				var property = GetType().GetProperty( propertyName );
-
-				if ( property != null )
+				if ( propertyName != null )
 				{
-					app.Logger.WriteLine( $"[Settings] {propertyName} = {property.GetValue( this )}" );
-				}
-			}
+					var property = GetType().GetProperty( propertyName );
 
-			app.SettingsFile.QueueForSerialization = true;
+					if ( property != null )
+					{
+						app.Logger.WriteLine( $"[ContextSwitches] {propertyName} = {property.GetValue( this )}" );
+					}
+				}
+
+				app.SettingsFile.QueueForSerialization = true;
+			}
 		}
 
 		PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
@@ -47,6 +56,8 @@ public class ContextSwitches : INotifyPropertyChanged
 		PerTrack = false;
 		PerTrackConfiguration = false;
 		PerWetDry = false;
+
+		_initializing = false;
 	}
 
 	public ContextSwitches( bool perWheelbase, bool perCar, bool perTrack, bool perTrackConfiguration, bool perWetDry )
@@ -56,6 +67,8 @@ public class ContextSwitches : INotifyPropertyChanged
 		PerTrack = perTrack;
 		PerTrackConfiguration = perTrackConfiguration;
 		PerWetDry = perWetDry;
+
+		_initializing = false;
 	}
 
 	#region Per wheelbase

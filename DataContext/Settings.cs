@@ -1331,6 +1331,34 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Pedals - Enabled
+
+	private bool _pedalsEnabled = false;
+
+	public bool PedalsEnabled
+	{
+		get => _pedalsEnabled;
+
+		set
+		{
+			if ( value != _pedalsEnabled )
+			{
+				_pedalsEnabled = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			if ( !app.SettingsFile.PauseSerialization )
+			{
+				app?.Pedals.Refresh();
+			}
+		}
+	}
+
+	#endregion
+
 	#region Pedals - Clutch effect 1
 
 	private Pedals.Effect _pedalsClutchEffect1 = Pedals.Effect.GearChange;

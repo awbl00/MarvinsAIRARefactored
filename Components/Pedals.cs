@@ -20,6 +20,8 @@ public class Pedals
 		ClutchSlip
 	};
 
+	public HPR.PedalsDevice PedalsDevice { get; private set; }
+
 	private const float deltaSeconds = 1f / 20f;
 
 	private readonly HPR _hpr = new();
@@ -30,37 +32,21 @@ public class Pedals
 	private float _gearChangeAmplitude = 0f;
 	private float _gearChangeTimer = 0f;
 
-	public void Initialize()
+	public void Refresh()
 	{
 		var app = App.Instance;
 
 		if ( app != null )
 		{
-			app.Logger.WriteLine( "[Pedals] Initialize >>>" );
+			app.Logger.WriteLine( "[Pedals] Refresh >>>" );
 
-			var pedals = _hpr.Initialize();
+			PedalsDevice = _hpr.Initialize( DataContext.DataContext.Instance.Settings.PedalsEnabled );
 
-			app.Logger.WriteLine( $"[Pedals] Simagic HPR API reports: {pedals}" );
+			app.Logger.WriteLine( $"[Pedals] Simagic HPR API reports: {PedalsDevice}" );
 
-			app.Dispatcher.BeginInvoke( () =>
-			{
-				switch ( pedals )
-				{
-					case HPR.Pedals.None:
-						app.MainWindow.Pedals_Device_Label.Content = DataContext.DataContext.Instance.Localization[ "PedalsNone" ];
-						break;
+			app.MainWindow.UpdatePedalsDevice();
 
-					case HPR.Pedals.P1000:
-						app.MainWindow.Pedals_Device_Label.Content = DataContext.DataContext.Instance.Localization[ "PedalsP1000" ];
-						break;
-
-					case HPR.Pedals.P2000:
-						app.MainWindow.Pedals_Device_Label.Content = DataContext.DataContext.Instance.Localization[ "PedalsP2000" ];
-						break;
-				}
-			} );
-
-			app.Logger.WriteLine( "[Pedals] <<< Initialize" );
+			app.Logger.WriteLine( "[Pedals] <<< Refresh" );
 		}
 	}
 

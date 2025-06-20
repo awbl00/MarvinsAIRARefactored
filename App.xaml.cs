@@ -22,8 +22,8 @@ public partial class App : Application
 
 	public Logger Logger { get; private set; }
 	public CloudService CloudService { get; private set; }
-	public Pedals Pedals { get; private set; }
 	public SettingsFile SettingsFile { get; private set; }
+	public Pedals Pedals { get; private set; }
 	public AdminBoxx AdminBoxx { get; private set; }
 	public Debug Debug { get; private set; }
 	public new MainWindow MainWindow { get; private set; }
@@ -53,8 +53,8 @@ public partial class App : Application
 
 		Logger = new();
 		CloudService = new();
-		Pedals = new();
 		SettingsFile = new();
+		Pedals = new();
 		AdminBoxx = new();
 		Debug = new();
 		MainWindow = new();
@@ -89,7 +89,6 @@ public partial class App : Application
 
 		Logger.Initialize();
 		CloudService.Initialize();
-		Pedals.Initialize();
 		SettingsFile.Initialize();
 		AdminBoxx.Initialize();
 		Graph.Initialize();

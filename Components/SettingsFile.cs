@@ -13,7 +13,7 @@ public class SettingsFile
 	private bool _pauseSerialization = false;
 	public bool PauseSerialization
 	{
-		private get => _pauseSerialization;
+		get => _pauseSerialization;
 
 		set
 		{
