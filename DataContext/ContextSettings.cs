@@ -69,4 +69,5 @@ public class ContextSettings
 	public float PedalsMinimumAmplitude { get; set; }
 	public float PedalsMaximumAmplitude { get; set; }
 	public float PedalsAmplitudeCurve { get; set; }
+	public float PedalsNoiseDamper { get; set; }
 }

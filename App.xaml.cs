@@ -23,11 +23,11 @@ public partial class App : Application
 	public Logger Logger { get; private set; }
 	public CloudService CloudService { get; private set; }
 	public SettingsFile SettingsFile { get; private set; }
+	public Graph Graph { get; private set; }
 	public Pedals Pedals { get; private set; }
 	public AdminBoxx AdminBoxx { get; private set; }
 	public Debug Debug { get; private set; }
 	public new MainWindow MainWindow { get; private set; }
-	public Graph Graph { get; private set; }
 	public RacingWheel RacingWheel { get; private set; }
 	public ChatQueue ChatQueue { get; private set; }
 	public AudioManager AudioManager { get; private set; }
@@ -54,11 +54,11 @@ public partial class App : Application
 		Logger = new();
 		CloudService = new();
 		SettingsFile = new();
+		Graph = new();
 		Pedals = new();
 		AdminBoxx = new();
 		Debug = new();
 		MainWindow = new();
-		Graph = new();
 		RacingWheel = new();
 		ChatQueue = new();
 		AudioManager = new();
@@ -90,8 +90,9 @@ public partial class App : Application
 		Logger.Initialize();
 		CloudService.Initialize();
 		SettingsFile.Initialize();
-		AdminBoxx.Initialize();
 		Graph.Initialize();
+		Pedals.Initialize();
+		AdminBoxx.Initialize();
 		RacingWheel.Initialize();
 		AudioManager.Initialize();
 		DirectInput.Initialize();
@@ -750,6 +751,18 @@ public partial class App : Application
 			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.PedalsAmplitudeCurveMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
 				DataContext.DataContext.Instance.Settings.PedalsAmplitudeCurve -= 0.01f;
+			}
+
+			// pedals noise damper
+
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.PedalsNoiseDamperPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				DataContext.DataContext.Instance.Settings.PedalsNoiseDamper += 0.01f;
+			}
+
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.PedalsNoiseDamperMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				DataContext.DataContext.Instance.Settings.PedalsNoiseDamper -= 0.01f;
 			}
 
 			// adminboxx brightness knob

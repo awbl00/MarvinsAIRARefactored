@@ -69,9 +69,9 @@ public class RacingWheel
 			app.Logger.WriteLine( "[RacingWheel] Initialize >>>" );
 
 			app.Graph.SetLayerColors( Graph.LayerIndex.InputTorque60Hz, 1f, 0f, 0f, 1f, 0f, 0f );
-			app.Graph.SetLayerColors( Graph.LayerIndex.InputTorque500Hz, 1f, 0f, 1f, 1f, 0f, 1f );
-			app.Graph.SetLayerColors( Graph.LayerIndex.InputLFE500Hz, 0.1f, 0.5f, 1f, 1f, 1f, 1f );
-			app.Graph.SetLayerColors( Graph.LayerIndex.OutputTorque500Hz, 0f, 1f, 1f, 0f, 1f, 1f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.InputTorque, 1f, 0f, 1f, 1f, 0f, 1f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.InputLFE, 0.1f, 0.5f, 1f, 1f, 1f, 1f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.OutputTorque, 0f, 1f, 1f, 0f, 1f, 1f );
 
 			app.Logger.WriteLine( "[RacingWheel] <<< Initialize" );
 		}
@@ -587,9 +587,9 @@ public class RacingWheel
 				// update graph
 
 				app.Graph.UpdateLayer( Graph.LayerIndex.InputTorque60Hz, steeringWheelTorque60Hz, steeringWheelTorque60Hz / settings.RacingWheelMaxForce );
-				app.Graph.UpdateLayer( Graph.LayerIndex.InputTorque500Hz, steeringWheelTorque500Hz, steeringWheelTorque500Hz / settings.RacingWheelMaxForce );
-				app.Graph.UpdateLayer( Graph.LayerIndex.InputLFE500Hz, inputLFEMagnitude, inputLFEMagnitude );
-				app.Graph.UpdateLayer( Graph.LayerIndex.OutputTorque500Hz, outputTorque, outputTorque );
+				app.Graph.UpdateLayer( Graph.LayerIndex.InputTorque, steeringWheelTorque500Hz, steeringWheelTorque500Hz / settings.RacingWheelMaxForce );
+				app.Graph.UpdateLayer( Graph.LayerIndex.InputLFE, inputLFEMagnitude, inputLFEMagnitude );
+				app.Graph.UpdateLayer( Graph.LayerIndex.OutputTorque, outputTorque, outputTorque );
 
 				// update alan le dump
 

@@ -59,7 +59,7 @@ public class MultimediaTimer
 		{
 			app.Logger.WriteLine( "[MultimediaTimer] Initialize >>>" );
 
-			app.Graph.SetLayerColors( Graph.LayerIndex.TimerJitter500Hz, 0.25f, 1f, 0.25f, 1f, 0.25f, 0.25f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.TimerJitter, 0.25f, 1f, 0.25f, 1f, 0.25f, 0.25f );
 
 			_stopwatch.Start();
 
@@ -163,13 +163,17 @@ public class MultimediaTimer
 
 						app.RacingWheel.Update( deltaMilliseconds );
 
+						// update pedals graph
+
+						app.Pedals.UpdateGraph();
+
 						// update jitter statistics and graph
 
 						var jitterMilliseconds = deltaMilliseconds - 2f;
 
 						var y = Math.Clamp( jitterMilliseconds / 2f, -1f, 1f );
 
-						app.Graph.UpdateLayer( Graph.LayerIndex.TimerJitter500Hz, jitterMilliseconds, y );
+						app.Graph.UpdateLayer( Graph.LayerIndex.TimerJitter, jitterMilliseconds, y );
 
 						// update the graph
 

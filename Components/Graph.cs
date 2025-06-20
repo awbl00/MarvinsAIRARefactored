@@ -13,11 +13,14 @@ public class Graph
 {
 	public enum LayerIndex
 	{
+		InputTorque,
+		OutputTorque,
 		InputTorque60Hz,
-		InputTorque500Hz,
-		InputLFE500Hz,
-		OutputTorque500Hz,
-		TimerJitter500Hz,
+		InputLFE,
+		ClutchPedalHaptics,
+		BrakePedalHaptics,
+		ThrottlePedalHaptics,
+		TimerJitter,
 		Count
 	}
 
@@ -80,11 +83,14 @@ public class Graph
 
 			var dictionary = new Dictionary<LayerIndex, string>
 			{
-				{ LayerIndex.InputTorque60Hz, DataContext.DataContext.Instance.Localization[ "TorqueInput60Hz" ] },
-				{ LayerIndex.InputTorque500Hz, DataContext.DataContext.Instance.Localization[ "TorqueInput500Hz" ] },
-				{ LayerIndex.InputLFE500Hz, DataContext.DataContext.Instance.Localization[ "LFEInput500Hz" ] },
-				{ LayerIndex.OutputTorque500Hz, DataContext.DataContext.Instance.Localization[ "TorqueOutput500Hz" ] },
-				{ LayerIndex.TimerJitter500Hz, DataContext.DataContext.Instance.Localization[ "TimerJitter500Hz" ] }
+				{ LayerIndex.InputTorque, DataContext.DataContext.Instance.Localization[ "InputTorque" ] },
+				{ LayerIndex.OutputTorque, DataContext.DataContext.Instance.Localization[ "OutputTorque" ] },
+				{ LayerIndex.InputTorque60Hz, DataContext.DataContext.Instance.Localization[ "InputTorque60hz" ] },
+				{ LayerIndex.InputLFE, DataContext.DataContext.Instance.Localization[ "InputLFE" ] },
+				{ LayerIndex.ClutchPedalHaptics, DataContext.DataContext.Instance.Localization[ "ClutchPedalHaptics" ] },
+				{ LayerIndex.BrakePedalHaptics, DataContext.DataContext.Instance.Localization[ "BrakePedalHaptics" ] },
+				{ LayerIndex.ThrottlePedalHaptics, DataContext.DataContext.Instance.Localization[ "ThrottlePedalHaptics" ] },
+				{ LayerIndex.TimerJitter, DataContext.DataContext.Instance.Localization[ "TimerJitter" ] }
 			};
 
 			mairaComboBox.ItemsSource = dictionary;
@@ -95,7 +101,7 @@ public class Graph
 			}
 			else
 			{
-				mairaComboBox.SelectedValue = LayerIndex.OutputTorque500Hz;
+				mairaComboBox.SelectedValue = LayerIndex.OutputTorque;
 			}
 
 			app.Logger.WriteLine( "[Graph] <<< SetMairaComboBoxItemsSource" );
@@ -142,11 +148,14 @@ public class Graph
 			{
 				var showLayer = layerIndex switch
 				{
-					LayerIndex.InputTorque60Hz => settings.GraphTorqueInput60Hz,
-					LayerIndex.InputTorque500Hz => settings.GraphTorqueInput500Hz,
-					LayerIndex.InputLFE500Hz => settings.GraphLFEInput500Hz,
-					LayerIndex.OutputTorque500Hz => settings.GraphTorqueOutput500Hz,
-					LayerIndex.TimerJitter500Hz => settings.GraphTimerJitter500Hz,
+					LayerIndex.InputTorque => settings.GraphInputTorque,
+					LayerIndex.OutputTorque => settings.GraphOutputTorque,
+					LayerIndex.InputTorque60Hz => settings.GraphInputTorque60Hz,
+					LayerIndex.InputLFE => settings.GraphInputLFE,
+					LayerIndex.ClutchPedalHaptics => settings.GraphClutchPedalHaptics,
+					LayerIndex.BrakePedalHaptics => settings.GraphBrakePedalHaptics,
+					LayerIndex.ThrottlePedalHaptics => settings.GraphThrottlePedalHaptics,
+					LayerIndex.TimerJitter => settings.GraphTimerJitter,
 					_ => false
 				};
 
@@ -248,3 +257,4 @@ public class Graph
 		public float maxB;
 	}
 }
+

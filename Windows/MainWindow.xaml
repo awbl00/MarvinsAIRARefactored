@@ -538,7 +538,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[StartingRPM]}" Value="{Binding Settings.PedalsStartingRPM, Mode=TwoWay}" ValueString="{Binding Settings.PedalsStartingRPMString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsStartingRPMContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsStartingRPMPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsStartingRPMMinusButtonMappings}" DefaultValue="0.75"/>
+                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[StartingRPM]}" Value="{Binding Settings.PedalsStartingRPM, Mode=TwoWay}" ValueString="{Binding Settings.PedalsStartingRPMString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsStartingRPMContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsStartingRPMPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsStartingRPMMinusButtonMappings}" DefaultValue="0"/>
                             <controls:MairaSwitch Grid.Column="1" Margin="10,0,10,0" IsOn="{Binding Settings.PedalsRPMVibrateInTopGearEnabled, Mode=TwoWay}" Title="{Binding Localization[VibrateInTopGear]}" ContextSwitches="{Binding Settings.PedalsRPMVibrateInTopGearEnabledContextSwitches}" LabelPosition="Top"/>
                             <controls:MairaSwitch Grid.Column="2" Margin="10,0,10,0" IsOn="{Binding Settings.PedalsRPMFadeWithThrottleEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeWithThrottle]}" ContextSwitches="{Binding Settings.PedalsRPMFadeWithThrottleEnabledContextSwitches}" LabelPosition="Top"/>
 
@@ -592,9 +592,25 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[Minimum]}" Value="{Binding Settings.PedalsMinimumAmplitude, Mode=TwoWay}" ValueString="{Binding Settings.PedalsMinimumAmplitudeString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsMinimumAmplitudeContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsMinimumAmplitudePlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsMinimumAmplitudeMinusButtonMappings}" DefaultValue="0.15"/>
+                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[Minimum]}" Value="{Binding Settings.PedalsMinimumAmplitude, Mode=TwoWay}" ValueString="{Binding Settings.PedalsMinimumAmplitudeString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsMinimumAmplitudeContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsMinimumAmplitudePlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsMinimumAmplitudeMinusButtonMappings}" DefaultValue="0"/>
                             <controls:MairaKnob Grid.Column="1" Margin="10,0,10,0" Title="{Binding Localization[Maximum]}" Value="{Binding Settings.PedalsMaximumAmplitude, Mode=TwoWay}" ValueString="{Binding Settings.PedalsMaximumAmplitudeString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsMaximumAmplitudeContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsMaximumAmplitudePlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsMaximumAmplitudeMinusButtonMappings}" DefaultValue="1"/>
                             <controls:MairaKnob Grid.Column="2" Margin="10,0,10,0" Title="{Binding Localization[Curve]}" Value="{Binding Settings.PedalsAmplitudeCurve, Mode=TwoWay}" ValueString="{Binding Settings.PedalsAmplitudeCurveString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsAmplitudeCurveContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsAmplitudeCurvePlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsAmplitudeCurveMinusButtonMappings}" ShowCurve="True" DefaultValue="0"/>
+
+                        </Grid>
+
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding Localization[OtherFeatures]}" Margin="0,10,0,0">
+
+                        <Grid Margin="0,10,0,20">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[NoiseDamper]}" Value="{Binding Settings.PedalsNoiseDamper, Mode=TwoWay}" ValueString="{Binding Settings.PedalsNoiseDamperString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsNoiseDamperContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsNoiseDamperPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsNoiseDamperMinusButtonMappings}" DefaultValue="0.1"/>
 
                         </Grid>
 
@@ -736,9 +752,35 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphTorqueInput60Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueInput60Hz]}"/>
-                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphTorqueInput500Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueInput500Hz]}"/>
-                        <controls:MairaSwitch Grid.Column="2" IsOn="{Binding Settings.GraphLFEInput500Hz, Mode=TwoWay}" Title="{Binding Localization[LFEInput500Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphInputTorque, Mode=TwoWay}" Title="{Binding Localization[InputTorque]}"/>
+                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphOutputTorque, Mode=TwoWay}" Title="{Binding Localization[OutputTorque]}"/>
+                    
+                    </Grid>
+
+                    <Grid Margin="0,20,0,0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphInputTorque60Hz, Mode=TwoWay}" Title="{Binding Localization[InputTorque60Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphInputLFE, Mode=TwoWay}" Title="{Binding Localization[InputLFE]}"/>
+
+                    </Grid>
+
+                    <Grid Margin="0,20,0,0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphClutchPedalHaptics, Mode=TwoWay}" Title="{Binding Localization[ClutchPedalHaptics]}"/>
+                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphBrakePedalHaptics, Mode=TwoWay}" Title="{Binding Localization[BrakePedalHaptics]}"/>
+                        <controls:MairaSwitch Grid.Column="2" IsOn="{Binding Settings.GraphThrottlePedalHaptics, Mode=TwoWay}" Title="{Binding Localization[ThrottlePedalHaptics]}"/>
 
                     </Grid>
 
@@ -750,8 +792,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphTorqueOutput500Hz, Mode=TwoWay}" Title="{Binding Localization[TorqueOutput500Hz]}"/>
-                        <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphTimerJitter500Hz, Mode=TwoWay}" Title="{Binding Localization[TimerJitter500Hz]}"/>
+                        <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphTimerJitter, Mode=TwoWay}" Title="{Binding Localization[TimerJitter]}"/>
 
                     </Grid>
 

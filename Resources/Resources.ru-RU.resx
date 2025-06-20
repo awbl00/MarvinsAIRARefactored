@@ -59,10 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root"
-    xmlns=""
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -192,10 +189,6 @@
     <value>ВЫКЛ</value>
     <comment>Generic</comment>
   </data>
-  <data name="Output500HzTorque" xml:space="preserve">
-    <value>Output 500 Hz Torque</value>
-    <comment>Graph</comment>
-  </data>
   <data name="ParkedStrength" xml:space="preserve">
     <value>Сила на парковке</value>
     <comment>Racing wheel</comment>
@@ -269,7 +262,7 @@
     <comment>Window title</comment>
   </data>
   <data name="PressTheRecordButton" xml:space="preserve">
-    <value>[Нажмите кнопку &quot;запись&quot;]</value>
+    <value>[Нажмите кнопку "запись"]</value>
     <comment>Button mapping</comment>
   </data>
   <data name="Button" xml:space="preserve">
@@ -612,24 +605,24 @@
     <value>Стандартное отклонение</value>
     <comment>Graph</comment>
   </data>
-  <data name="TorqueInput60Hz" xml:space="preserve">
+  <data name="InputTorque60Hz" xml:space="preserve">
     <value>60 Гц Torque вход</value>
     <comment>Graph</comment>
   </data>
-  <data name="TorqueInput500Hz" xml:space="preserve">
-    <value>500 Гц Torque вход</value>
+  <data name="InputTorque" xml:space="preserve">
+    <value>Torque вход</value>
     <comment>Graph</comment>
   </data>
-  <data name="TorqueOutput500Hz" xml:space="preserve">
-    <value>500 Гц Torque выход</value>
+  <data name="OutputTorque" xml:space="preserve">
+    <value>Torque выход</value>
     <comment>Graph</comment>
   </data>
-  <data name="TimerJitter500Hz" xml:space="preserve">
-    <value>500 Hz Timer Jitter</value>
+  <data name="TimerJitter" xml:space="preserve">
+    <value>Timer Jitter</value>
     <comment>Graph</comment>
   </data>
-  <data name="LFEInput500Hz" xml:space="preserve">
-    <value>500 Hz LFE вход</value>
+  <data name="InputLFE" xml:space="preserve">
+    <value>LFE вход</value>
     <comment>Graph</comment>
   </data>
   <data name="ABSEngaged" xml:space="preserve">

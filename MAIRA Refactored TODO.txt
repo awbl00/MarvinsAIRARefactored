@@ -11,10 +11,10 @@ MAIRA Refactored TODO
 - Logitech RPM lights
 - Output pedal vibration to SimHub
 - Visualize what changing algorithm settings will do to FFB signal
-- Graph HPR pedal vibrations
-- Allow MAIRA to run even if iRacing FFB is on.
 
 
 - Make pedal vibrations optional
 - Fix issue with MAIRA app ending up off screen if monitor settings have changed
-
+- Add option to allow MAIRA FFB to run even if iRacing FFB is on
+- Graph HPR pedal vibrations
+- Fix pedal effects

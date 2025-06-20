@@ -2418,7 +2418,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Starting RPM
 
-	private float _pedalsStartingRPM = 0.75f;
+	private float _pedalsStartingRPM = 0f;
 
 	public float PedalsStartingRPM
 	{
@@ -2808,7 +2808,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Minimum Amplitude
 
-	private float _pedalsMinimumAmplitude = 0.15f;
+	private float _pedalsMinimumAmplitude = 0f;
 
 	public float PedalsMinimumAmplitude
 	{
@@ -2955,6 +2955,60 @@ public class Settings : INotifyPropertyChanged
 	public ContextSwitches PedalsAmplitudeCurveContextSwitches { get; set; } = new( false, false, false, false, false );
 	public ButtonMappings PedalsAmplitudeCurvePlusButtonMappings { get; set; } = new();
 	public ButtonMappings PedalsAmplitudeCurveMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Noise damper
+
+	private float _pedalsNoiseDamper = 0.1f;
+
+	public float PedalsNoiseDamper
+	{
+		get => _pedalsNoiseDamper;
+
+		set
+		{
+			value = Math.Clamp( value, -1f, 1f );
+
+			if ( value != _pedalsNoiseDamper )
+			{
+				_pedalsNoiseDamper = value;
+
+				OnPropertyChanged();
+			}
+
+			if ( _pedalsNoiseDamper == 0f )
+			{
+				PedalsNoiseDamperString = DataContext.Instance.Localization[ "OFF" ];
+			}
+			else
+			{
+				PedalsNoiseDamperString = $"{_pedalsNoiseDamper * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			}
+		}
+	}
+
+	private string _pedalsNoiseDamperString = string.Empty;
+
+	[XmlIgnore]
+	public string PedalsNoiseDamperString
+	{
+		get => _pedalsNoiseDamperString;
+
+		set
+		{
+			if ( value != _pedalsNoiseDamperString )
+			{
+				_pedalsNoiseDamperString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsNoiseDamperContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsNoiseDamperPlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsNoiseDamperMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -3211,7 +3265,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Graph - Statistics
 
-	private Graph.LayerIndex _graphStatisticsLayerIndex = Graph.LayerIndex.OutputTorque500Hz;
+	private Graph.LayerIndex _graphStatisticsLayerIndex = Graph.LayerIndex.TimerJitter;
 
 	public Graph.LayerIndex GraphStatisticsLayerIndex
 	{
@@ -3230,19 +3284,19 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Graph - 60 Hz torque input
+	#region Graph - Input torque
 
-	private bool _graphTorqueInput60Hz = false;
+	private bool _graphInputTorque = true;
 
-	public bool GraphTorqueInput60Hz
+	public bool GraphInputTorque
 	{
-		get => _graphTorqueInput60Hz;
+		get => _graphInputTorque;
 
 		set
 		{
-			if ( value != _graphTorqueInput60Hz )
+			if ( value != _graphInputTorque )
 			{
-				_graphTorqueInput60Hz = value;
+				_graphInputTorque = value;
 
 				OnPropertyChanged();
 			}
@@ -3251,19 +3305,19 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Graph - 500 Hz torque input
+	#region Graph - Output torque
 
-	private bool _graphTorqueInput500Hz = true;
+	private bool _graphOutputTorque = true;
 
-	public bool GraphTorqueInput500Hz
+	public bool GraphOutputTorque
 	{
-		get => _graphTorqueInput500Hz;
+		get => _graphOutputTorque;
 
 		set
 		{
-			if ( value != _graphTorqueInput500Hz )
+			if ( value != _graphOutputTorque )
 			{
-				_graphTorqueInput500Hz = value;
+				_graphOutputTorque = value;
 
 				OnPropertyChanged();
 			}
@@ -3272,19 +3326,19 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Graph - 500 Hz LFE input
+	#region Graph - Input torque (60 Hz)
 
-	private bool _graphLFEInput500Hz = false;
+	private bool _graphInputTorque60Hz = false;
 
-	public bool GraphLFEInput500Hz
+	public bool GraphInputTorque60Hz
 	{
-		get => _graphLFEInput500Hz;
+		get => _graphInputTorque60Hz;
 
 		set
 		{
-			if ( value != _graphLFEInput500Hz )
+			if ( value != _graphInputTorque60Hz )
 			{
-				_graphLFEInput500Hz = value;
+				_graphInputTorque60Hz = value;
 
 				OnPropertyChanged();
 			}
@@ -3293,19 +3347,19 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Graph - 500 Hz torque output
+	#region Graph - Input LFE
 
-	private bool _graphTorqueOutput500Hz = true;
+	private bool _graphInputLFE = false;
 
-	public bool GraphTorqueOutput500Hz
+	public bool GraphInputLFE
 	{
-		get => _graphTorqueOutput500Hz;
+		get => _graphInputLFE;
 
 		set
 		{
-			if ( value != _graphTorqueOutput500Hz )
+			if ( value != _graphInputLFE )
 			{
-				_graphTorqueOutput500Hz = value;
+				_graphInputLFE = value;
 
 				OnPropertyChanged();
 			}
@@ -3314,19 +3368,82 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Graph - 500 Hz timer jitter
+	#region Graph - Clutch pedal haptics
 
-	private bool _graphTimerJitter500Hz = false;
+	private bool _graphClutchPedalHaptics = false;
 
-	public bool GraphTimerJitter500Hz
+	public bool GraphClutchPedalHaptics
 	{
-		get => _graphTimerJitter500Hz;
+		get => _graphClutchPedalHaptics;
 
 		set
 		{
-			if ( value != _graphTimerJitter500Hz )
+			if ( value != _graphClutchPedalHaptics )
 			{
-				_graphTimerJitter500Hz = value;
+				_graphClutchPedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Brake pedal haptics
+
+	private bool _graphBrakePedalHaptics = false;
+
+	public bool GraphBrakePedalHaptics
+	{
+		get => _graphBrakePedalHaptics;
+
+		set
+		{
+			if ( value != _graphBrakePedalHaptics )
+			{
+				_graphBrakePedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Throttle pedal haptics
+
+	private bool _graphThrottlePedalHaptics = false;
+
+	public bool GraphThrottlePedalHaptics
+	{
+		get => _graphThrottlePedalHaptics;
+
+		set
+		{
+			if ( value != _graphThrottlePedalHaptics )
+			{
+				_graphThrottlePedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Timer jitter
+
+	private bool _graphTimerJitter = false;
+
+	public bool GraphTimerJitter
+	{
+		get => _graphTimerJitter;
+
+		set
+		{
+			if ( value != _graphTimerJitter )
+			{
+				_graphTimerJitter = value;
 
 				OnPropertyChanged();
 			}

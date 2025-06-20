@@ -32,6 +32,22 @@ public class Pedals
 	private float _gearChangeAmplitude = 0f;
 	private float _gearChangeTimer = 0f;
 
+	private readonly float[] _frequency = [ 0f, 0f, 0f ];
+	private readonly float[] _amplitude = [ 0f, 0f, 0f ];
+	private readonly float[] _cycles = [ 0f, 0f, 0f ];
+
+	public void Initialize()
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			app.Graph.SetLayerColors( Graph.LayerIndex.ClutchPedalHaptics, 0f, 0f, 0.5f, 0f, 0f, 1f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.BrakePedalHaptics, 0.5f, 0f, 0f, 1f, 0f, 0f );
+			app.Graph.SetLayerColors( Graph.LayerIndex.ThrottlePedalHaptics, 0f, 0.5f, 0f, 0f, 1f, 0f );
+		}
+	}
+
 	public void Refresh()
 	{
 		var app = App.Instance;
@@ -87,6 +103,23 @@ public class Pedals
 		}
 	}
 
+	public void UpdateGraph()
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			for ( var i = 0; i < 3; i++ )
+			{
+				_cycles[ i ] += _frequency[ i ] * MathF.Tau / 500f;
+
+				var amplitude = MathF.Sin( _cycles[ i ] ) * _amplitude[ i ];
+
+				app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + i, amplitude, amplitude );
+			}
+		}
+	}
+
 	public void Update( App app )
 	{
 		// update gear change effect timer
@@ -103,6 +136,18 @@ public class Pedals
 			_hpr.VibratePedal( HPR.Channel.Clutch, HPR.State.Off, 0, 0 );
 			_hpr.VibratePedal( HPR.Channel.Brake, HPR.State.Off, 0, 0 );
 			_hpr.VibratePedal( HPR.Channel.Throttle, HPR.State.Off, 0, 0 );
+
+			_frequency[ 0 ] = 0f;
+			_frequency[ 1 ] = 0f;
+			_frequency[ 2 ] = 0f;
+
+			_amplitude[ 0 ] = 0f;
+			_amplitude[ 1 ] = 0f;
+			_amplitude[ 2 ] = 0f;
+
+			_cycles[ 0 ] = 0f;
+			_cycles[ 1 ] = 0f;
+			_cycles[ 2 ] = 0f;
 
 			return;
 		}
@@ -122,13 +167,13 @@ public class Pedals
 		{
 			if ( app.Simulator.Gear == 0 )
 			{
-				_gearChangeFrequency = settings.PedalsShiftIntoNeutralFrequency;
+				_gearChangeFrequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, settings.PedalsShiftIntoNeutralFrequency );
 				_gearChangeAmplitude = settings.PedalsShiftIntoNeutralAmplitude;
 				_gearChangeTimer = settings.PedalsShiftIntoNeutralDuration;
 			}
 			else
 			{
-				_gearChangeFrequency = settings.PedalsShiftIntoGearFrequency;
+				_gearChangeFrequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, settings.PedalsShiftIntoGearFrequency );
 				_gearChangeAmplitude = settings.PedalsShiftIntoGearAmplitude;
 				_gearChangeTimer = settings.PedalsShiftIntoGearDuration;
 			}
@@ -175,11 +220,22 @@ public class Pedals
 
 			if ( effectActive )
 			{
+				amplitude *= MathF.Pow( frequency / 50f, Misc.CurveToPower( settings.PedalsNoiseDamper ) );
+
 				_hpr.VibratePedal( (HPR.Channel) i, HPR.State.On, frequency, amplitude * 100f );
+
+				_frequency[ i ] = (int) ( Math.Clamp( frequency, 1f, 50f ) );
+				_amplitude[ i ] = amplitude;
 			}
 			else
 			{
 				_hpr.VibratePedal( (HPR.Channel) i, HPR.State.Off, 0f, 0f );
+
+				app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + i, 0f, 0f );
+
+				_frequency[ i ] = 0f;
+				_amplitude[ i ] = 0f;
+				_cycles[ i ] = 0f;
 			}
 		}
 	}
