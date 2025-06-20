@@ -673,4 +673,8 @@
     <value>Gear Change - Shift Into Neutral</value>
     <comment>Pedals</comment>
   </data>
+  <data name="AlwaysEnableFFB" xml:space="preserve">
+    <value>Enable FFB even if iRacing simulator FFB is on</value>
+    <comment>Racing wheel</comment>
+  </data>
 </root>

@@ -74,12 +74,15 @@ public partial class MainWindow : Window
 			{
 				var rectangle = settings.AppWindowPositionAndSize;
 
-				Left = rectangle.Location.X;
-				Top = rectangle.Location.Y;
-				Width = rectangle.Size.Width;
-				Height = rectangle.Size.Height;
+				if ( Misc.IsWindowBoundsVisible( rectangle ) )
+				{
+					Left = rectangle.Location.X;
+					Top = rectangle.Location.Y;
+					Width = rectangle.Size.Width;
+					Height = rectangle.Size.Height;
 
-				WindowStartupLocation = WindowStartupLocation.Manual;
+					WindowStartupLocation = WindowStartupLocation.Manual;
+				}
 			}
 
 			_initialized = true;
@@ -409,6 +412,11 @@ public partial class MainWindow : Window
 		{
 			app.RacingWheel.ClearPeakTorque = true;
 		}
+	}
+
+	private void RacingWheel_AlwaysEnableFFB_MairaSwitch_Toggled( object sender, EventArgs e )
+	{
+
 	}
 
 	private void Simulator_HeaderData_HeaderDataViewer_MouseWheel( object sender, MouseWheelEventArgs e )

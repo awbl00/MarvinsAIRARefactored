@@ -286,6 +286,10 @@ public class Simulator
 				_telemetryDataInitialized = true;
 			}
 
+			// shortcut to settings
+
+			var settings = DataContext.DataContext.Instance.Settings;
+
 			// set last frame tick count if its not been set yet
 
 			_tickCountLastFrame ??= _irsdk.Data.TickCount - 1;
@@ -346,7 +350,7 @@ public class Simulator
 
 			SteeringFFBEnabled = _irsdk.Data.GetBool( _steeringFFBEnabledDatum );
 
-			app.RacingWheel.SuspendForceFeedback = SteeringFFBEnabled;
+			app.RacingWheel.SuspendForceFeedback = SteeringFFBEnabled && !settings.RacingWheelAlwaysEnableFFB;
 
 			// get the session flags
 
@@ -407,7 +411,7 @@ public class Simulator
 				{
 					if ( !_needToUpdateFromContextSettings )
 					{
-						DataContext.DataContext.Instance.Settings.UpdateFromContextSettings();
+						settings.UpdateFromContextSettings();
 					}
 				}
 			}
@@ -429,9 +433,9 @@ public class Simulator
 
 			// crash protection processing
 
-			if ( ( DataContext.DataContext.Instance.Settings.RacingWheelCrashProtectionGForce > 2f ) && ( DataContext.DataContext.Instance.Settings.RacingWheelCrashProtectionDuration > 0f ) && ( DataContext.DataContext.Instance.Settings.RacingWheelCrashProtectionForceReduction > 0f ) )
+			if ( ( settings.RacingWheelCrashProtectionGForce > 2f ) && ( settings.RacingWheelCrashProtectionDuration > 0f ) && ( settings.RacingWheelCrashProtectionForceReduction > 0f ) )
 			{
-				if ( MathF.Abs( GForce ) >= DataContext.DataContext.Instance.Settings.RacingWheelCrashProtectionGForce )
+				if ( MathF.Abs( GForce ) >= settings.RacingWheelCrashProtectionGForce )
 				{
 					app.RacingWheel.ActivateCrashProtection = true;
 				}
@@ -471,7 +475,7 @@ public class Simulator
 
 			// curb protection processing
 
-			if ( ( DataContext.DataContext.Instance.Settings.RacingWheelCurbProtectionShockVelocity > 0f ) && ( DataContext.DataContext.Instance.Settings.RacingWheelCurbProtectionDuration > 0f ) && ( DataContext.DataContext.Instance.Settings.RacingWheelCurbProtectionForceReduction > 0f ) )
+			if ( ( settings.RacingWheelCurbProtectionShockVelocity > 0f ) && ( settings.RacingWheelCurbProtectionDuration > 0f ) && ( settings.RacingWheelCurbProtectionForceReduction > 0f ) )
 			{
 				var maxShockVelocity = 0f;
 
@@ -487,7 +491,7 @@ public class Simulator
 
 				app.Debug.Label_8 = $"maxShockVelocity = {maxShockVelocity:F2} m/s";
 
-				if ( maxShockVelocity >= DataContext.DataContext.Instance.Settings.RacingWheelCurbProtectionShockVelocity )
+				if ( maxShockVelocity >= settings.RacingWheelCurbProtectionShockVelocity )
 				{
 					app.RacingWheel.ActivateCurbProtection = true;
 				}

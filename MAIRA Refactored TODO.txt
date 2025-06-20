@@ -12,6 +12,9 @@ MAIRA Refactored TODO
 - Output pedal vibration to SimHub
 - Visualize what changing algorithm settings will do to FFB signal
 - Graph HPR pedal vibrations
-- Fix issue with MAIRA app ending up off screen
-- Make pedal vibrations optional
 - Allow MAIRA to run even if iRacing FFB is on.
+
+
+- Make pedal vibrations optional
+- Fix issue with MAIRA app ending up off screen if monitor settings have changed
+

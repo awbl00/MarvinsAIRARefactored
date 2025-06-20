@@ -1331,6 +1331,31 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Racing wheel - Always enable FFB
+
+	private bool _racingWheelAlwaysEnableFFB = false;
+
+	public bool RacingWheelAlwaysEnableFFB
+	{
+		get => _racingWheelAlwaysEnableFFB;
+
+		set
+		{
+			if ( value != _racingWheelAlwaysEnableFFB )
+			{
+				_racingWheelAlwaysEnableFFB = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			app?.MainWindow.UpdateRacingWheelPowerButton();
+		}
+	}
+
+	#endregion
+
 	#region Pedals - Enabled
 
 	private bool _pedalsEnabled = false;
@@ -1350,9 +1375,12 @@ public class Settings : INotifyPropertyChanged
 
 			var app = App.Instance;
 
-			if ( !app.SettingsFile.PauseSerialization )
+			if ( app != null )
 			{
-				app?.Pedals.Refresh();
+				if ( !app.SettingsFile.PauseSerialization )
+				{
+					app.Pedals.Refresh();
+				}
 			}
 		}
 	}

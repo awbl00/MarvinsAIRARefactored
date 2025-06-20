@@ -1,6 +1,4 @@
 ﻿
-using PInvoke;
-using System;
 using System.Collections;
 using System.ComponentModel.Design;
 using System.Diagnostics;
@@ -9,6 +7,8 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+using PInvoke;
 
 namespace MarvinsAIRARefactored.Classes;
 
@@ -158,5 +158,18 @@ public class Misc
 		}
 
 		return dictionary;
+	}
+
+	public static bool IsWindowBoundsVisible( Rectangle bounds )
+	{
+		foreach ( var screen in Screen.AllScreens )
+		{
+			if ( screen.WorkingArea.IntersectsWith( bounds ) )
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

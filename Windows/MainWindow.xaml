@@ -288,7 +288,12 @@
 
                     <GroupBox Header="{Binding Localization[Switches]}" Margin="0,10,0,0">
 
-                        <controls:MairaSwitch Margin="0,20,0,20" IsOn="{Binding Settings.RacingWheelFadeEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeForceFeedback]}" ContextSwitches="{Binding Settings.RacingWheelFadeEnabledContextSwitches}"/>
+                        <StackPanel>
+
+                            <controls:MairaSwitch Margin="10,20,10,0" IsOn="{Binding Settings.RacingWheelFadeEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeForceFeedback]}" ContextSwitches="{Binding Settings.RacingWheelFadeEnabledContextSwitches}"/>
+                            <controls:MairaSwitch Margin="10,10,10,10" IsOn="{Binding Settings.RacingWheelAlwaysEnableFFB, Mode=TwoWay}" Title="{Binding Localization[AlwaysEnableFFB]}" Toggled="RacingWheel_AlwaysEnableFFB_MairaSwitch_Toggled"/>
+                            
+                        </StackPanel>
 
                     </GroupBox>
 
