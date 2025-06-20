@@ -223,15 +223,6 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Compression Rate.
-        /// </summary>
-        internal static string CompressionRate {
-            get {
-                return ResourceManager.GetString("CompressionRate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to %/Nm.
         /// </summary>
         internal static string CompressionRateUnits {
@@ -979,6 +970,15 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acceleration Threshold (ms to 100%) .
+        /// </summary>
+        internal static string TimeToMaxTorque {
+            get {
+                return ResourceManager.GetString("TimeToMaxTorque", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Topmost Window.
         /// </summary>
         internal static string TopmostWindow {
@@ -988,11 +988,38 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Torque Acceleration Scaling.
+        /// </summary>
+        internal static string TorqueAccelScale {
+            get {
+                return ResourceManager.GetString("TorqueAccelScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  Nm.
         /// </summary>
         internal static string TorqueUnits {
             get {
                 return ResourceManager.GetString("TorqueUnits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Torque Scaling.
+        /// </summary>
+        internal static string TotalTorqueScale {
+            get {
+                return ResourceManager.GetString("TotalTorqueScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Threshold for Scaling Total Torque.
+        /// </summary>
+        internal static string TotalTorqueThreshold {
+            get {
+                return ResourceManager.GetString("TotalTorqueThreshold", resourceCulture);
             }
         }
         

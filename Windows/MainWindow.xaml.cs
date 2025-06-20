@@ -163,6 +163,10 @@ public partial class MainWindow : Window
 			var racingWheelDetailBoostKnobControlVisibility = Visibility.Hidden;
 			var racingWheelDeltaLimitKnobControlVisibility = Visibility.Hidden;
 			var racingWheelBiasKnobControlVisibility = Visibility.Hidden;
+			var racingWheelTimeToMaxTorqueVisibility = Visibility.Hidden;
+			var racingWheelTorqueAccelScaleVisibility = Visibility.Hidden;
+            var racingWheelTotalTorqueThresholdVisibility = Visibility.Hidden;
+            var racingWheelTotalTorqueScaleVisibility = Visibility.Hidden;
 			var racingWheelCurbProtectionGroupBoxVisibility = Visibility.Collapsed;
 
 			switch ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm )
@@ -183,9 +187,10 @@ public partial class MainWindow : Window
 
 				case RacingWheelAlgorithmEnum.ZeAlanLeTwist:
 					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
-					racingWheelDeltaLimitKnobControlVisibility = Visibility.Visible;
-					racingWheelBiasKnobControlVisibility = Visibility.Visible;
-					racingWheelCurbProtectionGroupBoxVisibility = Visibility.Visible;
+					racingWheelTimeToMaxTorqueVisibility = Visibility.Visible;
+					racingWheelTorqueAccelScaleVisibility = Visibility.Visible;
+					racingWheelTotalTorqueThresholdVisibility = Visibility.Visible;
+					racingWheelTotalTorqueScaleVisibility = Visibility.Visible;
 					break;
 			}
 
@@ -193,6 +198,11 @@ public partial class MainWindow : Window
 			RacingWheel_DetailBoost_KnobControl.Visibility = racingWheelDetailBoostKnobControlVisibility;
 			RacingWheel_DeltaLimit_KnobControl.Visibility = racingWheelDeltaLimitKnobControlVisibility;
 			RacingWheel_Bias_KnobControl.Visibility = racingWheelBiasKnobControlVisibility;
+			RacingWheel_TimeToMaxTorque.Visibility = racingWheelTimeToMaxTorqueVisibility;
+			RacingWheel_TorqueAccelScale.Visibility = racingWheelTorqueAccelScaleVisibility;
+			RacingWheel_TotalTorqueThreshold.Visibility = racingWheelTotalTorqueThresholdVisibility;
+			RacingWheel_TotalTorqueScale.Visibility = racingWheelTotalTorqueScaleVisibility;
+
 			RacingWheel_CurbProtection_GroupBox.Visibility = racingWheelCurbProtectionGroupBoxVisibility;
 		} );
 	}

@@ -325,9 +325,9 @@
     <value>%</value>
     <comment>Abbreviation for percent</comment>
   </data>
-  <data name="CompressionRate" xml:space="preserve">
-    <value>Compression Rate</value>
-    <comment>Racing wheel</comment>
+  <data name="TotalTorqueScale" xml:space="preserve">
+    <value>Total Torque Scaling</value>
+    <comment>Scalar applied to total torque</comment>
   </data>
   <data name="Device" xml:space="preserve">
     <value>Device</value>
@@ -560,5 +560,17 @@
   <data name="AutomaticallyDownloadUpdates" xml:space="preserve">
     <value>Automatically Download Updates</value>
     <comment>App</comment>
+  </data>
+  <data name="TimeToMaxTorque" xml:space="preserve">
+    <value>Acceleration Threshold (ms to 100%) </value>
+    <comment>The minimum time to scale from 0 Nm to max torque</comment>
+  </data>
+  <data name="TorqueAccelScale" xml:space="preserve">
+    <value>Torque Acceleration Scaling</value>
+    <comment>Scalar applied to torque delta</comment>
+  </data>
+  <data name="TotalTorqueThreshold" xml:space="preserve">
+    <value>Threshold for Scaling Total Torque</value>
+    <comment>Threshold for scaling total torque</comment>
   </data>
 </root>
