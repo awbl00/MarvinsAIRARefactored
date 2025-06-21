@@ -146,17 +146,17 @@
 
                                 <StackPanel Grid.Column="0" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[CurrentForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[PeakForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[AutoForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                             </Grid>
@@ -321,7 +321,7 @@
                             </Grid.ColumnDefinitions>
 
                             <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.PedalsEnabled, Mode=TwoWay}"/>
-                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" VerticalAlignment="Center"/>
+                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="Technology" Padding="0" VerticalAlignment="Center"/>
                             <Image Grid.Column="3" Source="/Artwork/simagic_logo.png" Height="32" Margin="0,0,10,0"/>
 
                         </Grid>
@@ -709,7 +709,7 @@
                 <StackPanel Margin="10,10,10,20">
 
                     <Border Grid.Column="2" Margin="0,10,0,0" BorderThickness="1" BorderBrush="Gray" Background="#80000000">
-                        <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right"/>
+                        <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Border>
 
                     <Grid Margin="0,10,0,0">
@@ -903,7 +903,7 @@
 
                             <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,20,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
                             <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,10" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
-                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="10,0,10,0" VerticalAlignment="Center" Title="{Binding Localization[WindowScale]}" Value="{Binding Settings.AppWindowScale, Mode=TwoWay}" ValueString="{Binding Settings.AppWindowScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
+                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="10,0,10,0" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
 
                         </Grid>
 
@@ -937,16 +937,16 @@
 
                         <StackPanel>
 
-                            <Label x:Name="Debug_Label_1" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 1"/>
-                            <Label x:Name="Debug_Label_2" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 2"/>
-                            <Label x:Name="Debug_Label_3" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 3"/>
-                            <Label x:Name="Debug_Label_4" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 4"/>
-                            <Label x:Name="Debug_Label_5" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 5"/>
-                            <Label x:Name="Debug_Label_6" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 6"/>
-                            <Label x:Name="Debug_Label_7" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 7"/>
-                            <Label x:Name="Debug_Label_8" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 8"/>
-                            <Label x:Name="Debug_Label_9" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 9"/>
-                            <Label x:Name="Debug_Label_10" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 10"/>
+                            <Label x:Name="Debug_Label_1" FontSize="37" Padding="0" Content="Test 1"/>
+                            <Label x:Name="Debug_Label_2" FontSize="37" Padding="0" Content="Test 2"/>
+                            <Label x:Name="Debug_Label_3" FontSize="37" Padding="0" Content="Test 3"/>
+                            <Label x:Name="Debug_Label_4" FontSize="37" Padding="0" Content="Test 4"/>
+                            <Label x:Name="Debug_Label_5" FontSize="37" Padding="0" Content="Test 5"/>
+                            <Label x:Name="Debug_Label_6" FontSize="37" Padding="0" Content="Test 6"/>
+                            <Label x:Name="Debug_Label_7" FontSize="37" Padding="0" Content="Test 7"/>
+                            <Label x:Name="Debug_Label_8" FontSize="37" Padding="0" Content="Test 8"/>
+                            <Label x:Name="Debug_Label_9" FontSize="37" Padding="0" Content="Test 9"/>
+                            <Label x:Name="Debug_Label_10" FontSize="37" Padding="0" Content="Test 10"/>
 
                         </StackPanel>
 

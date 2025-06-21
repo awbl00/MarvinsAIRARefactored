@@ -3551,21 +3551,21 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region App - Window scale
+	#region App - UI scale
 
-	private float _appWindowScale = 1f;
+	private float _appUIScale = 1f;
 
-	public float AppWindowScale
+	public float AppUIScale
 	{
-		get => _appWindowScale;
+		get => _appUIScale;
 
 		set
 		{
 			value = Math.Clamp( value, 0.25f, 4f );
 
-			if ( value != _appWindowScale )
+			if ( value != _appUIScale )
 			{
-				_appWindowScale = value;
+				_appUIScale = value;
 
 				OnPropertyChanged();
 			}
@@ -3574,22 +3574,22 @@ public class Settings : INotifyPropertyChanged
 
 			app?.MainWindow.UpdateScale();
 
-			AppWindowScaleString = $"{_appWindowScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			AppUIScaleString = $"{_appUIScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _appWindowScaleString = string.Empty;
+	private string _appUIScaleString = string.Empty;
 
 	[XmlIgnore]
-	public string AppWindowScaleString
+	public string AppUIScaleString
 	{
-		get => _appWindowScaleString;
+		get => _appUIScaleString;
 
 		set
 		{
-			if ( value != _appWindowScaleString )
+			if ( value != _appUIScaleString )
 			{
-				_appWindowScaleString = value;
+				_appUIScaleString = value;
 
 				OnPropertyChanged();
 			}

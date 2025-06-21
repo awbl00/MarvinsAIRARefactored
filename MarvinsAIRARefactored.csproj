@@ -11,7 +11,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>artwork\white_icon.ico</ApplicationIcon>
     <UseWindowsForms>True</UseWindowsForms>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
 
   <ItemGroup>

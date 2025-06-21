@@ -693,8 +693,8 @@
     <value>App Window</value>
     <comment>App</comment>
   </data>
-  <data name="WindowScale" xml:space="preserve">
-    <value>Window Scale</value>
+  <data name="UIScale" xml:space="preserve">
+    <value>UI Scale</value>
     <comment>App</comment>
   </data>
   <data name="CloudService" xml:space="preserve">

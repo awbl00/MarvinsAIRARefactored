@@ -129,8 +129,8 @@ public partial class MainWindow : Window
 	{
 		var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 
-		RootScaleTransform.ScaleX = settings.AppWindowScale;
-		RootScaleTransform.ScaleY = settings.AppWindowScale;
+		RootScaleTransform.ScaleX = settings.AppUIScale;
+		RootScaleTransform.ScaleY = settings.AppUIScale;
 	}
 
 	public void UpdateStatus()

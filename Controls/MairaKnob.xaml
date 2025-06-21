@@ -46,7 +46,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Image Grid.Column="0" x:Name="CurveImage" Width="48" Height="48" Margin="10,0,0,0" Visibility="Collapsed"/>
-                    <Label Grid.Column="1" x:Name="Value_Label" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Margin="10,0,0,0" Content="{Binding ValueString, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalContentAlignment="Center" PreviewMouseRightButtonDown="Value_Label_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="Value_Label_PreviewMouseRightButtonUp" MouseLeave="Value_Label_MouseLeave"/>
+                    <Label Grid.Column="1" x:Name="Value_Label" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" Margin="10,0,0,0" Content="{Binding ValueString, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalContentAlignment="Center" PreviewMouseRightButtonDown="Value_Label_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="Value_Label_PreviewMouseRightButtonUp" MouseLeave="Value_Label_MouseLeave"/>
 
                 </Grid>
 
