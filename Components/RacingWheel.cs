@@ -186,9 +186,13 @@ public class RacingWheel
 				if ( ResetForceFeedback )
 				{
 					ResetForceFeedback = false;
-					NextRacingWheelGuid = _currentRacingWheelGuid;
 
-					app.Logger.WriteLine( "[RacingWheel] Requesting reset of force feedback device" );
+					if ( NextRacingWheelGuid == null )
+					{
+						NextRacingWheelGuid = _currentRacingWheelGuid;
+
+						app.Logger.WriteLine( "[RacingWheel] Requesting reset of force feedback device" );
+					}
 				}
 
 				// if power button is off, or suspend is requested, or unsuspend counter is still counting down, then suspend the racing wheel force feedback
