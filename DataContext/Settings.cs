@@ -230,6 +230,10 @@ public class Settings : INotifyPropertyChanged
 			}
 
 			RacingWheelMaxForceString = $"{_racingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
+
+			// Force the display values to update for the zeAlanLeTwist algorithm
+			DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold = DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold;
+			DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold = DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold;
 		}
 	}
 
@@ -484,55 +488,55 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Racing wheel - Time to Max Torque
+	#region Racing wheel - Torque Acceleration Threshold
 
-	private float _racingWheelTimeToMaxTorque = 0.5f;
-	public float RacingWheelTimeToMaxTorque
+	private float _racingWheelTorqueAccelThreshold = 200f;
+	public float RacingWheelTorqueAccelThreshold
 	{
-		get => _racingWheelTimeToMaxTorque;
+		get => _racingWheelTorqueAccelThreshold;
 
 		set
 		{
-			value = Math.Clamp(value, 0f, 1000f);
+			value = Math.Clamp(value, 100f, 30000f);
 
-			if (value != _racingWheelTimeToMaxTorque)
+			if (value != _racingWheelTorqueAccelThreshold)
 			{
-				_racingWheelTimeToMaxTorque = value;
+				_racingWheelTorqueAccelThreshold = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelTimeToMaxTorqueString = $"{_racingWheelTimeToMaxTorque:F0} ms";
+			RacingWheelTorqueAccelThresholdString = $"{_racingWheelTorqueAccelThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce:F1} {DataContext.Instance.Localization["TorqueAccelUnits"]}";
 		}
 	}
 
-	private string _racingWheelTimeToMaxTorqueString = string.Empty;
+	private string _racingWheelTorqueAccelThresholdString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelTimeToMaxTorqueString
+	public string RacingWheelTorqueAccelThresholdString
 	{
-		get => _racingWheelTimeToMaxTorqueString;
+		get => _racingWheelTorqueAccelThresholdString;
 
 		set
 		{
-			if (value != _racingWheelTimeToMaxTorqueString)
+			if (value != _racingWheelTorqueAccelThresholdString)
 			{
-				_racingWheelTimeToMaxTorqueString = value;
+				_racingWheelTorqueAccelThresholdString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelTimeToMaxTorqueContextSwitches { get; set; } = new(true, true, false, false, false);
-	public ButtonMappings RacingWheelTimeToMaxTorquePlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTimeToMaxTorqueMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTorqueAccelThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelTorqueAccelThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTorqueAccelThresholdMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
 	#region Racing wheel - Torque Acceleration Scale
 
-	private float _racingWheelTorqueAccelScale = 0.35f;
+	private float _racingWheelTorqueAccelScale = 35f;
 
 	public float RacingWheelTorqueAccelScale
 	{
@@ -540,7 +544,7 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp(value, 0f, 1f);
+			value = Math.Clamp(value, 0f, 100f);
 
 			if (value != _racingWheelTorqueAccelScale)
 			{
@@ -549,7 +553,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			RacingWheelTorqueAccelScaleString = $"{_racingWheelTorqueAccelScale * 100f:F0}%";
+			RacingWheelTorqueAccelScaleString = $"{_racingWheelTorqueAccelScale:F0}%";
 		}
 	}
 
@@ -579,7 +583,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Racing wheel - Total Torque Threshold
 
-	private float _racingWheelTotalTorqueThreshold = 1f;
+	private float _racingWheelTotalTorqueThreshold = 65f;
 
 	public float RacingWheelTotalTorqueThreshold
 	{
@@ -587,7 +591,7 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp(value, 0f, 1f);
+			value = Math.Clamp(value, 0f, 100f);
 
 			if (value != _racingWheelTotalTorqueThreshold)
 			{
@@ -596,7 +600,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			RacingWheelTotalTorqueThresholdString = $"{_racingWheelTotalTorqueThreshold * 100f:F0}%";
+			RacingWheelTotalTorqueThresholdString = $"{_racingWheelTotalTorqueThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce:F1} {DataContext.Instance.Localization["TorqueUnits"]}";
 		}
 	}
 
@@ -626,7 +630,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Racing wheel - Total Torque Scale
 
-	private float _racingWheelTotalTorqueScale = 0.75f;
+	private float _racingWheelTotalTorqueScale = 75f;
 
 	public float RacingWheelTotalTorqueScale
 	{
@@ -634,7 +638,7 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp( value, 0f, 1f );
+			value = Math.Clamp( value, 0f, 100f );
 
 			if ( value != _racingWheelTotalTorqueScale )
 			{
@@ -643,7 +647,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			RacingWheelTotalTorqueScaleString = $"{_racingWheelTotalTorqueScale * 100f:F0}%";
+			RacingWheelTotalTorqueScaleString = $"{_racingWheelTotalTorqueScale:F0}%";
 		}
 	}
 

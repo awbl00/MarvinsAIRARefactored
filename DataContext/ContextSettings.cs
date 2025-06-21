@@ -21,7 +21,7 @@ public class ContextSettings
 	public float RacingWheelDetailBoost {  get; set; }
 	public float RacingWheelDeltaLimit {  get; set; }
 	public float RacingWheelBias {  get; set; }
-	public float RacingWheelTimeToMaxTorque { get; set; }
+	public float RacingWheelTorqueAccelThreshold { get; set; }
 	public float RacingWheelTorqueAccelScale { get; set; }
 	public float RacingWheelTotalTorqueThreshold { get; set; }
 	public float RacingWheelTotalTorqueScale {  get; set; }

@@ -236,16 +236,16 @@ public partial class App : Application
 				DataContext.DataContext.Instance.Settings.RacingWheelBias -= 0.01f;
 			}
 
-			// racing wheel time to max torque knob
+			// racing wheel torque acceleration threshold knob
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorquePlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorque += 10f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold += .05f;
 			}
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorqueMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorque -= 10f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold -= .05f;
 			}
 
 			// racing wheel torque acceleration scale knob

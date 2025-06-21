@@ -163,7 +163,7 @@ public partial class MainWindow : Window
 			var racingWheelDetailBoostKnobControlVisibility = Visibility.Hidden;
 			var racingWheelDeltaLimitKnobControlVisibility = Visibility.Hidden;
 			var racingWheelBiasKnobControlVisibility = Visibility.Hidden;
-			var racingWheelTimeToMaxTorqueVisibility = Visibility.Hidden;
+			var racingWheelTorqueAccelThresholdVisibility = Visibility.Hidden;
 			var racingWheelTorqueAccelScaleVisibility = Visibility.Hidden;
 			var racingWheelTotalTorqueThresholdVisibility = Visibility.Hidden;
 			var racingWheelTotalTorqueScaleVisibility = Visibility.Hidden;
@@ -187,7 +187,7 @@ public partial class MainWindow : Window
 
 				case RacingWheelAlgorithmEnum.ZeAlanLeTwist:
 					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
-					racingWheelTimeToMaxTorqueVisibility = Visibility.Visible;
+					racingWheelTorqueAccelThresholdVisibility = Visibility.Visible;
 					racingWheelTorqueAccelScaleVisibility = Visibility.Visible;
 					racingWheelTotalTorqueThresholdVisibility = Visibility.Visible;
 					racingWheelTotalTorqueScaleVisibility = Visibility.Visible;
@@ -198,7 +198,7 @@ public partial class MainWindow : Window
 			RacingWheel_DetailBoost_KnobControl.Visibility = racingWheelDetailBoostKnobControlVisibility;
 			RacingWheel_DeltaLimit_KnobControl.Visibility = racingWheelDeltaLimitKnobControlVisibility;
 			RacingWheel_Bias_KnobControl.Visibility = racingWheelBiasKnobControlVisibility;
-			RacingWheel_TimeToMaxTorque.Visibility = racingWheelTimeToMaxTorqueVisibility;
+			RacingWheel_TorqueAccelThreshold.Visibility = racingWheelTorqueAccelThresholdVisibility;
 			RacingWheel_TorqueAccelScale.Visibility = racingWheelTorqueAccelScaleVisibility;
 			RacingWheel_TotalTorqueThreshold.Visibility = racingWheelTotalTorqueThresholdVisibility;
 			RacingWheel_TotalTorqueScale.Visibility = racingWheelTotalTorqueScaleVisibility;

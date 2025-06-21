@@ -420,9 +420,9 @@ public class RacingWheel
 
 							var deltaAbs = MathF.Abs(delta);
 
-							var deltaLimit = (DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorque != 0f) ? (1000f / DataContext.DataContext.Instance.Settings.RacingWheelTimeToMaxTorque / 360f) : 0f;
+							var deltaLimit = DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold / 100f / 360f;
 
-							var deltaRate = DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale * ((MathF.Sign(delta) == MathF.Sign(steeringWheelTorque360Hz)) ? 1f : MathF.Max(0.5f, 0.25f + (DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale * 0.75f)));
+							var deltaRate = DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale / 100f * ((MathF.Sign(delta) == MathF.Sign(steeringWheelTorque360Hz)) ? 1f : MathF.Max(0.5f, 0.25f + (DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale / 100f * 0.75f)));
 
 							if ((deltaRate != 1) && (deltaAbs > deltaLimit))
 							{
@@ -433,11 +433,11 @@ public class RacingWheel
 								runningTorquePct += delta;
 							}
 
-							var compressionThreshold = DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold;
+							var compressionThreshold = DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold / 100f;
 
 							var compressionWidth = compressionThreshold;
 
-							var compressionRate = DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScale;
+							var compressionRate = DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScale / 100f;
 
 							var runningTorquePctAbs = MathF.Abs(runningTorquePct);
 

@@ -970,15 +970,6 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acceleration Threshold (ms to 100%) .
-        /// </summary>
-        internal static string TimeToMaxTorque {
-            get {
-                return ResourceManager.GetString("TimeToMaxTorque", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Topmost Window.
         /// </summary>
         internal static string TopmostWindow {
@@ -988,11 +979,29 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Torque Acceleration Scaling.
+        ///   Looks up a localized string similar to Torque Acceleration Scale.
         /// </summary>
         internal static string TorqueAccelScale {
             get {
                 return ResourceManager.GetString("TorqueAccelScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nm/s Threshold.
+        /// </summary>
+        internal static string TorqueAccelThreshold {
+            get {
+                return ResourceManager.GetString("TorqueAccelThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nm/s.
+        /// </summary>
+        internal static string TorqueAccelUnits {
+            get {
+                return ResourceManager.GetString("TorqueAccelUnits", resourceCulture);
             }
         }
         
@@ -1006,7 +1015,7 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Torque Scaling.
+        ///   Looks up a localized string similar to Total Torque Scale.
         /// </summary>
         internal static string TotalTorqueScale {
             get {
@@ -1015,7 +1024,7 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Threshold for Scaling Total Torque.
+        ///   Looks up a localized string similar to Total Nm Threshold.
         /// </summary>
         internal static string TotalTorqueThreshold {
             get {
