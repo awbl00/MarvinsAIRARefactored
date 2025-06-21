@@ -3572,27 +3572,6 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region App - Automatically download updates
-
-	private bool _appAutomaticallyDownloadUpdates = true;
-
-	public bool AppAutomaticallyDownloadUpdates
-	{
-		get => _appAutomaticallyDownloadUpdates;
-
-		set
-		{
-			if ( value != _appAutomaticallyDownloadUpdates )
-			{
-				_appAutomaticallyDownloadUpdates = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
 	#region Debug (temporary)
 
 	public ButtonMappings DebugAlanLeResetMappings { get; set; } = new();

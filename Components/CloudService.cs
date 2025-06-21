@@ -89,23 +89,16 @@ public class CloudService
 							{
 								var downloadUpdate = false;
 
-								if ( DataContext.DataContext.Instance.Settings.AppAutomaticallyDownloadUpdates )
+								app.Logger.WriteLine( "[CloudService] Asking user if they want to download the update" );
+
+								var window = new NewVersionAvailableWindow( getCurrentVersionResponse.currentVersion, getCurrentVersionResponse.changeLog )
 								{
-									downloadUpdate = true;
-								}
-								else
-								{
-									app.Logger.WriteLine( "[CloudService] Asking user if they want to download the update" );
+									Owner = app.MainWindow
+								};
 
-									var window = new NewVersionAvailableWindow( getCurrentVersionResponse.currentVersion, getCurrentVersionResponse.changeLog )
-									{
-										Owner = app.MainWindow
-									};
+								window.ShowDialog();
 
-									window.ShowDialog();
-
-									downloadUpdate = window.DownloadUpdate;
-								}
+								downloadUpdate = window.DownloadUpdate;
 
 								if ( downloadUpdate )
 								{
