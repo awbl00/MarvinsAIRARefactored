@@ -14,6 +14,9 @@ public class CloudService
 {
 	public Guid NetworkIdGuid { get; private set; } = Guid.Empty;
 
+	public bool CheckingForUpdate { get; private set; } = false;
+	public bool DownloadingUpdate { get; private set; } = false;
+
 	public void Initialize()
 	{
 		var app = App.Instance;
@@ -57,6 +60,10 @@ public class CloudService
 
 			try
 			{
+				CheckingForUpdate = true;
+
+				app.MainWindow.UpdateStatus();
+
 				var getCurrentVersionUrl = $"https://herboldracing.com/wp-json/maira/v2/get-current-version?id={NetworkIdGuid}";
 
 				using var httpClient = new HttpClient();
@@ -102,6 +109,11 @@ public class CloudService
 
 								if ( downloadUpdate )
 								{
+									CheckingForUpdate = false;
+									DownloadingUpdate = true;
+
+									app.MainWindow.UpdateStatus();
+
 									app.Logger.WriteLine( $"[CloudService] Downloading update from {getCurrentVersionResponse.downloadUrl}" );
 
 									var httpResponseMessage = await httpClient.GetAsync( getCurrentVersionResponse.downloadUrl, HttpCompletionOption.ResponseHeadersRead );
@@ -162,10 +174,20 @@ public class CloudService
 						}
 					}
 				}
+
+				CheckingForUpdate = false;
+				DownloadingUpdate = false;
+
+				app.MainWindow.UpdateStatus();
 			}
 			catch ( Exception exception )
 			{
 				app.Logger.WriteLine( $"[CloudService] Failed trying to check for updates: {exception.Message.Trim()}" );
+
+				CheckingForUpdate = false;
+				DownloadingUpdate = false;
+
+				app.MainWindow.UpdateStatus();
 			}
 
 			app.Logger.WriteLine( "[CloudService] <<< CheckForUpdates" );

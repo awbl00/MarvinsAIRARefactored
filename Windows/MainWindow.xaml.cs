@@ -14,6 +14,7 @@ using Simagic;
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Components;
 using MarvinsAIRARefactored.PInvoke;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace MarvinsAIRARefactored.Windows;
 
@@ -141,33 +142,83 @@ public partial class MainWindow : Window
 
 			if ( app != null )
 			{
-				if ( app.Simulator.IsConnected )
+				var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
+
+				var backgroundColor = Brushes.Black;
+
+				var panel1Message = string.Empty;
+				var panel2Message = string.Empty;
+				var panel3Message = string.Empty;
+				var panel4Message = string.Empty;
+
+				if ( app.CloudService.CheckingForUpdate )
 				{
-					Status_Border.Background = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.1f, 0.1f, 0.1f ) );
+					backgroundColor = Brushes.DarkOrange;
 
-					Status_Car_Label.Content = app.Simulator.CarScreenName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.CarScreenName;
-					Status_Track_Label.Content = app.Simulator.TrackDisplayName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackDisplayName;
-					Status_TrackConfiguration_Label.Content = app.Simulator.TrackConfigName == string.Empty ? MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "Default" ] : app.Simulator.TrackConfigName;
-					Status_WetDry_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ app.Simulator.WeatherDeclaredWet ? "Wet" : "Dry" ];
+					panel1Message = localization[ "CheckingForUpdate" ];
+				}
+				else if ( app.CloudService.DownloadingUpdate )
+				{
+					backgroundColor = Brushes.DarkOrange;
 
-					Status_Car_Label.Visibility = Visibility.Visible;
-					Status_Track_Label.Visibility = Visibility.Visible;
-					Status_TrackConfiguration_Label.Visibility = Visibility.Visible;
-					Status_WetDry_Label.Visibility = Visibility.Visible;
+					panel1Message = localization[ "DownloadingUpdate" ];
+				}
+				else if ( app.Simulator.IsConnected )
+				{
+					backgroundColor = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.1f, 0.1f, 0.1f ) );
+
+					panel1Message = app.Simulator.CarScreenName == string.Empty ? localization[ "Default" ] : app.Simulator.CarScreenName;
+					panel2Message = app.Simulator.TrackDisplayName == string.Empty ? localization[ "Default" ] : app.Simulator.TrackDisplayName;
+					panel3Message = app.Simulator.TrackConfigName == string.Empty ? localization[ "Default" ] : app.Simulator.TrackConfigName;
+					panel4Message = localization[ app.Simulator.WeatherDeclaredWet ? "Wet" : "Dry" ];
 				}
 				else
 				{
-					Status_Border.Background = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.3f, 0f, 0f ) );
+					backgroundColor = new SolidColorBrush( System.Windows.Media.Color.FromScRgb( 1f, 0.3f, 0f, 0f ) );
 
-					Status_Car_Label.Content = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization[ "SimulatorNotRunning" ];
-					Status_Track_Label.Content = string.Empty;
-					Status_TrackConfiguration_Label.Content = string.Empty;
-					Status_WetDry_Label.Content = string.Empty;
+					panel1Message = localization[ "SimulatorNotRunning" ];
+				}
 
+				Status_Border.Background = backgroundColor;
+
+				if ( panel1Message == string.Empty )
+				{
+					Status_Car_Label.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					Status_Car_Label.Content = panel1Message;
 					Status_Car_Label.Visibility = Visibility.Visible;
+				}
+
+				if ( panel2Message == string.Empty )
+				{
 					Status_Track_Label.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					Status_Track_Label.Content = panel2Message;
+					Status_Track_Label.Visibility = Visibility.Visible;
+				}
+
+				if ( panel3Message == string.Empty )
+				{
 					Status_TrackConfiguration_Label.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					Status_TrackConfiguration_Label.Content = panel3Message;
+					Status_TrackConfiguration_Label.Visibility = Visibility.Visible;
+				}
+
+				if ( panel4Message == string.Empty )
+				{
 					Status_WetDry_Label.Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					Status_WetDry_Label.Content = panel4Message;
+					Status_WetDry_Label.Visibility = Visibility.Visible;
 				}
 			}
 		} );
@@ -303,6 +354,20 @@ public partial class MainWindow : Window
 		}
 	}
 
+	private void UpdateTabItemIsVisible()
+	{
+		if ( WindowState == WindowState.Minimized )
+		{
+			GraphTabItemIsVisible = false;
+			DebugTabItemIsVisible = false;
+		}
+		else if ( TabControl.SelectedItem is TabItem selectedTab )
+		{
+			GraphTabItemIsVisible = ( selectedTab == Graph_TabItem );
+			DebugTabItemIsVisible = ( selectedTab == Debug_TabItem );
+		}
+	}
+
 	public void CloseAndLaunchInstaller( string installerFilePath )
 	{
 		_installerFilePath = installerFilePath;
@@ -370,11 +435,7 @@ public partial class MainWindow : Window
 	{
 		if ( e.Source is TabControl tabControl )
 		{
-			if ( tabControl.SelectedItem is TabItem selectedTab )
-			{
-				GraphTabItemIsVisible = ( selectedTab == Graph_TabItem );
-				DebugTabItemIsVisible = ( selectedTab == Debug_TabItem );
-			}
+			UpdateTabItemIsVisible();
 		}
 	}
 
@@ -542,6 +603,16 @@ public partial class MainWindow : Window
 		var app = App.Instance;
 
 		app?.AdminBoxx.StartTestCycle();
+	}
+
+	private async void App_CheckNow_MairaButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			await app.CloudService.CheckForUpdates( true );
+		}
 	}
 
 	private void Debug_AlanLeReset_Click( object sender, RoutedEventArgs e )

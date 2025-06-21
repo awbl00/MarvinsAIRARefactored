@@ -146,17 +146,17 @@
 
                                 <StackPanel Grid.Column="0" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[CurrentForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[PeakForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[AutoForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                             </Grid>
@@ -321,7 +321,7 @@
                             </Grid.ColumnDefinitions>
 
                             <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.PedalsEnabled, Mode=TwoWay}"/>
-                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="Technology" Padding="0" VerticalAlignment="Center"/>
+                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Padding="0" VerticalAlignment="Center"/>
                             <Image Grid.Column="3" Source="/Artwork/simagic_logo.png" Height="32" Margin="0,0,10,0"/>
 
                         </Grid>
@@ -888,7 +888,7 @@
 
                     <GroupBox Header="{Binding Localization[AppWindow]}" Margin="0,10,0,0">
 
-                        <Grid>
+                        <Grid Margin="0,10,0,20">
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -901,9 +901,9 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,20,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
-                            <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,10" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
-                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="10,0,10,0" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
+                            <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
+                            <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
+                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
 
                         </Grid>
 
@@ -911,7 +911,7 @@
 
                     <GroupBox Header="{Binding Localization[CloudService]}" Margin="0,10,0,0">
 
-                        <Grid>
+                        <Grid Margin="0,10,0,20">
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -919,7 +919,8 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <controls:MairaSwitch Margin="0,20,0,10" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}"/>
+                            <controls:MairaSwitch Grid.Column="0" Grid.ColumnSpan="2" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}" Margin="0,10,0,0"/>
+                            <controls:MairaButton Grid.Column="2" x:Name="App_CheckNow_MairaButton" Title="{Binding Localization[CheckNow]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_binoculars.png" Click="App_CheckNow_MairaButton_Click"/>
 
                         </Grid>
 

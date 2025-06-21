@@ -36,7 +36,7 @@
 
                 <Image Grid.Column="0" Source="/MarvinsAIRARefactored;component/artwork/dial.png"/>
 
-                <Image Grid.Column="0" x:Name="KnobImage" Source="/MarvinsAIRARefactored;component/artwork/dial_marker.png" RenderTransformOrigin="0.5,0.5" MouseDown="KnobImage_Image_MouseDown" MouseUp="KnobImage_Image_MouseUp" MouseMove="KnobImage_Image_MouseMove" Cursor="Hand"/>
+                <Image Grid.Column="0" x:Name="KnobImage" Source="/MarvinsAIRARefactored;component/artwork/dial_marker.png" RenderTransformOrigin="0.5,0.5" MouseDown="KnobImage_Image_MouseDown" MouseMove="KnobImage_Image_MouseMove" MouseUp="KnobImage_Image_MouseUp" LostMouseCapture="KnobImage_Image_LostMouseCapture" Cursor="Hand"/>
 
                 <Grid Grid.Column="1">
 
@@ -46,7 +46,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Image Grid.Column="0" x:Name="CurveImage" Width="48" Height="48" Margin="10,0,0,0" Visibility="Collapsed"/>
-                    <Label Grid.Column="1" x:Name="Value_Label" FontSize="37" FontFamily="Technology" Foreground="PaleGreen" Padding="0" Margin="10,0,0,0" Content="{Binding ValueString, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalContentAlignment="Center" PreviewMouseRightButtonDown="Value_Label_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="Value_Label_PreviewMouseRightButtonUp" MouseLeave="Value_Label_MouseLeave"/>
+                    <Label Grid.Column="1" x:Name="Value_Label" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" Margin="10,0,0,0" Content="{Binding ValueString, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalContentAlignment="Center" PreviewMouseRightButtonDown="Value_Label_PreviewMouseRightButtonDown" PreviewMouseRightButtonUp="Value_Label_PreviewMouseRightButtonUp" MouseLeave="Value_Label_MouseLeave"/>
 
                 </Grid>
 

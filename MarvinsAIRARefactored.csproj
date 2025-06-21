@@ -20,6 +20,7 @@
     <None Remove="Artwork\background_racingwheel.png" />
     <None Remove="Artwork\dial.png" />
     <None Remove="Artwork\dial_marker.png" />
+    <None Remove="Artwork\icon_binoculars.png" />
     <None Remove="Artwork\icon_cancel.png" />
     <None Remove="Artwork\icon_down_small.png" />
     <None Remove="Artwork\icon_minus_small.png" />
@@ -44,12 +45,14 @@
     <None Remove="Artwork\switch_off.png" />
     <None Remove="Artwork\switch_on.png" />
     <None Remove="Artwork\white_icon.png" />
+    <None Remove="Fonts\digital-7 %28mono%29.ttf" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Artwork\background_adminboxx.png" />
     <Resource Include="Artwork\background_pedals.png" />
     <Resource Include="Artwork\background_racingwheel.png" />
+    <Resource Include="Artwork\icon_binoculars.png" />
     <Resource Include="Artwork\icon_cancel.png" />
     <Resource Include="Artwork\icon_magic.png" />
     <Resource Include="Artwork\icon_record_off.png" />
@@ -110,6 +113,7 @@
     <Resource Include="Artwork\switch_off.png" />
     <Resource Include="Artwork\switch_on.png" />
     <Resource Include="Artwork\white_icon.png" />
+    <Resource Include="Fonts\digital-7 (mono).ttf" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
