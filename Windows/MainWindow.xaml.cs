@@ -125,6 +125,14 @@ public partial class MainWindow : Window
 		} );
 	}
 
+	public void UpdateScale()
+	{
+		var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+
+		RootScaleTransform.ScaleX = settings.AppWindowScale;
+		RootScaleTransform.ScaleY = settings.AppWindowScale;
+	}
+
 	public void UpdateStatus()
 	{
 		Dispatcher.BeginInvoke( () =>

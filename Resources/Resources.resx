@@ -689,4 +689,16 @@
     <value>Noise Damper</value>
     <comment>Pedals</comment>
   </data>
+  <data name="AppWindow" xml:space="preserve">
+    <value>App Window</value>
+    <comment>App</comment>
+  </data>
+  <data name="WindowScale" xml:space="preserve">
+    <value>Window Scale</value>
+    <comment>App</comment>
+  </data>
+  <data name="CloudService" xml:space="preserve">
+    <value>Cloud Service</value>
+    <comment>App</comment>
+  </data>
 </root>

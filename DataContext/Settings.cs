@@ -3551,6 +3551,53 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Window scale
+
+	private float _appWindowScale = 1f;
+
+	public float AppWindowScale
+	{
+		get => _appWindowScale;
+
+		set
+		{
+			value = Math.Clamp( value, 0.25f, 4f );
+
+			if ( value != _appWindowScale )
+			{
+				_appWindowScale = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			app?.MainWindow.UpdateScale();
+
+			AppWindowScaleString = $"{_appWindowScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _appWindowScaleString = string.Empty;
+
+	[XmlIgnore]
+	public string AppWindowScaleString
+	{
+		get => _appWindowScaleString;
+
+		set
+		{
+			if ( value != _appWindowScaleString )
+			{
+				_appWindowScaleString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
 	#region App - Check for updates
 
 	private bool _appCheckForUpdates = true;
