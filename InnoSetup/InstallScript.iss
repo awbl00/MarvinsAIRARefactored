@@ -2,7 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppFile "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\bin\publish\MarvinsAIRARefactored.exe"
-#define MyAppName "Marvin's Awesome iRacing App - Refactored"
+#define MyAppName "Marvins Awesome iRacing App - Refactored"
+#define MyAppIconName "MarvinsAIRA Refactored"
 #define MyAppVersion GetFileVersion(MyAppFile)
 #define MyAppPublisher "Marvin Herbold"
 #define MyAppURL "https://herboldracing.com"
@@ -53,12 +54,11 @@ Name: "{userdocs}\MarvinsAIRA Refactored\Languages"
 Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\bin\publish\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\Resources\Resources*.resx"; DestDir: "{userdocs}\MarvinsAIRA Refactored\Languages"; Flags: ignoreversion
 Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\Sounds\*.wav"; DestDir: "{userdocs}\MarvinsAIRA Refactored\Sounds"; Flags: ignoreversion
-Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\Fonts\advanced_led_board-7.ttf"; DestDir: "{autofonts}"; FontInstall: "Technology"; Flags: onlyifdoesntexist uninsneveruninstall fontisnttruetype
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppIconName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppIconName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
