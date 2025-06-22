@@ -785,4 +785,8 @@
     <value>Start Minimized</value>
     <comment>App</comment>
   </data>
+  <data name="StartWithWindows" xml:space="preserve">
+    <value>Start With Windows</value>
+    <comment>App</comment>
+  </data>
 </root>

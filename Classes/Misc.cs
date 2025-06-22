@@ -8,6 +8,8 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+using IWshRuntimeLibrary;
+
 using PInvoke;
 
 namespace MarvinsAIRARefactored.Classes;
@@ -120,7 +122,7 @@ public class Misc
 		{
 			app.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
 
-			if ( File.Exists( filePath ) )
+			if ( System.IO.File.Exists( filePath ) )
 			{
 				using var reader = new ResXResourceReader( filePath );
 
@@ -190,6 +192,33 @@ public class Misc
 				}
 
 				break;
+			}
+		}
+	}
+
+	public static void SetStartWithWindows( bool enable )
+	{
+		var startupPath = Environment.GetFolderPath( Environment.SpecialFolder.Startup );
+		var shortcutPath = Path.Combine( startupPath, "MarvinsAIRA Refactored.lnk" );
+
+		if ( enable )
+		{
+			if ( !System.IO.File.Exists( shortcutPath ) )
+			{
+				var shell = new WshShell();
+
+				var shortcut = (IWshShortcut) shell.CreateShortcut( shortcutPath );
+
+				shortcut.TargetPath = Assembly.GetExecutingAssembly().Location;
+				shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				shortcut.Save();
+			}
+		}
+		else
+		{
+			if ( System.IO.File.Exists( shortcutPath ) )
+			{
+				System.IO.File.Delete( shortcutPath );
 			}
 		}
 	}

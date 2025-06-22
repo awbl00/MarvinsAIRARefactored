@@ -3551,6 +3551,29 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Start with Windows
+
+	private bool _appStartWithWindows = false;
+
+	public bool AppStartWithWindows
+	{
+		get => _appStartWithWindows;
+
+		set
+		{
+			if ( value != _appStartWithWindows )
+			{
+				_appStartWithWindows = value;
+
+				OnPropertyChanged();
+			}
+
+			Misc.SetStartWithWindows( _appStartWithWindows );
+		}
+	}
+
+	#endregion
+
 	#region App - Start minimized
 
 	private bool _appStartMinimized = false;

@@ -62,3 +62,9 @@ Name: "{autodesktop}\{#MyAppIconName}"; Filename: "{app}\{#MyAppExeName}"; Tasks
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[InstallDelete]
+Type: files; Name: "{userstartup}\MarvinsAIRA Refactored.lnk"
+
+[UninstallDelete]
+Type: files; Name: "{userstartup}\MarvinsAIRA Refactored.lnk"
