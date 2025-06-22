@@ -261,16 +261,52 @@ public partial class App : Application
 				DataContext.DataContext.Instance.Settings.RacingWheelDeltaLimiterBias -= 0.01f;
 			}
 
-			// racing wheel compression rate knob
+			// racing wheel slew compression threshold knob
 
-			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelCompressionRate += 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold += 100f;
 			}
 
-			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelCompressionRate -= 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold -= 100f;
+			}
+
+			// racing wheel slew compression rate knob
+
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate += 1f;
+			}
+
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate -= 1f;
+			}
+
+			// racing wheel total compression threshold knob
+
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold += 1f;
+			}
+
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold -= 1f;
+			}
+
+			// racing wheel total compression rate knob
+
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRate += 1f;
+			}
+
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRate -= 1f;
 			}
 
 			// racing wheel output minimum knob

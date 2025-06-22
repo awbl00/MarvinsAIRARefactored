@@ -37,6 +37,10 @@ public class ContextSettings
 	public Pedals.Effect PedalsClutchEffect3 { get; set; }
 	public float PedalsClutchEffect3Strength { get; set; }
 	public Pedals.Effect PedalsBrakeEffect1 { get; set; }
+	public float RacingWheelSlewCompressionThreshold { get; set; }
+	public float RacingWheelSlewCompressionRate { get; set; }
+	public float RacingWheelTotalCompressionThreshold { get; set; }
+	public float RacingWheelTotalCompressionRate {  get; set; }
 	public float PedalsBrakeEffect1Strength { get; set; }
 	public Pedals.Effect PedalsBrakeEffect2 { get; set; }
 	public float PedalsBrakeEffect2Strength { get; set; }

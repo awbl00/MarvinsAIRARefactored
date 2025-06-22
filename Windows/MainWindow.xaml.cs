@@ -232,6 +232,10 @@ public partial class MainWindow : Window
 			var racingWheelDeltaLimitKnobControlVisibility = Visibility.Hidden;
 			var racingWheelDetailBoostBiasKnobControlVisibility = Visibility.Hidden;
 			var racingWheelDeltaLimiterBiasKnobControlVisibility = Visibility.Hidden;
+			var racingWheelSlewCompressionThresholdVisibility = Visibility.Hidden;
+			var racingWheelSlewCompressionRateVisibility = Visibility.Hidden;
+			var racingWheelTotalCompressionThresholdVisibility = Visibility.Hidden;
+			var racingWheelTotalCompressionRateVisibility = Visibility.Hidden;
 			var racingWheelCurbProtectionGroupBoxVisibility = Visibility.Collapsed;
 
 			switch ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm )
@@ -263,6 +267,11 @@ public partial class MainWindow : Window
 			RacingWheel_DeltaLimit_KnobControl.Visibility = racingWheelDeltaLimitKnobControlVisibility;
 			RacingWheel_DetailBoostBias_KnobControl.Visibility = racingWheelDetailBoostBiasKnobControlVisibility;
 			RacingWheel_DeltaLimiterBias_KnobControl.Visibility = racingWheelDeltaLimiterBiasKnobControlVisibility;
+			RacingWheel_SlewCompressionThreshold.Visibility = racingWheelSlewCompressionThresholdVisibility;
+			RacingWheel_SlewCompressionRate.Visibility = racingWheelSlewCompressionRateVisibility;
+			RacingWheel_TotalCompressionThreshold.Visibility = racingWheelTotalCompressionThresholdVisibility;
+			RacingWheel_TotalCompressionRate.Visibility = racingWheelTotalCompressionRateVisibility;
+
 			RacingWheel_CurbProtection_GroupBox.Visibility = racingWheelCurbProtectionGroupBoxVisibility;
 		} );
 	}

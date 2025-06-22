@@ -442,18 +442,49 @@ public class RacingWheel
 					case Algorithm.ZeAlanLeTwist:
 					{
 						var deltaLimit = Misc.Lerp( settings.RacingWheelDeltaLimit, 1f, curbProtectionLerpFactor ) / 500f;
+						case RacingWheelAlgorithmEnum.ZeAlanLeTwist:
+						{
+							var runningTorquePct = _runningSteeringWheelTorque360Hz / DataContext.DataContext.Instance.Settings.RacingWheelMaxForce;
 
-						var delta = steeringWheelTorque500Hz - _lastSteeringWheelTorque500Hz;
+							var delta = (steeringWheelTorque360Hz - _runningSteeringWheelTorque360Hz) / DataContext.DataContext.Instance.Settings.RacingWheelMaxForce;
 
-						var compressibleDelta = MathF.Max( 0f, MathF.Abs( delta ) - deltaLimit );
+							var deltaAbs = MathF.Abs(delta);
 
-						var deltaScale = MathF.Max( 0f, 1f - ( compressibleDelta * settings.RacingWheelCompressionRate ) );
+							var deltaLimit = DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold / 100f / 360f;
 
-						var compressedDeltaSteeringWheelTorque500Hz = ( compressibleDelta > 0f ) ? delta : delta + MathF.Sign( delta ) * compressibleDelta * deltaScale;
+							var deltaRate = (1f - (DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f)) * ((MathF.Sign(delta) == MathF.Sign(steeringWheelTorque360Hz)) ? 1f : MathF.Max(0.75f, 0.25f + ((1f - DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f) * 0.75f)));
 
-						_runningSteeringWheelTorque500Hz = Misc.Lerp( _runningSteeringWheelTorque500Hz + compressedDeltaSteeringWheelTorque500Hz, steeringWheelTorque500Hz, settings.RacingWheelDeltaLimiterBias );
+							if ((deltaRate != 1) && (deltaAbs > deltaLimit))
+							{
+								runningTorquePct += (deltaLimit + ((deltaAbs - deltaLimit) * deltaRate)) * MathF.Sign(delta);
+							} 
+							else
+							{
+								runningTorquePct += delta;
+							}
 
-						outputTorque = _runningSteeringWheelTorque500Hz / settings.RacingWheelMaxForce;
+							var compressionThreshold = DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold / 100f;
+
+							var compressionWidth = compressionThreshold;
+
+							var compressionRate = 1 - (DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRate / 100f);
+
+							var runningTorquePctAbs = MathF.Abs(runningTorquePct);
+
+							if ((runningTorquePctAbs > (compressionThreshold - (compressionWidth / 2f))) && (runningTorquePctAbs < (compressionThreshold + (compressionWidth / 2f))))
+							{
+								runningTorquePctAbs = runningTorquePctAbs - ((compressionRate / 2f) * (runningTorquePctAbs - compressionThreshold + (compressionWidth / 2f) - (compressionWidth / MathF.PI * MathF.Sin(MathF.PI * (runningTorquePctAbs - compressionThreshold + (compressionWidth / 2f)) / compressionWidth))));
+							} 
+							else if (runningTorquePctAbs >= (compressionThreshold + (compressionWidth / 2f)))
+							{
+								runningTorquePctAbs = compressionThreshold + ((runningTorquePctAbs - compressionThreshold) * compressionRate);
+							}
+
+							runningTorquePct = runningTorquePctAbs * MathF.Sign(runningTorquePct);
+
+							_runningSteeringWheelTorque360Hz = runningTorquePct * DataContext.DataContext.Instance.Settings.RacingWheelMaxForce;
+
+							outputTorque = runningTorquePct;
 
 						break;
 					}
