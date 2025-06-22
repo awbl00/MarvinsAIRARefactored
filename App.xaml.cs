@@ -236,52 +236,52 @@ public partial class App : Application
 				DataContext.DataContext.Instance.Settings.RacingWheelBias -= 0.01f;
 			}
 
-			// racing wheel torque acceleration threshold knob
+			// racing wheel slew compression threshold knob
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold += .05f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold += 100f;
 			}
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold -= .05f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold -= 100f;
 			}
 
-			// racing wheel torque acceleration scale knob
+			// racing wheel slew compression rate knob
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScalePlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale += 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate += 1f;
 			}
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScaleMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTorqueAccelScale -= 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate -= 1f;
 			}
 
-			// racing wheel total torque threshold knob
+			// racing wheel total compression threshold knob
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold += 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold += 1f;
 			}
 
-			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
+			if (CheckMappedButtons(DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber))
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold -= 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold -= 1f;
 			}
 
-			// racing wheel total torque scale knob
+			// racing wheel total compression rate knob
 
-			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScalePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScale += 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRate += 1f;
 			}
 
-			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScaleMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				DataContext.DataContext.Instance.Settings.RacingWheelTotalTorqueScale -= 0.01f;
+				DataContext.DataContext.Instance.Settings.RacingWheelTotalCompressionRate -= 1f;
 			}
 
 			// racing wheel crash protection g force knob

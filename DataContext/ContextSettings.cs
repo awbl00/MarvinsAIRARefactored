@@ -21,10 +21,10 @@ public class ContextSettings
 	public float RacingWheelDetailBoost {  get; set; }
 	public float RacingWheelDeltaLimit {  get; set; }
 	public float RacingWheelBias {  get; set; }
-	public float RacingWheelTorqueAccelThreshold { get; set; }
-	public float RacingWheelTorqueAccelScale { get; set; }
-	public float RacingWheelTotalTorqueThreshold { get; set; }
-	public float RacingWheelTotalTorqueScale {  get; set; }
+	public float RacingWheelSlewCompressionThreshold { get; set; }
+	public float RacingWheelSlewCompressionRate { get; set; }
+	public float RacingWheelTotalCompressionThreshold { get; set; }
+	public float RacingWheelTotalCompressionRate {  get; set; }
 	public float RacingWheelFriction {  get; set; }
 	public bool RacingWheelFadeEnabled {  get; set; }
 	public float PedalsMinimumFrequency { get; set; }

@@ -163,10 +163,10 @@ public partial class MainWindow : Window
 			var racingWheelDetailBoostKnobControlVisibility = Visibility.Hidden;
 			var racingWheelDeltaLimitKnobControlVisibility = Visibility.Hidden;
 			var racingWheelBiasKnobControlVisibility = Visibility.Hidden;
-			var racingWheelTorqueAccelThresholdVisibility = Visibility.Hidden;
-			var racingWheelTorqueAccelScaleVisibility = Visibility.Hidden;
-			var racingWheelTotalTorqueThresholdVisibility = Visibility.Hidden;
-			var racingWheelTotalTorqueScaleVisibility = Visibility.Hidden;
+			var racingWheelSlewCompressionThresholdVisibility = Visibility.Hidden;
+			var racingWheelSlewCompressionRateVisibility = Visibility.Hidden;
+			var racingWheelTotalCompressionThresholdVisibility = Visibility.Hidden;
+			var racingWheelTotalCompressionRateVisibility = Visibility.Hidden;
 			var racingWheelCurbProtectionGroupBoxVisibility = Visibility.Collapsed;
 
 			switch ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.RacingWheelAlgorithm )
@@ -187,10 +187,10 @@ public partial class MainWindow : Window
 
 				case RacingWheelAlgorithmEnum.ZeAlanLeTwist:
 					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
-					racingWheelTorqueAccelThresholdVisibility = Visibility.Visible;
-					racingWheelTorqueAccelScaleVisibility = Visibility.Visible;
-					racingWheelTotalTorqueThresholdVisibility = Visibility.Visible;
-					racingWheelTotalTorqueScaleVisibility = Visibility.Visible;
+					racingWheelSlewCompressionThresholdVisibility = Visibility.Visible;
+					racingWheelSlewCompressionRateVisibility = Visibility.Visible;
+					racingWheelTotalCompressionThresholdVisibility = Visibility.Visible;
+					racingWheelTotalCompressionRateVisibility = Visibility.Visible;
 					break;
 			}
 
@@ -198,10 +198,10 @@ public partial class MainWindow : Window
 			RacingWheel_DetailBoost_KnobControl.Visibility = racingWheelDetailBoostKnobControlVisibility;
 			RacingWheel_DeltaLimit_KnobControl.Visibility = racingWheelDeltaLimitKnobControlVisibility;
 			RacingWheel_Bias_KnobControl.Visibility = racingWheelBiasKnobControlVisibility;
-			RacingWheel_TorqueAccelThreshold.Visibility = racingWheelTorqueAccelThresholdVisibility;
-			RacingWheel_TorqueAccelScale.Visibility = racingWheelTorqueAccelScaleVisibility;
-			RacingWheel_TotalTorqueThreshold.Visibility = racingWheelTotalTorqueThresholdVisibility;
-			RacingWheel_TotalTorqueScale.Visibility = racingWheelTotalTorqueScaleVisibility;
+			RacingWheel_SlewCompressionThreshold.Visibility = racingWheelSlewCompressionThresholdVisibility;
+			RacingWheel_SlewCompressionRate.Visibility = racingWheelSlewCompressionRateVisibility;
+			RacingWheel_TotalCompressionThreshold.Visibility = racingWheelTotalCompressionThresholdVisibility;
+			RacingWheel_TotalCompressionRate.Visibility = racingWheelTotalCompressionRateVisibility;
 
 			RacingWheel_CurbProtection_GroupBox.Visibility = racingWheelCurbProtectionGroupBoxVisibility;
 		} );

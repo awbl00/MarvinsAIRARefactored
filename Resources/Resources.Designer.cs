@@ -898,6 +898,33 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Slew: Compression Rate.
+        /// </summary>
+        internal static string SlewCompressionRate {
+            get {
+                return ResourceManager.GetString("SlewCompressionRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slew: Compression Threshold.
+        /// </summary>
+        internal static string SlewCompressionThreshold {
+            get {
+                return ResourceManager.GetString("SlewCompressionThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  Nm/ms.
+        /// </summary>
+        internal static string SlewUnits {
+            get {
+                return ResourceManager.GetString("SlewUnits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Soft Lock Strength.
         /// </summary>
         internal static string SoftLockStrength {
@@ -979,33 +1006,6 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Torque Acceleration Scale.
-        /// </summary>
-        internal static string TorqueAccelScale {
-            get {
-                return ResourceManager.GetString("TorqueAccelScale", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Nm/s Threshold.
-        /// </summary>
-        internal static string TorqueAccelThreshold {
-            get {
-                return ResourceManager.GetString("TorqueAccelThreshold", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Nm/s.
-        /// </summary>
-        internal static string TorqueAccelUnits {
-            get {
-                return ResourceManager.GetString("TorqueAccelUnits", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to  Nm.
         /// </summary>
         internal static string TorqueUnits {
@@ -1015,20 +1015,20 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Torque Scale.
+        ///   Looks up a localized string similar to Total: Compression Rate.
         /// </summary>
-        internal static string TotalTorqueScale {
+        internal static string TotalCompressionRate {
             get {
-                return ResourceManager.GetString("TotalTorqueScale", resourceCulture);
+                return ResourceManager.GetString("TotalCompressionRate", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Nm Threshold.
+        ///   Looks up a localized string similar to Total: Compression Threshold.
         /// </summary>
-        internal static string TotalTorqueThreshold {
+        internal static string TotalCompressionThreshold {
             get {
-                return ResourceManager.GetString("TotalTorqueThreshold", resourceCulture);
+                return ResourceManager.GetString("TotalCompressionThreshold", resourceCulture);
             }
         }
         
@@ -1087,7 +1087,7 @@ namespace MarvinsAIRARefactored.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ze Alan Le Twist.
+        ///   Looks up a localized string similar to Slew and Total Compression.
         /// </summary>
         internal static string ZeAlanLeTwist {
             get {

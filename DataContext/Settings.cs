@@ -232,8 +232,8 @@ public class Settings : INotifyPropertyChanged
 			RacingWheelMaxForceString = $"{_racingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
 
 			// Force the display values to update for the zeAlanLeTwist algorithm
-			DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold = DataContext.Instance.Settings.RacingWheelTorqueAccelThreshold;
-			DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold = DataContext.Instance.Settings.RacingWheelTotalTorqueThreshold;
+			DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold = DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold;
+			DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold = DataContext.Instance.Settings.RacingWheelTotalCompressionThreshold;
 		}
 	}
 
@@ -488,190 +488,190 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Racing wheel - Torque Acceleration Threshold
+	#region Racing wheel - Slew Compression Threshold
 
-	private float _racingWheelTorqueAccelThreshold = 200f;
-	public float RacingWheelTorqueAccelThreshold
+	private float _racingWheelSlewCompressionThreshold = 200f;
+	public float RacingWheelSlewCompressionThreshold
 	{
-		get => _racingWheelTorqueAccelThreshold;
+		get => _racingWheelSlewCompressionThreshold;
 
 		set
 		{
-			value = Math.Clamp(value, 100f, 30000f);
+			value = Math.Clamp(value, 0f, 35000f);
 
-			if (value != _racingWheelTorqueAccelThreshold)
+			if (value != _racingWheelSlewCompressionThreshold)
 			{
-				_racingWheelTorqueAccelThreshold = value;
+				_racingWheelSlewCompressionThreshold = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelTorqueAccelThresholdString = $"{_racingWheelTorqueAccelThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce:F1} {DataContext.Instance.Localization["TorqueAccelUnits"]}";
+			RacingWheelSlewCompressionThresholdString = $"{_racingWheelSlewCompressionThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce / 1000f:F1}{DataContext.Instance.Localization["SlewUnits"]}";
 		}
 	}
 
-	private string _racingWheelTorqueAccelThresholdString = string.Empty;
+	private string _racingWheelSlewCompressionThresholdString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelTorqueAccelThresholdString
+	public string RacingWheelSlewCompressionThresholdString
 	{
-		get => _racingWheelTorqueAccelThresholdString;
+		get => _racingWheelSlewCompressionThresholdString;
 
 		set
 		{
-			if (value != _racingWheelTorqueAccelThresholdString)
+			if (value != _racingWheelSlewCompressionThresholdString)
 			{
-				_racingWheelTorqueAccelThresholdString = value;
+				_racingWheelSlewCompressionThresholdString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelTorqueAccelThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
-	public ButtonMappings RacingWheelTorqueAccelThresholdPlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTorqueAccelThresholdMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelSlewCompressionThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelSlewCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSlewCompressionThresholdMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
-	#region Racing wheel - Torque Acceleration Scale
+	#region Racing wheel - Slew Compression Rate
 
-	private float _racingWheelTorqueAccelScale = 35f;
+	private float _racingWheelSlewCompressionRate = 65f;
 
-	public float RacingWheelTorqueAccelScale
+	public float RacingWheelSlewCompressionRate
 	{
-		get => _racingWheelTorqueAccelScale;
+		get => _racingWheelSlewCompressionRate;
 
 		set
 		{
 			value = Math.Clamp(value, 0f, 100f);
 
-			if (value != _racingWheelTorqueAccelScale)
+			if (value != _racingWheelSlewCompressionRate)
 			{
-				_racingWheelTorqueAccelScale = value;
+				_racingWheelSlewCompressionRate = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelTorqueAccelScaleString = $"{_racingWheelTorqueAccelScale:F0}%";
+			RacingWheelSlewCompressionRateString = $"{_racingWheelSlewCompressionRate:F0}%";
 		}
 	}
 
-	private string _racingWheelTorqueAccelScaleString = string.Empty;
+	private string _racingWheelSlewCompressionRateString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelTorqueAccelScaleString
+	public string RacingWheelSlewCompressionRateString
 	{
-		get => _racingWheelTorqueAccelScaleString;
+		get => _racingWheelSlewCompressionRateString;
 
 		set
 		{
-			if (value != _racingWheelTorqueAccelScaleString)
+			if (value != _racingWheelSlewCompressionRateString)
 			{
-				_racingWheelTorqueAccelScaleString = value;
+				_racingWheelSlewCompressionRateString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelTorqueAccelScaleContextSwitches { get; set; } = new(true, true, false, false, false);
-	public ButtonMappings RacingWheelTorqueAccelScalePlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTorqueAccelScaleMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelSlewCompressionRateContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelSlewCompressionRatePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSlewCompressionRateMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
-	#region Racing wheel - Total Torque Threshold
+	#region Racing wheel - Total Compression Threshold
 
-	private float _racingWheelTotalTorqueThreshold = 65f;
+	private float _racingWheelTotalCompressionThreshold = 65f;
 
-	public float RacingWheelTotalTorqueThreshold
+	public float RacingWheelTotalCompressionThreshold
 	{
-		get => _racingWheelTotalTorqueThreshold;
+		get => _racingWheelTotalCompressionThreshold;
 
 		set
 		{
 			value = Math.Clamp(value, 0f, 100f);
 
-			if (value != _racingWheelTotalTorqueThreshold)
+			if (value != _racingWheelTotalCompressionThreshold)
 			{
-				_racingWheelTotalTorqueThreshold = value;
+				_racingWheelTotalCompressionThreshold = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelTotalTorqueThresholdString = $"{_racingWheelTotalTorqueThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce:F1} {DataContext.Instance.Localization["TorqueUnits"]}";
+			RacingWheelTotalCompressionThresholdString = $"{_racingWheelTotalCompressionThreshold / 100f * DataContext.Instance.Settings.RacingWheelMaxForce:F1}{DataContext.Instance.Localization["TorqueUnits"]}";
 		}
 	}
 
-	private string _racingWheelTotalTorqueThresholdString = string.Empty;
+	private string _racingWheelTotalCompressionThresholdString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelTotalTorqueThresholdString
+	public string RacingWheelTotalCompressionThresholdString
 	{
-		get => _racingWheelTotalTorqueThresholdString;
+		get => _racingWheelTotalCompressionThresholdString;
 
 		set
 		{
-			if (value != _racingWheelTotalTorqueThresholdString)
+			if (value != _racingWheelTotalCompressionThresholdString)
 			{
-				_racingWheelTotalTorqueThresholdString = value;
+				_racingWheelTotalCompressionThresholdString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelTotalTorqueThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
-	public ButtonMappings RacingWheelTotalTorqueThresholdPlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTotalTorqueThresholdMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTotalCompressionThresholdContextSwitches { get; set; } = new(true, true, false, false, false);
+	public ButtonMappings RacingWheelTotalCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalCompressionThresholdMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
-	#region Racing wheel - Total Torque Scale
+	#region Racing wheel - Total Compression Rate
 
-	private float _racingWheelTotalTorqueScale = 75f;
+	private float _racingWheelTotalCompressionRate = 75f;
 
-	public float RacingWheelTotalTorqueScale
+	public float RacingWheelTotalCompressionRate
 	{
-		get => _racingWheelTotalTorqueScale;
+		get => _racingWheelTotalCompressionRate;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 100f );
 
-			if ( value != _racingWheelTotalTorqueScale )
+			if ( value != _racingWheelTotalCompressionRate )
 			{
-				_racingWheelTotalTorqueScale = value;
+				_racingWheelTotalCompressionRate = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelTotalTorqueScaleString = $"{_racingWheelTotalTorqueScale:F0}%";
+			RacingWheelTotalCompressionRateString = $"{_racingWheelTotalCompressionRate:F0}%";
 		}
 	}
 
-	private string _racingWheelTotalTorqueScaleString = string.Empty;
+	private string _racingWheelTotalCompressionRateString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelTotalTorqueScaleString
+	public string RacingWheelTotalCompressionRateString
 	{
-		get => _racingWheelTotalTorqueScaleString;
+		get => _racingWheelTotalCompressionRateString;
 
 		set
 		{
-			if ( value != _racingWheelTotalTorqueScaleString )
+			if ( value != _racingWheelTotalCompressionRateString )
 			{
-				_racingWheelTotalTorqueScaleString = value;
+				_racingWheelTotalCompressionRateString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelTotalTorqueScaleContextSwitches { get; set; } = new( true, true, false, false, false );
-	public ButtonMappings RacingWheelTotalTorqueScalePlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTotalTorqueScaleMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelTotalCompressionRateContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelTotalCompressionRatePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalCompressionRateMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
