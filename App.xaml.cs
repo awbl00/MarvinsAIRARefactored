@@ -39,6 +39,10 @@ public partial class App : Application
 	public const int TimerPeriodInMilliseconds = 17;
 	public const int TimerTicksPerSecond = 1000 / TimerPeriodInMilliseconds;
 
+	private const string MutexName = "MarvinsAIRARefactoredMutex";
+
+	private static Mutex? _mutex = null;
+
 	private readonly AutoResetEvent _autoResetEvent = new( false );
 
 	private readonly Thread _workerThread = new( WorkerThread ) { IsBackground = true, Priority = ThreadPriority.Normal };
@@ -80,52 +84,65 @@ public partial class App : Application
 	{
 		Logger.WriteLine( "[App] App_Startup >>>" );
 
-		Misc.DisableThrottling();
+		_mutex = new Mutex( true, MutexName, out var createdNew );
 
-		if ( !Directory.Exists( DocumentsFolder ) )
+		if ( !createdNew )
 		{
-			Directory.CreateDirectory( DocumentsFolder );
+			Logger.WriteLine( "[App] Another instance of this app is already running!" );
+
+			Misc.BringExistingInstanceToFront();
+
+			Shutdown();
 		}
-
-		Logger.Initialize();
-		CloudService.Initialize();
-		SettingsFile.Initialize();
-		Graph.Initialize();
-		Pedals.Initialize();
-		AdminBoxx.Initialize();
-		RacingWheel.Initialize();
-		AudioManager.Initialize();
-		DirectInput.Initialize();
-		LFE.Initialize();
-		MultimediaTimer.Initialize();
-		Simulator.Initialize();
-
-		DirectInput.OnInput += OnInput;
-
-		GC.Collect();
-
-		MainWindow.Resources = Current.Resources;
-
-		MainWindow.Initialize();
-		MainWindow.Show();
-
-		if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
+		else
 		{
-			AdminBoxx.Connect();
+			Misc.DisableThrottling();
+
+			if ( !Directory.Exists( DocumentsFolder ) )
+			{
+				Directory.CreateDirectory( DocumentsFolder );
+			}
+
+			Logger.Initialize();
+			CloudService.Initialize();
+			SettingsFile.Initialize();
+			Graph.Initialize();
+			Pedals.Initialize();
+			AdminBoxx.Initialize();
+			RacingWheel.Initialize();
+			AudioManager.Initialize();
+			DirectInput.Initialize();
+			LFE.Initialize();
+			MultimediaTimer.Initialize();
+			Simulator.Initialize();
+
+			DirectInput.OnInput += OnInput;
+
+			GC.Collect();
+
+			MainWindow.Resources = Current.Resources;
+
+			MainWindow.Initialize();
+			MainWindow.Show();
+
+			if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
+			{
+				AdminBoxx.Connect();
+			}
+
+			if ( DataContext.DataContext.Instance.Settings.AppCheckForUpdates )
+			{
+				await CloudService.CheckForUpdates( false );
+			}
+
+			_workerThread.Start();
+
+			_timer.Start();
+
+			Simulator.Start();
+
+			GC.Collect();
 		}
-
-		if ( DataContext.DataContext.Instance.Settings.AppCheckForUpdates )
-		{
-			await CloudService.CheckForUpdates( false );
-		}
-
-		_workerThread.Start();
-
-		_timer.Start();
-
-		Simulator.Start();
-
-		GC.Collect();
 
 		Logger.WriteLine( "[App] <<< App_Startup" );
 	}

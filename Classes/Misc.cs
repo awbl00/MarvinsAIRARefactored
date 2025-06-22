@@ -172,4 +172,25 @@ public class Misc
 
 		return false;
 	}
+
+	public static void BringExistingInstanceToFront()
+	{
+		var current = Process.GetCurrentProcess();
+
+		foreach ( var process in Process.GetProcessesByName( current.ProcessName ) )
+		{
+			if ( process.Id != current.Id )
+			{
+				var handle = process.MainWindowHandle;
+
+				if ( handle != IntPtr.Zero )
+				{
+					User32.ShowWindow( handle, User32.WindowShowStyle.SW_RESTORE );
+					User32.SetForegroundWindow( handle );
+				}
+
+				break;
+			}
+		}
+	}
 }
