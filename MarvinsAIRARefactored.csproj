@@ -1,123 +1,123 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<UseWPF>true</UseWPF>
-		<Version>2.0.$([MSBuild]::Subtract($([System.Math]::Floor($([MSBuild]::Divide($([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()), 86400)))), 20180)).$([MSBuild]::Divide($([MSBuild]::Modulo($([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()), 86400)), 60))</Version>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Platforms>AnyCPU;x64</Platforms>
-		<ApplicationIcon>artwork\white_icon.ico</ApplicationIcon>
-		<UseWindowsForms>True</UseWindowsForms>
-		<ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+        <Version>2.0.$([MSBuild]::Subtract($([System.Math]::Floor($([MSBuild]::Divide($([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()), 86400)))), 20180)).$([MSBuild]::Divide($([MSBuild]::Modulo($([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()), 86400)), 60))</Version>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Platforms>AnyCPU;x64</Platforms>
+        <ApplicationIcon>artwork\white_icon.ico</ApplicationIcon>
+        <UseWindowsForms>True</UseWindowsForms>
+        <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<None Remove="Artwork\background_adminboxx.png" />
-		<None Remove="Artwork\background_pedals.png" />
-		<None Remove="Artwork\background_racingwheel.png" />
-		<None Remove="Artwork\dial.png" />
-		<None Remove="Artwork\dial_marker.png" />
-		<None Remove="Artwork\icon_binoculars.png" />
-		<None Remove="Artwork\icon_cancel.png" />
-		<None Remove="Artwork\icon_down_small.png" />
-		<None Remove="Artwork\icon_minus_small.png" />
-		<None Remove="Artwork\icon_plus.png" />
-		<None Remove="Artwork\icon_plus_small.png" />
-		<None Remove="Artwork\icon_record_off.png" />
-		<None Remove="Artwork\icon_thumbs_up.png" />
-		<None Remove="Artwork\icon_trash.png" />
-		<None Remove="Artwork\icon_zero.png" />
-		<None Remove="Artwork\power_led_black.png" />
-		<None Remove="Artwork\power_led_green.png" />
-		<None Remove="Artwork\power_led_red.png" />
-		<None Remove="Artwork\power_led_yellow.png" />
-		<None Remove="Artwork\round_button_disabled.png" />
-		<None Remove="Artwork\round_button_disabled_small.png" />
-		<None Remove="Artwork\round_button_down_arrow.png" />
-		<None Remove="Artwork\round_button_mapped.png" />
-		<None Remove="Artwork\round_button_mapped_small.png" />
-		<None Remove="Artwork\round_button_pressed.png" />
-		<None Remove="Artwork\round_button_pressed_small.png" />
-		<None Remove="Artwork\simagic_logo.png" />
-		<None Remove="Artwork\switch_off.png" />
-		<None Remove="Artwork\switch_on.png" />
-		<None Remove="Artwork\white_icon.png" />
-		<None Remove="Fonts\digital-7 %28mono%29.ttf" />
-	</ItemGroup>
+    <ItemGroup>
+        <None Remove="Artwork\background_adminboxx.png" />
+        <None Remove="Artwork\background_pedals.png" />
+        <None Remove="Artwork\background_racingwheel.png" />
+        <None Remove="Artwork\dial.png" />
+        <None Remove="Artwork\dial_marker.png" />
+        <None Remove="Artwork\icon_binoculars.png" />
+        <None Remove="Artwork\icon_cancel.png" />
+        <None Remove="Artwork\icon_down_small.png" />
+        <None Remove="Artwork\icon_minus_small.png" />
+        <None Remove="Artwork\icon_plus.png" />
+        <None Remove="Artwork\icon_plus_small.png" />
+        <None Remove="Artwork\icon_record_off.png" />
+        <None Remove="Artwork\icon_thumbs_up.png" />
+        <None Remove="Artwork\icon_trash.png" />
+        <None Remove="Artwork\icon_zero.png" />
+        <None Remove="Artwork\power_led_black.png" />
+        <None Remove="Artwork\power_led_green.png" />
+        <None Remove="Artwork\power_led_red.png" />
+        <None Remove="Artwork\power_led_yellow.png" />
+        <None Remove="Artwork\round_button_disabled.png" />
+        <None Remove="Artwork\round_button_disabled_small.png" />
+        <None Remove="Artwork\round_button_down_arrow.png" />
+        <None Remove="Artwork\round_button_mapped.png" />
+        <None Remove="Artwork\round_button_mapped_small.png" />
+        <None Remove="Artwork\round_button_pressed.png" />
+        <None Remove="Artwork\round_button_pressed_small.png" />
+        <None Remove="Artwork\simagic_logo.png" />
+        <None Remove="Artwork\switch_off.png" />
+        <None Remove="Artwork\switch_on.png" />
+        <None Remove="Artwork\white_icon.png" />
+        <None Remove="Fonts\digital-7 %28mono%29.ttf" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<Resource Include="Artwork\background_adminboxx.png" />
-		<Resource Include="Artwork\background_pedals.png" />
-		<Resource Include="Artwork\background_racingwheel.png" />
-		<Resource Include="Artwork\icon_binoculars.png" />
-		<Resource Include="Artwork\icon_cancel.png" />
-		<Resource Include="Artwork\icon_magic.png" />
-		<Resource Include="Artwork\icon_record_off.png" />
-		<Resource Include="Artwork\icon_thumbs_up.png" />
-		<Resource Include="Artwork\icon_zero.png" />
-		<Resource Include="Artwork\power_led_black.png" />
-		<Resource Include="Artwork\round_button_disabled.png" />
-		<Resource Include="Artwork\round_button_disabled_small.png" />
-		<Resource Include="Artwork\round_button_mapped.png" />
-		<Resource Include="Artwork\round_button_mapped_small.png" />
-		<Resource Include="Artwork\background_buttonmapping.png" />
-		<Resource Include="Artwork\simagic_logo.png" />
-		<Resource Include="Artwork\white_icon.ico" />
-	</ItemGroup>
+    <ItemGroup>
+        <Resource Include="Artwork\background_adminboxx.png" />
+        <Resource Include="Artwork\background_pedals.png" />
+        <Resource Include="Artwork\background_racingwheel.png" />
+        <Resource Include="Artwork\icon_binoculars.png" />
+        <Resource Include="Artwork\icon_cancel.png" />
+        <Resource Include="Artwork\icon_magic.png" />
+        <Resource Include="Artwork\icon_record_off.png" />
+        <Resource Include="Artwork\icon_thumbs_up.png" />
+        <Resource Include="Artwork\icon_zero.png" />
+        <Resource Include="Artwork\power_led_black.png" />
+        <Resource Include="Artwork\round_button_disabled.png" />
+        <Resource Include="Artwork\round_button_disabled_small.png" />
+        <Resource Include="Artwork\round_button_mapped.png" />
+        <Resource Include="Artwork\round_button_mapped_small.png" />
+        <Resource Include="Artwork\background_buttonmapping.png" />
+        <Resource Include="Artwork\simagic_logo.png" />
+        <Resource Include="Artwork\white_icon.ico" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
-		<PackageReference Include="PInvoke.SetupApi" Version="0.7.124" />
-		<PackageReference Include="PInvoke.User32" Version="0.7.124" />
-		<PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
-		<PackageReference Include="SharpDX.DirectSound" Version="4.2.0" />
-		<PackageReference Include="SharpDX.XAudio2" Version="4.2.0" />
-		<PackageReference Include="System.IO.Ports" Version="9.0.6" />
-		<PackageReference Include="System.Management" Version="9.0.6" />
-		<PackageReference Include="System.Windows.Extensions" Version="9.0.6" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
+        <PackageReference Include="PInvoke.SetupApi" Version="0.7.124" />
+        <PackageReference Include="PInvoke.User32" Version="0.7.124" />
+        <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
+        <PackageReference Include="SharpDX.DirectSound" Version="4.2.0" />
+        <PackageReference Include="SharpDX.XAudio2" Version="4.2.0" />
+        <PackageReference Include="System.IO.Ports" Version="9.0.6" />
+        <PackageReference Include="System.Management" Version="9.0.6" />
+        <PackageReference Include="System.Windows.Extensions" Version="9.0.6" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\IRSDKSharper\IRSDKSharper.csproj" />
-		<ProjectReference Include="..\SimagicHPR\SimagicHPR.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\IRSDKSharper\IRSDKSharper.csproj" />
+        <ProjectReference Include="..\SimagicHPR\SimagicHPR.csproj" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<Resource Include="Artwork\background_app.png" />
-		<Resource Include="Artwork\dial.png" />
-		<Resource Include="Artwork\dial_marker.png" />
-		<Resource Include="Artwork\icon_down_small.png" />
-		<Resource Include="Artwork\icon_minus_small.png" />
-		<Resource Include="Artwork\icon_plus.png" />
-		<Resource Include="Artwork\icon_plus_small.png" />
-		<Resource Include="Artwork\icon_record_on.png" />
-		<Resource Include="Artwork\icon_reset.png" />
-		<Resource Include="Artwork\icon_vibrate.png" />
-		<Resource Include="Artwork\icon_trash.png" />
-		<Resource Include="Artwork\power_led_green.png" />
-		<Resource Include="Artwork\power_led_red.png" />
-		<Resource Include="Artwork\power_led_yellow.png" />
-		<Resource Include="Artwork\round_button_down_arrow.png" />
-		<Resource Include="Artwork\round_button.png" />
-		<Resource Include="Artwork\round_button_small.png" />
-		<Resource Include="Artwork\round_button_pressed.png" />
-		<Resource Include="Artwork\round_button_pressed_small.png" />
-		<Resource Include="Artwork\switch_off.png" />
-		<Resource Include="Artwork\switch_on.png" />
-		<Resource Include="Artwork\white_icon.png" />
-		<Resource Include="Fonts\digital-7 (mono).ttf" />
-	</ItemGroup>
+    <ItemGroup>
+        <Resource Include="Artwork\background_app.png" />
+        <Resource Include="Artwork\dial.png" />
+        <Resource Include="Artwork\dial_marker.png" />
+        <Resource Include="Artwork\icon_down_small.png" />
+        <Resource Include="Artwork\icon_minus_small.png" />
+        <Resource Include="Artwork\icon_plus.png" />
+        <Resource Include="Artwork\icon_plus_small.png" />
+        <Resource Include="Artwork\icon_record_on.png" />
+        <Resource Include="Artwork\icon_reset.png" />
+        <Resource Include="Artwork\icon_vibrate.png" />
+        <Resource Include="Artwork\icon_trash.png" />
+        <Resource Include="Artwork\power_led_green.png" />
+        <Resource Include="Artwork\power_led_red.png" />
+        <Resource Include="Artwork\power_led_yellow.png" />
+        <Resource Include="Artwork\round_button_down_arrow.png" />
+        <Resource Include="Artwork\round_button.png" />
+        <Resource Include="Artwork\round_button_small.png" />
+        <Resource Include="Artwork\round_button_pressed.png" />
+        <Resource Include="Artwork\round_button_pressed_small.png" />
+        <Resource Include="Artwork\switch_off.png" />
+        <Resource Include="Artwork\switch_on.png" />
+        <Resource Include="Artwork\white_icon.png" />
+        <Resource Include="Fonts\digital-7 (mono).ttf" />
+    </ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(ProjectDir)Resources\Resources*.resx&quot; &quot;C:\Users\marvi\OneDrive\Documents\MarvinsAIRA Refactored\Languages\&quot; /Y /I" />
-	</Target>
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="xcopy &quot;$(ProjectDir)Resources\Resources*.resx&quot; &quot;C:\Users\marvi\OneDrive\Documents\MarvinsAIRA Refactored\Languages\&quot; /Y /I" />
+    </Target>
 
 </Project>
