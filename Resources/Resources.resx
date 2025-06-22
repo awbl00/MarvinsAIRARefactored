@@ -713,4 +713,60 @@
     <value>Downloading update...</value>
     <comment>Status</comment>
   </data>
+  <data name="Contribute" xml:space="preserve">
+    <value>Contribute</value>
+    <comment>Tab item</comment>
+  </data>
+  <data name="BuyMeACoffee" xml:space="preserve">
+    <value>Buy Me a Coffee!</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="DonationsText" xml:space="preserve">
+    <value>Donations are completely optional. I will never charge any fees for using MAIRA. That said, donations make me feel warm and fuzzy, and is a great motivator for me to keep working on MAIRA. A huge thank you to everybody who have donated already! Here is the link to donate:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donations" xml:space="preserve">
+    <value>Donations</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donors" xml:space="preserve">
+    <value>Donors</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="SuperDonors" xml:space="preserve">
+    <value>Super Donors</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donate" xml:space="preserve">
+    <value>Donate</value>
+    <comment>Tab item</comment>
+  </data>
+  <data name="CodeContributions" xml:space="preserve">
+    <value>Code Contributions</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationContributions" xml:space="preserve">
+    <value>Translation Contributions</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="CodeContributionsText" xml:space="preserve">
+    <value>If you are a C# developer, and would like to contribute some code to this project, here is the link to the GitHub repository:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationContributionsText" xml:space="preserve">
+    <value>If you can read and write in multiple languages, we need your help to translate this app into every possible language in the world! For more information about how to do this, visit this Discord channel:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationsDiscordChannel" xml:space="preserve">
+    <value>Translations Discord Channel</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="GitHubRepository" xml:space="preserve">
+    <value>GitHub Repository</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Contributors" xml:space="preserve">
+    <value>Contributors</value>
+    <comment>Contribute</comment>
+  </data>
 </root>
