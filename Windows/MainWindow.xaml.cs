@@ -5,16 +5,18 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.ComponentModel;
 
 using ScrollEventArgs = System.Windows.Controls.Primitives.ScrollEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
+using Brushes = System.Windows.Media.Brushes;
+using Application = System.Windows.Application;
 
 using Simagic;
 
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Components;
 using MarvinsAIRARefactored.PInvoke;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace MarvinsAIRARefactored.Windows;
 
@@ -27,6 +29,8 @@ public partial class MainWindow : Window
 	private string? _installerFilePath = null;
 
 	private bool _initialized = false;
+
+	private NotifyIcon? _notifyIcon = null;
 
 	public MainWindow()
 	{
@@ -122,6 +126,7 @@ public partial class MainWindow : Window
 
 				UpdateStatus();
 				UpdatePedalsDevice();
+				UpdateNotifyIcon();
 			}
 		} );
 	}
@@ -354,6 +359,73 @@ public partial class MainWindow : Window
 		}
 	}
 
+	public void UpdateNotifyIcon()
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			Dispatcher.BeginInvoke( () =>
+			{
+				var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
+
+				if ( _notifyIcon != null )
+				{
+					_notifyIcon.Visible = false;
+
+					_notifyIcon.Dispose();
+				}
+
+				if ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+				{
+					var resourceStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MarvinsAIRARefactored;component/Artwork/white_icon.ico" ) ).Stream;
+
+					_notifyIcon = new()
+					{
+						Icon = new Icon( resourceStream ),
+						Visible = true,
+						Text = localization[ "AppTitle" ],
+						ContextMenuStrip = new ContextMenuStrip()
+					};
+
+					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ShowWindow" ], null, ( s, e ) => RestoreFromTray() );
+					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ExitApp" ], null, ( s, e ) => ExitApp() );
+
+					_notifyIcon.DoubleClick += ( s, e ) => RestoreFromTray();
+				}
+			} );
+		}
+	}
+
+	private void RestoreFromTray()
+	{
+		Show();
+
+		WindowState = WindowState.Normal;
+
+		Activate();
+
+		if ( !MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppTopmostWindowEnabled )
+		{
+			Topmost = true;
+			Topmost = false;
+		}
+
+		Focus();
+	}
+
+	private void ExitApp()
+	{
+		if ( _notifyIcon != null )
+		{
+			_notifyIcon.Visible = false;
+
+			_notifyIcon.Dispose();
+
+			Close();
+		}
+	}
+
 	private void UpdateTabItemIsVisible()
 	{
 		if ( WindowState == WindowState.Minimized )
@@ -408,6 +480,27 @@ public partial class MainWindow : Window
 			rectangle.Size = new System.Drawing.Size( (int) Width, (int) Height );
 
 			settings.AppWindowPositionAndSize = rectangle;
+		}
+	}
+
+	private void Window_StateChanged( object sender, EventArgs e )
+	{
+		if ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+		{
+			if ( WindowState == WindowState.Minimized )
+			{
+				Hide();
+			}
+		}
+	}
+
+	private void Window_Closing( object sender, CancelEventArgs e )
+	{
+		if ( _notifyIcon != null )
+		{
+			_notifyIcon.Visible = false;
+
+			_notifyIcon.Dispose();
 		}
 	}
 

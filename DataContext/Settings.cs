@@ -3551,6 +3551,31 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Minimize to system tray
+
+	private bool _appMinimizeToSystemTray = false;
+
+	public bool AppMinimizeToSystemTray
+	{
+		get => _appMinimizeToSystemTray;
+
+		set
+		{
+			if ( value != _appMinimizeToSystemTray )
+			{
+				_appMinimizeToSystemTray = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			app?.MainWindow.UpdateNotifyIcon();
+		}
+	}
+
+	#endregion
+
 	#region App - UI scale
 
 	private float _appUIScale = 1f;

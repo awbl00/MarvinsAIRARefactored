@@ -22,7 +22,9 @@
         WindowStartupLocation="CenterScreen"
         LocationChanged="Window_LocationChanged"
         SizeChanged="Window_SizeChanged"
-        ContentRendered="Window_ContentRendered">
+        ContentRendered="Window_ContentRendered"
+        StateChanged="Window_StateChanged"
+        Closing="Window_Closing">
 
     <Window.DataContext>
         <Binding Source="{x:Static datacontext:DataContext.Instance}"/>
@@ -899,11 +901,14 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
                             <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
-                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
+                            <controls:MairaSwitch Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppMinimizeToSystemTray, Mode=TwoWay}" Title="{Binding Localization[MinimizeToSystemTray]}"/>
+
+                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" VerticalAlignment="Center" Margin="0,0,0,33" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
 
                         </Grid>
 
