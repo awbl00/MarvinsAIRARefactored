@@ -49,6 +49,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Dirs]
 Name: "{userdocs}\MarvinsAIRA Refactored"
 Name: "{userdocs}\MarvinsAIRA Refactored\Languages"
+Name: "{userdocs}\MarvinsAIRA Refactored\Sounds"
 
 [Files]
 Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\bin\publish\*"; DestDir: "{app}"; Flags: ignoreversion
