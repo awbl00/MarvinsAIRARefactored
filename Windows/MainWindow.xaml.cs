@@ -615,6 +615,13 @@ public partial class MainWindow : Window
 		}
 	}
 
+	private void Hyperlink_RequestNavigate( object sender, System.Windows.Navigation.RequestNavigateEventArgs e )
+	{
+		Process.Start( new ProcessStartInfo( e.Uri.AbsoluteUri ) { UseShellExecute = true } );
+
+		e.Handled = true;
+	}
+
 	private void Debug_AlanLeReset_Click( object sender, RoutedEventArgs e )
 	{
 		var app = App.Instance;
