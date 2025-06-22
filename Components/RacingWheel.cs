@@ -422,7 +422,7 @@ public class RacingWheel
 
 							var deltaLimit = DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionThreshold / 100f / 360f;
 
-							var deltaRate = (1f - (DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f)) * ((MathF.Sign(delta) == MathF.Sign(steeringWheelTorque360Hz)) ? 1f : MathF.Max(0.5f, 0.25f + ((1f - DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f) * 0.75f)));
+							var deltaRate = (1f - (DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f)) * ((MathF.Sign(delta) == MathF.Sign(steeringWheelTorque360Hz)) ? 1f : MathF.Max(0.75f, 0.25f + ((1f - DataContext.DataContext.Instance.Settings.RacingWheelSlewCompressionRate / 100f) * 0.75f)));
 
 							if ((deltaRate != 1) && (deltaAbs > deltaLimit))
 							{
