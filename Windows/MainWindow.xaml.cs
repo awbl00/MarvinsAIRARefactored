@@ -256,8 +256,10 @@ public partial class MainWindow : Window
 
 				case RacingWheel.Algorithm.ZeAlanLeTwist:
 					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
-					racingWheelDeltaLimitKnobControlVisibility = Visibility.Visible;
-					racingWheelDeltaLimiterBiasKnobControlVisibility = Visibility.Visible;
+					racingWheelSlewCompressionThresholdVisibility = Visibility.Visible;
+					racingWheelSlewCompressionRateVisibility = Visibility.Visible;
+					racingWheelTotalCompressionThresholdVisibility = Visibility.Visible;
+					racingWheelTotalCompressionRateVisibility = Visibility.Visible;
 					racingWheelCurbProtectionGroupBoxVisibility = Visibility.Visible;
 					break;
 			}
@@ -288,15 +290,15 @@ public partial class MainWindow : Window
 
 				switch ( app.Pedals.PedalsDevice )
 				{
-					case HPR.PedalsDevice.None:
+					case HPR.Pedals.None:
 						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsNone" ];
 						break;
 
-					case HPR.PedalsDevice.P1000:
+					case HPR.Pedals.P1000:
 						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsP1000" ];
 						break;
 
-					case HPR.PedalsDevice.P2000:
+					case HPR.Pedals.P2000:
 						app.MainWindow.Pedals_Device_Label.Content = localization[ "PedalsP2000" ];
 						break;
 				}

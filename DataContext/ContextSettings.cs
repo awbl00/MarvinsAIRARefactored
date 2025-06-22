@@ -14,7 +14,6 @@ public class ContextSettings
 	public float RacingWheelDeltaLimit { get; set; }
 	public float RacingWheelDetailBoostBias { get; set; }
 	public float RacingWheelDeltaLimiterBias { get; set; }
-	public float RacingWheelCompressionRate { get; set; }
 	public float RacingWheelOutputMinimum { get; set; }
 	public float RacingWheelOutputMaximum { get; set; }
 	public float RacingWheelOutputCurve { get; set; }
