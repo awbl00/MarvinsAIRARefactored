@@ -14,9 +14,12 @@ public class DirectInput
 		public required Joystick Joystick;
 		public required Guid InstanceGuid;
 		public required string ProductName;
+
 		public ObjectProperties? XAxisProperties = null;
 		public JoystickState JoystickState = new();
 		public JoystickUpdate[]? JoystickUpdates = null;
+		public bool Defunct = false;
+		public int NextRetryCounter = 0;
 	}
 
 	public const int DI_FFNOMINALMAX = 10000;
@@ -37,6 +40,9 @@ public class DirectInput
 	private Keyboard? _keyboard = null;
 	private KeyboardState _keyboardState = new();
 	private KeyboardUpdate[]? _keyboardUpdates = null;
+	private bool _keyboardDefunct = false;
+	private int _keyboardNextRetryCounter = 0;
+
 	private readonly Dictionary<Guid, JoystickInfo> _joystickInfoList = [];
 
 	private bool _forceFeedbackInitialized = false;
@@ -246,58 +252,109 @@ public class DirectInput
 
 	public void PollDevices( float deltaSeconds )
 	{
-		if ( _keyboard != null )
+		var app = App.Instance;
+
+		if ( app != null )
 		{
-			_keyboard.Poll();
-
-			_keyboard.GetCurrentState( ref _keyboardState );
-
-			_keyboardUpdates = _keyboard.GetBufferedData();
-		}
-
-		foreach ( var keyValuePair in _joystickInfoList )
-		{
-			var joystickInfo = keyValuePair.Value;
-
-			joystickInfo.Joystick.Poll();
-
-			joystickInfo.Joystick.GetCurrentState( ref joystickInfo.JoystickState );
-
-			joystickInfo.JoystickUpdates = joystickInfo.Joystick.GetBufferedData();
-
-			if ( joystickInfo.InstanceGuid == _forceFeedbackDeviceInstanceGuid )
+			if ( _keyboard != null )
 			{
-				if ( joystickInfo.XAxisProperties != null )
+				try
 				{
-					var lastForceFeedbackWheelPosition = ForceFeedbackWheelPosition;
+					if ( _keyboardDefunct )
+					{
+						_keyboardNextRetryCounter--;
 
-					ForceFeedbackWheelPosition = (float) 2f * ( joystickInfo.JoystickState.X - joystickInfo.XAxisProperties.Range.Minimum ) / ( joystickInfo.XAxisProperties.Range.Maximum - joystickInfo.XAxisProperties.Range.Minimum ) - 1f;
-					ForceFeedbackWheelVelocity = ( ForceFeedbackWheelPosition - lastForceFeedbackWheelPosition ) / deltaSeconds;
+						if ( _keyboardNextRetryCounter == 0 )
+						{
+							_keyboard.SetCooperativeLevel( app.MainWindow.WindowHandle, CooperativeLevel.NonExclusive | CooperativeLevel.Background );
+							_keyboard.Acquire();
+
+							_keyboardDefunct = false;
+						}
+					}
+					else
+					{
+						_keyboard.Poll();
+						_keyboard.GetCurrentState( ref _keyboardState );
+
+						_keyboardUpdates = _keyboard.GetBufferedData();
+					}
+				}
+				catch ( Exception )
+				{
+					_keyboardDefunct = true;
+					_keyboardNextRetryCounter = 120;
+					_keyboardUpdates = null;
 				}
 			}
-		}
 
-		if ( _keyboardUpdates != null )
-		{
-			var keyboardText = DataContext.DataContext.Instance.Localization[ "Keyboard" ];
-
-			foreach ( var keyboardUpdate in _keyboardUpdates )
+			foreach ( var keyValuePair in _joystickInfoList )
 			{
-				OnInput?.Invoke( keyboardText, KeyboardGuid, keyboardUpdate.RawOffset, keyboardUpdate.IsPressed );
-			}
-		}
+				var joystickInfo = keyValuePair.Value;
 
-		foreach ( var keyValuePair in _joystickInfoList )
-		{
-			var joystickInfo = keyValuePair.Value;
-
-			if ( joystickInfo.JoystickUpdates != null )
-			{
-				foreach ( var joystickUpdate in joystickInfo.JoystickUpdates )
+				try
 				{
-					if ( ( joystickUpdate.Offset >= JoystickOffset.Buttons0 ) && ( joystickUpdate.Offset <= JoystickOffset.Buttons127 ) )
+					if ( joystickInfo.Defunct )
 					{
-						OnInput?.Invoke( joystickInfo.ProductName, joystickInfo.InstanceGuid, joystickUpdate.Offset - JoystickOffset.Buttons0, joystickUpdate.Value != 0 );
+						joystickInfo.NextRetryCounter--;
+
+						if ( joystickInfo.NextRetryCounter == 0 )
+						{
+							joystickInfo.Joystick.SetCooperativeLevel( app.MainWindow.WindowHandle, CooperativeLevel.NonExclusive | CooperativeLevel.Background );
+							joystickInfo.Joystick.Acquire();
+
+							joystickInfo.Defunct = false;
+						}
+					}
+					else
+					{
+						joystickInfo.Joystick.Poll();
+						joystickInfo.Joystick.GetCurrentState( ref joystickInfo.JoystickState );
+
+						joystickInfo.JoystickUpdates = joystickInfo.Joystick.GetBufferedData();
+
+						if ( joystickInfo.InstanceGuid == _forceFeedbackDeviceInstanceGuid )
+						{
+							if ( joystickInfo.XAxisProperties != null )
+							{
+								var lastForceFeedbackWheelPosition = ForceFeedbackWheelPosition;
+
+								ForceFeedbackWheelPosition = (float) 2f * ( joystickInfo.JoystickState.X - joystickInfo.XAxisProperties.Range.Minimum ) / ( joystickInfo.XAxisProperties.Range.Maximum - joystickInfo.XAxisProperties.Range.Minimum ) - 1f;
+								ForceFeedbackWheelVelocity = ( ForceFeedbackWheelPosition - lastForceFeedbackWheelPosition ) / deltaSeconds;
+							}
+						}
+					}
+				}
+				catch ( Exception )
+				{
+					joystickInfo.Defunct = true;
+					joystickInfo.NextRetryCounter = 120;
+					joystickInfo.JoystickUpdates = null;
+				}
+			}
+
+			if ( _keyboardUpdates != null )
+			{
+				var keyboardText = DataContext.DataContext.Instance.Localization[ "Keyboard" ];
+
+				foreach ( var keyboardUpdate in _keyboardUpdates )
+				{
+					OnInput?.Invoke( keyboardText, KeyboardGuid, keyboardUpdate.RawOffset, keyboardUpdate.IsPressed );
+				}
+			}
+
+			foreach ( var keyValuePair in _joystickInfoList )
+			{
+				var joystickInfo = keyValuePair.Value;
+
+				if ( joystickInfo.JoystickUpdates != null )
+				{
+					foreach ( var joystickUpdate in joystickInfo.JoystickUpdates )
+					{
+						if ( ( joystickUpdate.Offset >= JoystickOffset.Buttons0 ) && ( joystickUpdate.Offset <= JoystickOffset.Buttons127 ) )
+						{
+							OnInput?.Invoke( joystickInfo.ProductName, joystickInfo.InstanceGuid, joystickUpdate.Offset - JoystickOffset.Buttons0, joystickUpdate.Value != 0 );
+						}
 					}
 				}
 			}

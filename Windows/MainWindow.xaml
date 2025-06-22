@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Title="{Binding Localization[AppTitle]}"
         Icon="/artwork/white_icon.ico"
-        MinWidth="1100"
+        MinWidth="550"
         MinHeight="350"
         Width="1100"
         Height="550"
@@ -56,6 +56,10 @@
     </Window.Style>
 
     <Grid>
+
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="RootScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+        </Grid.LayoutTransform>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -142,17 +146,17 @@
 
                                 <StackPanel Grid.Column="0" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[CurrentForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[PeakForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2" Margin="40,0,40,0">
                                     <Label Content="{Binding Localization[AutoForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" HorizontalAlignment="Center"/>
+                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
                             </Grid>
@@ -298,7 +302,7 @@
 
                             <controls:MairaSwitch Margin="10,20,10,0" IsOn="{Binding Settings.RacingWheelFadeEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeForceFeedback]}" ContextSwitches="{Binding Settings.RacingWheelFadeEnabledContextSwitches}"/>
                             <controls:MairaSwitch Margin="10,10,10,10" IsOn="{Binding Settings.RacingWheelAlwaysEnableFFB, Mode=TwoWay}" Title="{Binding Localization[AlwaysEnableFFB]}" Toggled="RacingWheel_AlwaysEnableFFB_MairaSwitch_Toggled"/>
-                            
+
                         </StackPanel>
 
                     </GroupBox>
@@ -323,7 +327,7 @@
                             </Grid.ColumnDefinitions>
 
                             <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.PedalsEnabled, Mode=TwoWay}"/>
-                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" VerticalAlignment="Center"/>
+                            <Label Grid.Column="1" x:Name="Pedals_Device_Label" Content="{Binding Localization[PedalsNone]}" Margin="0,10,10,10" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Padding="0" VerticalAlignment="Center"/>
                             <Image Grid.Column="3" Source="/Artwork/simagic_logo.png" Height="32" Margin="0,0,10,0"/>
 
                         </Grid>
@@ -711,7 +715,7 @@
                 <StackPanel Margin="10,10,10,20">
 
                     <Border Grid.Column="2" Margin="0,10,0,0" BorderThickness="1" BorderBrush="Gray" Background="#80000000">
-                        <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right"/>
+                        <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Border>
 
                     <Grid Margin="0,10,0,0">
@@ -760,10 +764,10 @@
 
                         <controls:MairaSwitch Grid.Column="0" IsOn="{Binding Settings.GraphInputTorque, Mode=TwoWay}" Title="{Binding Localization[InputTorque]}"/>
                         <controls:MairaSwitch Grid.Column="1" IsOn="{Binding Settings.GraphOutputTorque, Mode=TwoWay}" Title="{Binding Localization[OutputTorque]}"/>
-                    
+
                     </Grid>
 
-                    <Grid Margin="0,20,0,0">
+                    <Grid Margin="0,10,0,0">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -776,7 +780,7 @@
 
                     </Grid>
 
-                    <Grid Margin="0,20,0,0">
+                    <Grid Margin="0,10,0,0">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -866,31 +870,67 @@
 
                 <StackPanel Margin="10,10,10,20">
 
-                    <Grid Margin="0,10,0,0">
+                    <GroupBox Header="{Binding Localization[Language]}">
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid Margin="0,10,0,20">
 
-                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <ComboBox Grid.Row="0" x:Name="App_Language_ComboBox" Margin="10,10,10,0" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Settings.AppCurrentLanguageCode}" VerticalContentAlignment="Center"/>
+
+                            </Grid>
+
+                        </Grid>
+
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding Localization[AppWindow]}" Margin="0,10,0,0">
+
+                        <Grid Margin="0,10,0,20">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Label Grid.Row="0" Content="{Binding Localization[Language]}"/>
-
-                            <ComboBox Grid.Row="1" x:Name="App_Language_ComboBox" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Settings.AppCurrentLanguageCode}" VerticalContentAlignment="Center"/>
+                            <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
+                            <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
+                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
 
                         </Grid>
 
-                    </Grid>
+                    </GroupBox>
 
-                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
-                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
-                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}"/>
-                    <controls:MairaSwitch Margin="0,10,0,0" IsOn="{Binding Settings.AppAutomaticallyDownloadUpdates, Mode=TwoWay}" Title="{Binding Localization[AutomaticallyDownloadUpdates]}"/>
+                    <GroupBox Header="{Binding Localization[CloudService]}" Margin="0,10,0,0">
+
+                        <Grid Margin="0,10,0,20">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <controls:MairaSwitch Grid.Column="0" Grid.ColumnSpan="2" IsOn="{Binding Settings.AppCheckForUpdates, Mode=TwoWay}" Title="{Binding Localization[CheckForUpdates]}" Margin="0,10,0,0"/>
+                            <controls:MairaButton Grid.Column="2" x:Name="App_CheckNow_MairaButton" Title="{Binding Localization[CheckNow]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_binoculars.png" Click="App_CheckNow_MairaButton_Click"/>
+
+                        </Grid>
+
+                    </GroupBox>
 
                 </StackPanel>
 
@@ -904,16 +944,16 @@
 
                         <StackPanel>
 
-                            <Label x:Name="Debug_Label_1" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 1"/>
-                            <Label x:Name="Debug_Label_2" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 2"/>
-                            <Label x:Name="Debug_Label_3" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 3"/>
-                            <Label x:Name="Debug_Label_4" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 4"/>
-                            <Label x:Name="Debug_Label_5" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 5"/>
-                            <Label x:Name="Debug_Label_6" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 6"/>
-                            <Label x:Name="Debug_Label_7" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 7"/>
-                            <Label x:Name="Debug_Label_8" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 8"/>
-                            <Label x:Name="Debug_Label_9" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 9"/>
-                            <Label x:Name="Debug_Label_10" FontSize="37" FontFamily="Advanced LED Board-7" Padding="0" Content="Test 10"/>
+                            <Label x:Name="Debug_Label_1" FontSize="37" Padding="0" Content="Test 1"/>
+                            <Label x:Name="Debug_Label_2" FontSize="37" Padding="0" Content="Test 2"/>
+                            <Label x:Name="Debug_Label_3" FontSize="37" Padding="0" Content="Test 3"/>
+                            <Label x:Name="Debug_Label_4" FontSize="37" Padding="0" Content="Test 4"/>
+                            <Label x:Name="Debug_Label_5" FontSize="37" Padding="0" Content="Test 5"/>
+                            <Label x:Name="Debug_Label_6" FontSize="37" Padding="0" Content="Test 6"/>
+                            <Label x:Name="Debug_Label_7" FontSize="37" Padding="0" Content="Test 7"/>
+                            <Label x:Name="Debug_Label_8" FontSize="37" Padding="0" Content="Test 8"/>
+                            <Label x:Name="Debug_Label_9" FontSize="37" Padding="0" Content="Test 9"/>
+                            <Label x:Name="Debug_Label_10" FontSize="37" Padding="0" Content="Test 10"/>
 
                         </StackPanel>
 

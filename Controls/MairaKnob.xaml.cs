@@ -12,6 +12,8 @@ using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 using UserControl = System.Windows.Controls.UserControl;
 
+using PInvoke;
+
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.DataContext;
 using MarvinsAIRARefactored.Windows;
@@ -22,12 +24,14 @@ public partial class MairaKnob : UserControl
 {
 	private const int ResetHoldMilliseconds = 1000;
 
-	private Point _lastMousePosition;
-	private bool _isDragging = false;
 	private readonly RotateTransform _knobRotation = new( 0, 0.5, 0.5 );
-	private readonly DispatcherTimer _holdTimer = new() { Interval = TimeSpan.FromMilliseconds( 20 ) };
-	private DateTime _rightClickStartTime;
-	private bool _isRightClickHeld;
+
+	private bool _isDragging = false;
+	private POINT _draggingCenter;
+
+	private readonly DispatcherTimer _resetDispatcherTimer = new() { Interval = TimeSpan.FromMilliseconds( 20 ) };
+	private DateTime _resetStartTime;
+	private bool _isResetting;
 
 	public MairaKnob()
 	{
@@ -35,7 +39,7 @@ public partial class MairaKnob : UserControl
 
 		KnobImage.RenderTransform = _knobRotation;
 
-		_holdTimer.Tick += HoldTimer_Tick;
+		_resetDispatcherTimer.Tick += ResetDispatcherTimer_Tick;
 
 		UpdateLabelVisual();
 	}
@@ -165,22 +169,15 @@ public partial class MairaKnob : UserControl
 
 	private void KnobImage_Image_MouseDown( object sender, MouseButtonEventArgs e )
 	{
-		Mouse.Capture( (Image) sender );
-		Mouse.OverrideCursor = Cursors.SizeWE;
-
-		_lastMousePosition = e.GetPosition( null );
-
-		_isDragging = true;
-	}
-
-	private void KnobImage_Image_MouseUp( object sender, MouseButtonEventArgs e )
-	{
-		if ( _isDragging )
+		if ( e.LeftButton == MouseButtonState.Pressed )
 		{
-			Mouse.Capture( null );
-			Mouse.OverrideCursor = null;
+			_isDragging = true;
 
-			_isDragging = false;
+			User32.GetCursorPos( out _draggingCenter );
+
+			_ = User32.ShowCursor( false );
+
+			Mouse.Capture( (Image) sender );
 		}
 	}
 
@@ -188,13 +185,32 @@ public partial class MairaKnob : UserControl
 	{
 		if ( _isDragging )
 		{
-			var newPosition = e.GetPosition( null );
+			User32.GetCursorPos( out POINT current );
 
-			var delta = ( newPosition.X - _lastMousePosition.X ) + ( newPosition.Y - _lastMousePosition.Y );
+			var delta = ( current.x - _draggingCenter.x ) + ( current.y - _draggingCenter.y );
 
-			_lastMousePosition = newPosition;
+			if ( delta != 0 )
+			{
+				AdjustValue( delta * SmallValueChangeStep * 0.25f );
 
-			AdjustValue( (float) delta * SmallValueChangeStep );
+				User32.SetCursorPos( _draggingCenter.x, _draggingCenter.y );
+			}
+		}
+	}
+
+	private void KnobImage_Image_MouseUp( object sender, MouseButtonEventArgs e )
+	{
+		if ( _isDragging && ( e.ChangedButton == MouseButton.Left ) )
+		{
+			EndDrag();
+		}
+	}
+
+	private void KnobImage_Image_LostMouseCapture( object sender, MouseEventArgs e )
+	{
+		if ( _isDragging )
+		{
+			EndDrag();
 		}
 	}
 
@@ -232,18 +248,18 @@ public partial class MairaKnob : UserControl
 
 		e.Handled = true;
 
-		_rightClickStartTime = DateTime.Now;
-		_isRightClickHeld = true;
+		_resetStartTime = DateTime.Now;
+		_isResetting = true;
 
-		_holdTimer.Start();
+		_resetDispatcherTimer.Start();
 
 		Mouse.OverrideCursor = Cursors.None;
 
 		CursorCountdownOverlay.Start();
 	}
 
-	private void Value_Label_PreviewMouseRightButtonUp( object sender, MouseButtonEventArgs e ) => CancelHold();
-	private void Value_Label_MouseLeave( object sender, MouseEventArgs e ) => CancelHold();
+	private void Value_Label_PreviewMouseRightButtonUp( object sender, MouseButtonEventArgs e ) => CancelReset();
+	private void Value_Label_MouseLeave( object sender, MouseEventArgs e ) => CancelReset();
 
 	#endregion
 
@@ -257,6 +273,14 @@ public partial class MairaKnob : UserControl
 		Value = newValue;
 
 		ValueChangedCallback?.Invoke( newValue );
+	}
+	private void EndDrag()
+	{
+		_isDragging = false;
+
+		_ = User32.ShowCursor( true );
+
+		Mouse.Capture( null );
 	}
 
 	private void UpdateLabelVisual()
@@ -342,14 +366,14 @@ public partial class MairaKnob : UserControl
 		}
 	}
 
-	private void HoldTimer_Tick( object? sender, EventArgs e )
+	private void ResetDispatcherTimer_Tick( object? sender, EventArgs e )
 	{
-		if ( !_isRightClickHeld )
+		if ( !_isResetting )
 		{
 			return;
 		}
 
-		var elapsed = ( DateTime.Now - _rightClickStartTime ).TotalMilliseconds;
+		var elapsed = ( DateTime.Now - _resetStartTime ).TotalMilliseconds;
 		var progress = 1 - Math.Min( 1, elapsed / ResetHoldMilliseconds );
 
 		CursorCountdownOverlay.UpdateProgress( progress );
@@ -361,15 +385,15 @@ public partial class MairaKnob : UserControl
 				Value = (float) DefaultValue;
 			}
 
-			CancelHold();
+			CancelReset();
 		}
 	}
 
-	private void CancelHold()
+	private void CancelReset()
 	{
-		_isRightClickHeld = false;
+		_isResetting = false;
 
-		_holdTimer.Stop();
+		_resetDispatcherTimer.Stop();
 
 		CursorCountdownOverlay.Stop();
 

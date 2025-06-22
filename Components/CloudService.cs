@@ -14,6 +14,9 @@ public class CloudService
 {
 	public Guid NetworkIdGuid { get; private set; } = Guid.Empty;
 
+	public bool CheckingForUpdate { get; private set; } = false;
+	public bool DownloadingUpdate { get; private set; } = false;
+
 	public void Initialize()
 	{
 		var app = App.Instance;
@@ -57,6 +60,10 @@ public class CloudService
 
 			try
 			{
+				CheckingForUpdate = true;
+
+				app.MainWindow.UpdateStatus();
+
 				var getCurrentVersionUrl = $"https://herboldracing.com/wp-json/maira/v2/get-current-version?id={NetworkIdGuid}";
 
 				using var httpClient = new HttpClient();
@@ -89,26 +96,24 @@ public class CloudService
 							{
 								var downloadUpdate = false;
 
-								if ( DataContext.DataContext.Instance.Settings.AppAutomaticallyDownloadUpdates )
+								app.Logger.WriteLine( "[CloudService] Asking user if they want to download the update" );
+
+								var window = new NewVersionAvailableWindow( getCurrentVersionResponse.currentVersion, getCurrentVersionResponse.changeLog )
 								{
-									downloadUpdate = true;
-								}
-								else
-								{
-									app.Logger.WriteLine( "[CloudService] Asking user if they want to download the update" );
+									Owner = app.MainWindow
+								};
 
-									var window = new NewVersionAvailableWindow( getCurrentVersionResponse.currentVersion, getCurrentVersionResponse.changeLog )
-									{
-										Owner = app.MainWindow
-									};
+								window.ShowDialog();
 
-									window.ShowDialog();
-
-									downloadUpdate = window.DownloadUpdate;
-								}
+								downloadUpdate = window.DownloadUpdate;
 
 								if ( downloadUpdate )
 								{
+									CheckingForUpdate = false;
+									DownloadingUpdate = true;
+
+									app.MainWindow.UpdateStatus();
+
 									app.Logger.WriteLine( $"[CloudService] Downloading update from {getCurrentVersionResponse.downloadUrl}" );
 
 									var httpResponseMessage = await httpClient.GetAsync( getCurrentVersionResponse.downloadUrl, HttpCompletionOption.ResponseHeadersRead );
@@ -169,10 +174,20 @@ public class CloudService
 						}
 					}
 				}
+
+				CheckingForUpdate = false;
+				DownloadingUpdate = false;
+
+				app.MainWindow.UpdateStatus();
 			}
 			catch ( Exception exception )
 			{
 				app.Logger.WriteLine( $"[CloudService] Failed trying to check for updates: {exception.Message.Trim()}" );
+
+				CheckingForUpdate = false;
+				DownloadingUpdate = false;
+
+				app.MainWindow.UpdateStatus();
 			}
 
 			app.Logger.WriteLine( "[CloudService] <<< CheckForUpdates" );

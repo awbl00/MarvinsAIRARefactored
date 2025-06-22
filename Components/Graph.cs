@@ -85,7 +85,7 @@ public class Graph
 			{
 				{ LayerIndex.InputTorque, DataContext.DataContext.Instance.Localization[ "InputTorque" ] },
 				{ LayerIndex.OutputTorque, DataContext.DataContext.Instance.Localization[ "OutputTorque" ] },
-				{ LayerIndex.InputTorque60Hz, DataContext.DataContext.Instance.Localization[ "InputTorque60hz" ] },
+				{ LayerIndex.InputTorque60Hz, DataContext.DataContext.Instance.Localization[ "InputTorque60Hz" ] },
 				{ LayerIndex.InputLFE, DataContext.DataContext.Instance.Localization[ "InputLFE" ] },
 				{ LayerIndex.ClutchPedalHaptics, DataContext.DataContext.Instance.Localization[ "ClutchPedalHaptics" ] },
 				{ LayerIndex.BrakePedalHaptics, DataContext.DataContext.Instance.Localization[ "BrakePedalHaptics" ] },
@@ -144,7 +144,7 @@ public class Graph
 
 			Array.Clear( _colorMixArray );
 
-			for ( var layerIndex = LayerIndex.InputTorque60Hz; layerIndex < LayerIndex.Count; layerIndex++ )
+			for ( var layerIndex = LayerIndex.InputTorque; layerIndex < LayerIndex.Count; layerIndex++ )
 			{
 				var showLayer = layerIndex switch
 				{

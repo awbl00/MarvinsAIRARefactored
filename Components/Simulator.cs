@@ -164,6 +164,8 @@ public class Simulator
 
 			_needToUpdateFromContextSettings = true;
 
+			app.RacingWheel.ResetForceFeedback = true;
+
 			app.AdminBoxx.SimulatorConnected();
 
 			app.Logger.WriteLine( "[Simulator] <<< OnConnected" );

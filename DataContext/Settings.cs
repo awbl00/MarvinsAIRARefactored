@@ -3695,6 +3695,53 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - UI scale
+
+	private float _appUIScale = 1f;
+
+	public float AppUIScale
+	{
+		get => _appUIScale;
+
+		set
+		{
+			value = Math.Clamp( value, 0.25f, 4f );
+
+			if ( value != _appUIScale )
+			{
+				_appUIScale = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			app?.MainWindow.UpdateScale();
+
+			AppUIScaleString = $"{_appUIScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _appUIScaleString = string.Empty;
+
+	[XmlIgnore]
+	public string AppUIScaleString
+	{
+		get => _appUIScaleString;
+
+		set
+		{
+			if ( value != _appUIScaleString )
+			{
+				_appUIScaleString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
 	#region App - Check for updates
 
 	private bool _appCheckForUpdates = true;
@@ -3708,27 +3755,6 @@ public class Settings : INotifyPropertyChanged
 			if ( value != _appCheckForUpdates )
 			{
 				_appCheckForUpdates = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region App - Automatically download updates
-
-	private bool _appAutomaticallyDownloadUpdates = true;
-
-	public bool AppAutomaticallyDownloadUpdates
-	{
-		get => _appAutomaticallyDownloadUpdates;
-
-		set
-		{
-			if ( value != _appAutomaticallyDownloadUpdates )
-			{
-				_appAutomaticallyDownloadUpdates = value;
 
 				OnPropertyChanged();
 			}
