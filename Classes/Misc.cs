@@ -209,7 +209,7 @@ public class Misc
 
 				var shortcut = (IWshShortcut) shell.CreateShortcut( shortcutPath );
 
-				shortcut.TargetPath = Assembly.GetExecutingAssembly().Location;
+				shortcut.TargetPath = Environment.ProcessPath;
 				shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 				shortcut.Save();
 			}
