@@ -123,7 +123,23 @@ public partial class App : Application
 			MainWindow.Resources = Current.Resources;
 
 			MainWindow.Initialize();
-			MainWindow.Show();
+
+			var showWindow = true;
+
+			if ( DataContext.DataContext.Instance.Settings.AppStartMinimized )
+			{
+				MainWindow.WindowState = WindowState.Minimized;
+
+				if ( DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+				{
+					showWindow = false;
+				}
+			}
+
+			if ( showWindow )
+			{
+				MainWindow.Show();
+			}
 
 			if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
 			{

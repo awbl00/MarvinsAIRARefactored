@@ -3551,6 +3551,27 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Start minimized
+
+	private bool _appStartMinimized = false;
+
+	public bool AppStartMinimized
+	{
+		get => _appStartMinimized;
+
+		set
+		{
+			if ( value != _appStartMinimized )
+			{
+				_appStartMinimized = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
 	#region App - Minimize to system tray
 
 	private bool _appMinimizeToSystemTray = false;

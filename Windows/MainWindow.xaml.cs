@@ -1,16 +1,16 @@
 ﻿
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.ComponentModel;
 
+using Application = System.Windows.Application;
+using Brushes = System.Windows.Media.Brushes;
 using ScrollEventArgs = System.Windows.Controls.Primitives.ScrollEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
-using Brushes = System.Windows.Media.Brushes;
-using Application = System.Windows.Application;
 
 using Simagic;
 
@@ -391,7 +391,17 @@ public partial class MainWindow : Window
 					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ShowWindow" ], null, ( s, e ) => RestoreFromTray() );
 					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ExitApp" ], null, ( s, e ) => ExitApp() );
 
-					_notifyIcon.DoubleClick += ( s, e ) => RestoreFromTray();
+					_notifyIcon.MouseClick += ( s, e ) =>
+					{
+						if ( e.Button == MouseButtons.Left )
+						{
+							RestoreFromTray();
+						}
+						else if ( e.Button == MouseButtons.Right )
+						{
+							_notifyIcon.ContextMenuStrip?.Show( System.Windows.Forms.Cursor.Position );
+						}
+					};
 				}
 			} );
 		}
@@ -459,13 +469,16 @@ public partial class MainWindow : Window
 	{
 		if ( _initialized )
 		{
-			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+			if ( IsVisible && ( WindowState == WindowState.Normal ) )
+			{
+				var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 
-			var rectangle = settings.AppWindowPositionAndSize;
+				var rectangle = settings.AppWindowPositionAndSize;
 
-			rectangle.Location = new System.Drawing.Point( (int) Left, (int) Top );
+				rectangle.Location = new System.Drawing.Point( (int) RestoreBounds.Left, (int) RestoreBounds.Top );
 
-			settings.AppWindowPositionAndSize = rectangle;
+				settings.AppWindowPositionAndSize = rectangle;
+			}
 		}
 	}
 
@@ -473,13 +486,16 @@ public partial class MainWindow : Window
 	{
 		if ( _initialized )
 		{
-			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+			if ( IsVisible && ( WindowState == WindowState.Normal ) )
+			{
+				var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 
-			var rectangle = settings.AppWindowPositionAndSize;
+				var rectangle = settings.AppWindowPositionAndSize;
 
-			rectangle.Size = new System.Drawing.Size( (int) Width, (int) Height );
+				rectangle.Size = new System.Drawing.Size( (int) RestoreBounds.Width, (int) RestoreBounds.Height );
 
-			settings.AppWindowPositionAndSize = rectangle;
+				settings.AppWindowPositionAndSize = rectangle;
+			}
 		}
 	}
 
