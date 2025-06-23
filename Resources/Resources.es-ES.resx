@@ -197,7 +197,7 @@
     <comment>Racing wheel</comment>
   </data>
   <data name="Power" xml:space="preserve">
-    <value>Intensidad</value>
+    <value>Encendido</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="RacingWheel" xml:space="preserve">
@@ -205,7 +205,7 @@
     <comment>Tab item</comment>
   </data>
   <data name="SteeringDevice" xml:space="preserve">
-    <value>Dispositivo de Dirección</value>
+    <value>Base del Volante</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="Reset" xml:space="preserve">
@@ -601,7 +601,7 @@
     <comment>Graph</comment>
   </data>
   <data name="Variance" xml:space="preserve">
-    <value>Varianza</value>
+    <value> Variación</value>
     <comment>Graph</comment>
   </data>
   <data name="StandardDeviation" xml:space="preserve">

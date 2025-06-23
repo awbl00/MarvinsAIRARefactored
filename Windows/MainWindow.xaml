@@ -22,7 +22,9 @@
         WindowStartupLocation="CenterScreen"
         LocationChanged="Window_LocationChanged"
         SizeChanged="Window_SizeChanged"
-        ContentRendered="Window_ContentRendered">
+        ContentRendered="Window_ContentRendered"
+        StateChanged="Window_StateChanged"
+        Closing="Window_Closing">
 
     <Window.DataContext>
         <Binding Source="{x:Static datacontext:DataContext.Instance}"/>
@@ -58,7 +60,7 @@
     <Grid>
 
         <Grid.LayoutTransform>
-            <ScaleTransform x:Name="RootScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+            <ScaleTransform x:Name="RootScaleTransform" ScaleX="{Binding Settings.AppUIScale}" ScaleY="{Binding Settings.AppUIScale}"/>
         </Grid.LayoutTransform>
 
         <Grid.RowDefinitions>
@@ -905,11 +907,18 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <controls:MairaSwitch Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppTopmostWindowEnabled, Mode=TwoWay}" Title="{Binding Localization[TopmostWindow]}"/>
                             <controls:MairaSwitch Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppRememberWindowPositionAndSize, Mode=TwoWay}" Title="{Binding Localization[RememberWindowPositionAndSize]}"/>
-                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalAlignment="Center" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
+                            <controls:MairaSwitch Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppStartWithWindows, Mode=TwoWay}" Title="{Binding Localization[StartWithWindows]}"/>
+                            <controls:MairaSwitch Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppStartMinimized, Mode=TwoWay}" Title="{Binding Localization[StartMinimized]}"/>
+                            <controls:MairaSwitch Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0" IsOn="{Binding Settings.AppMinimizeToSystemTray, Mode=TwoWay}" Title="{Binding Localization[MinimizeToSystemTray]}"/>
+
+                            <controls:MairaKnob Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" VerticalAlignment="Center" Margin="10,0,10,33" Title="{Binding Localization[UIScale]}" Value="{Binding Settings.AppUIScale, Mode=TwoWay}" ValueString="{Binding Settings.AppUIScaleString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.05" RotationMultiplier="10" DefaultValue="1"/>
 
                         </Grid>
 
@@ -929,6 +938,372 @@
                             <controls:MairaButton Grid.Column="2" x:Name="App_CheckNow_MairaButton" Title="{Binding Localization[CheckNow]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_binoculars.png" Click="App_CheckNow_MairaButton_Click"/>
 
                         </Grid>
+
+                    </GroupBox>
+
+                </StackPanel>
+
+            </TabItem>
+
+            <TabItem x:Name="Contribute_TabItem" Header="{Binding Localization[Contribute]}">
+
+                <StackPanel Margin="10,10,10,20">
+
+                    <GroupBox Header="{Binding Localization[CodeContributions]}">
+
+                        <StackPanel Margin="0,10,0,10">
+
+                            <TextBlock TextWrapping="Wrap">
+                                
+                                <Run Text="{Binding Localization[CodeContributionsText], Mode=OneWay}" Foreground="White"/>
+                                <Hyperlink NavigateUri="https://github.com/mherbold/MarvinsAIRARefactored" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Localization[GitHubRepository], Mode=OneWay}"/></Hyperlink>
+
+                            </TextBlock>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,20,0,10">
+                                
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+                                <Run Text="{Binding Localization[Contributors], Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+
+                            </TextBlock>
+
+                            <UniformGrid Columns="1" HorizontalAlignment="Center">
+
+                                <UniformGrid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="DeepSkyBlue" />
+                                    </Style>
+                                </UniformGrid.Resources>
+
+                                <TextBlock Text="Matthew Brittle"/>
+                                <TextBlock Text="Alan Le"/>
+
+                            </UniformGrid>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding Localization[TranslationContributions]}" Margin="0,10,0,0">
+
+                        <StackPanel Margin="0,10,0,10">
+
+                            <TextBlock TextWrapping="Wrap">
+                                
+                                <Run Text="{Binding Localization[TranslationContributionsText], Mode=OneWay}" Foreground="White"/>
+                                <Hyperlink NavigateUri="https://discord.com/channels/1353509415571165204/1385439382693216297" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Localization[TranslationsDiscordChannel], Mode=OneWay}"/></Hyperlink>
+
+                            </TextBlock>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,20,0,10">
+                                
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+                                <Run Text="{Binding Localization[Contributors], Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+
+                            </TextBlock>
+
+                            <UniformGrid Columns="2">
+
+                                <UniformGrid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="DeepSkyBlue" />
+                                    </Style>
+                                </UniformGrid.Resources>
+
+                                <!--Jakub Trinkl-->
+                                <TextBlock Text="Jakub Trinkl - Czech - Čestina"/>
+                                <!--Vpolne-->
+                                <TextBlock Text="Stepan Kutyrev - Russian - Русский"/>
+                                <!--XKRamires-->
+                                <TextBlock Text="Raul Ramires - Portuguese (Brazil) - Português (Brazil)"/>
+                                <!--LAS-Zeppelin83-->
+                                <TextBlock Text="Michael Marcotte - French (Canada) - Français (Canada)"/>
+                                <!--Rene-->
+                                <TextBlock Text="Rene - German - Deutsch"/>
+                                <!--Rodas007-->
+                                <TextBlock Text="Rodas007 - Spanish - Español"/>
+
+                            </UniformGrid>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
+                </StackPanel>
+
+            </TabItem>
+
+            <TabItem x:Name="Donate_TabItem" Header="{Binding Localization[Donate]}">
+
+                <StackPanel Margin="10,10,10,20">
+
+                    <GroupBox Header="{Binding Localization[Donations]}">
+
+                        <StackPanel Margin="0,10,0,10">
+
+                            <TextBlock TextWrapping="Wrap">
+                                
+                                <Run Text="{Binding Localization[DonationsText], Mode=OneWay}" Foreground="White"/>
+                                <Hyperlink NavigateUri="https://buymeacoffee.com/marvinherbold" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="{Binding Localization[BuyMeACoffee], Mode=OneWay}"/></Hyperlink>
+
+                            </TextBlock>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,20,0,10">
+                                
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+                                <Run Text="{Binding Localization[SuperDonors], Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+
+                            </TextBlock>
+
+                            <UniformGrid Columns="3">
+
+                                <UniformGrid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="DeepSkyBlue" />
+                                    </Style>
+                                </UniformGrid.Resources>
+
+                                <TextBlock Text="@lucciano.netto"/>
+                                <TextBlock Text="Bruno Cerdeira Santos"/>
+                                <TextBlock Text="DIOGO XAVIER OLIVEIRA"/>
+                                <TextBlock Text="Herbert Heissenberger"/>
+                                <TextBlock Text="Robert JL Henry"/>
+                                <TextBlock Text="Ken Osborne"/>
+                                <TextBlock Text="Chad McNeese"/>
+                                <TextBlock Text="Marcos Martins de Souza"/>
+                                <TextBlock Text="Erin Andrusak"/>
+                                <TextBlock Text="Thiago G de O Morgado"/>
+                                <TextBlock Text="Matthew Davids"/>
+                                <TextBlock Text="Travis Boudreaux"/>
+
+                            </UniformGrid>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,20,0,10">
+                                
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+                                <Run Text="{Binding Localization[Donors], Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+
+                            </TextBlock>
+
+                            <UniformGrid Columns="3">
+
+                                <UniformGrid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="LimeGreen" />
+                                    </Style>
+                                </UniformGrid.Resources>
+
+                                <TextBlock Text="Ade"/>
+                                <TextBlock Text="Adrian G Rubio"/>
+                                <TextBlock Text="Ahmad El Baba"/>
+                                <TextBlock Text="Alan"/>
+                                <TextBlock Text="Alan King"/>
+                                <TextBlock Text="Alberto"/>
+                                <TextBlock Text="Alberto Rama"/>
+                                <TextBlock Text="Alexander Socher"/>
+                                <TextBlock Text="@alcir_lima_dp"/>
+                                <TextBlock Text="Andreas Mauchle"/>
+                                <TextBlock Text="Ari D Sherwood"/>
+                                <TextBlock Text="ARMracing"/>
+                                <TextBlock Text="AUSTIN ELLIOTT"/>
+                                <TextBlock Text="@azmath16"/>
+                                <TextBlock Text="Ba Anh Vu"/>
+                                <TextBlock Text="ben"/>
+                                <TextBlock Text="Ben Holmes"/>
+                                <TextBlock Text="Binesh Lad"/>
+                                <TextBlock Text="BorkulusRift"/>
+                                <TextBlock Text="Brendan Hobbart"/>
+                                <TextBlock Text="BZ"/>
+                                <TextBlock Text="Camron Frederick"/>
+                                <TextBlock Text="candido martinez"/>
+                                <TextBlock Text="Carlos Mancuso"/>
+                                <TextBlock Text="Chad Buchanan"/>
+                                <TextBlock Text="Chase"/>
+                                <TextBlock Text="choppy bristow"/>
+                                <TextBlock Text="Chris wilson"/>
+                                <TextBlock Text="Christian Elsinger"/>
+                                <TextBlock Text="Christian O"/>
+                                <TextBlock Text="Christian Scherf"/>
+                                <TextBlock Text="CJ Kent"/>
+                                <TextBlock Text="Cori Pandolfi"/>
+                                <TextBlock Text="Craig Miller"/>
+                                <TextBlock Text="Crispin Williamson"/>
+                                <TextBlock Text="CRISTIAN VILLENA SANCHEZ"/>
+                                <TextBlock Text="Dan"/>
+                                <TextBlock Text="Daniel Cohen"/>
+                                <TextBlock Text="Daniel König"/>
+                                <TextBlock Text="Daniel R"/>
+                                <TextBlock Text="Dave Cam"/>
+                                <TextBlock Text="Dave G"/>
+                                <TextBlock Text="David"/>
+                                <TextBlock Text="David Payne"/>
+                                <TextBlock Text="didier porte"/>
+                                <TextBlock Text="Dirk Ehrhardt"/>
+                                <TextBlock Text="EatisLee"/>
+                                <TextBlock Text="Elprimartin"/>
+                                <TextBlock Text="@eliassomo97"/>
+                                <TextBlock Text="@elimendozaaltamira"/>
+                                <TextBlock Text="Enrico castellano"/>
+                                <TextBlock Text="FABIO R QUEIROZ"/>
+                                <TextBlock Text="Flavio A Mendes"/>
+                                <TextBlock Text="Franck PELLOUX"/>
+                                <TextBlock Text="Frederick J Haag"/>
+                                <TextBlock Text="@fuelpodcast"/>
+                                <TextBlock Text="G. Balla"/>
+                                <TextBlock Text="@G83MIKE"/>
+                                <TextBlock Text="Gareth Bowen"/>
+                                <TextBlock Text="Geert Van Laere"/>
+                                <TextBlock Text="Gerrit van Bommel"/>
+                                <TextBlock Text="GingaNinjaRacing"/>
+                                <TextBlock Text="Glen D Blanchard DDS"/>
+                                <TextBlock Text="Grimaldi Jean"/>
+                                <TextBlock Text="Grimax Racing"/>
+                                <TextBlock Text="Greg Obrigavitch"/>
+                                <TextBlock Text="Greg Ogilvie"/>
+                                <TextBlock Text="GUIDOTTI"/>
+                                <TextBlock Text="Halan Williams"/>
+                                <TextBlock Text="hamilton smith"/>
+                                <TextBlock Text="Haralambos Babaletskos"/>
+                                <TextBlock Text="HG Vosmeijer"/>
+                                <TextBlock Text="Hugo"/>
+                                <TextBlock Text="illuminodie"/>
+                                <TextBlock Text="J van Zuijlekom"/>
+                                <TextBlock Text="Jai Cook"/>
+                                <TextBlock Text="Jakub Trinkl"/>
+                                <TextBlock Text="Janekeyu"/>
+                                <TextBlock Text="Jason"/>
+                                <TextBlock Text="Javier Montero Isusi"/>
+                                <TextBlock Text="Jeff Fritscher"/>
+                                <TextBlock Text="jeremy"/>
+                                <TextBlock Text="Jeroni Fajardo"/>
+                                <TextBlock Text="Jesse Moseley"/>
+                                <TextBlock Text="Joachim Osbeck"/>
+                                <TextBlock Text="JOAO BATISTA"/>
+                                <TextBlock Text="João Carriço"/>
+                                <TextBlock Text="Joe Pearson"/>
+                                <TextBlock Text="@joeyladouceur"/>
+                                <TextBlock Text="Johan Grankvist"/>
+                                <TextBlock Text="John Cherry"/>
+                                <TextBlock Text="John Ebersole"/>
+                                <TextBlock Text="John McCallion"/>
+                                <TextBlock Text="John Millet"/>
+                                <TextBlock Text="Jonathan E Marshall"/>
+                                <TextBlock Text="joy perez"/>
+                                <TextBlock Text="Juan Lu"/>
+                                <TextBlock Text="Julian"/>
+                                <TextBlock Text="Karl Thoroddsen"/>
+                                <TextBlock Text="Kevin Burke"/>
+                                <TextBlock Text="Kevin J Fanning"/>
+                                <TextBlock Text="klaas lageman"/>
+                                <TextBlock Text="Knosby"/>
+                                <TextBlock Text="Lufino"/>
+                                <TextBlock Text="Luka"/>
+                                <TextBlock Text="Maciej Tonderski"/>
+                                <TextBlock Text="Manhar G Dalal"/>
+                                <TextBlock Text="Marco"/>
+                                <TextBlock Text="marcus iglesias de souza oliveira"/>
+                                <TextBlock Text="Marin Marinov"/>
+                                <TextBlock Text="Martin Heidenbluth"/>
+                                <TextBlock Text="Mark Fleming"/>
+                                <TextBlock Text="Mark G"/>
+                                <TextBlock Text="Mark R McLewee"/>
+                                <TextBlock Text="Markus Kathan"/>
+                                <TextBlock Text="Marshall"/>
+                                <TextBlock Text="Massimo Martiglia"/>
+                                <TextBlock Text="Matteo Di Francesxo"/>
+                                <TextBlock Text="Matusz Attila"/>
+                                <TextBlock Text="Matt Swift"/>
+                                <TextBlock Text="Maxwell Giacomazzi"/>
+                                <TextBlock Text="M C Hastrich"/>
+                                <TextBlock Text="Michael Buckley"/>
+                                <TextBlock Text="Michael Gair"/>
+                                <TextBlock Text="Michael Othon"/>
+                                <TextBlock Text="Michie"/>
+                                <TextBlock Text="Miguel Angel Casado González"/>
+                                <TextBlock Text="Mike M"/>
+                                <TextBlock Text="Mikey Polard"/>
+                                <TextBlock Text="@millsdo"/>
+                                <TextBlock Text="Mitchell Bowen"/>
+                                <TextBlock Text="MR A M HALL"/>
+                                <TextBlock Text="Mr Kurt Nicholson"/>
+                                <TextBlock Text="Maksym Palazov"/>
+                                <TextBlock Text="Nash Milincic"/>
+                                <TextBlock Text="Nelson Rivera"/>
+                                <TextBlock Text="Nicholas Williams"/>
+                                <TextBlock Text="Noah Rusk"/>
+                                <TextBlock Text="@ nzkrems"/>
+                                <TextBlock Text="Ole"/>
+                                <TextBlock Text="olegs hanins"/>
+                                <TextBlock Text="Olly"/>
+                                <TextBlock Text="Omar Carlet"/>
+                                <TextBlock Text="Pan-Am Racing"/>
+                                <TextBlock Text="Panayiotis Papaioannou"/>
+                                <TextBlock Text="Paolo"/>
+                                <TextBlock Text="Patrick Park"/>
+                                <TextBlock Text="Patrick Rochadel"/>
+                                <TextBlock Text="Paul Mathie"/>
+                                <TextBlock Text="Peynado"/>
+                                <TextBlock Text="Philippe Jean"/>
+                                <TextBlock Text="Raphael"/>
+                                <TextBlock Text="Rene Vorwerk"/>
+                                <TextBlock Text="Rick"/>
+                                <TextBlock Text="Robert Gerke"/>
+                                <TextBlock Text="Robert Perry"/>
+                                <TextBlock Text="Robert Watson"/>
+                                <TextBlock Text="Rodrigo Ribeiro R S lima"/>
+                                <TextBlock Text="Rony Issak"/>
+                                <TextBlock Text="Rowly"/>
+                                <TextBlock Text="Rubén Ropero-Ruiz"/>
+                                <TextBlock Text="Ryan Bath"/>
+                                <TextBlock Text="Ryan Feltrin"/>
+                                <TextBlock Text="S.Schels"/>
+                                <TextBlock Text="Salvatore Palomba"/>
+                                <TextBlock Text="Sascha"/>
+                                <TextBlock Text="Sebastian"/>
+                                <TextBlock Text="SEBASTIAO FERREIRA"/>
+                                <TextBlock Text="Sean Symes"/>
+                                <TextBlock Text="Sergio Junior"/>
+                                <TextBlock Text="Sergio Macias"/>
+                                <TextBlock Text="Shane Cochran"/>
+                                <TextBlock Text="Shane Gleeson"/>
+                                <TextBlock Text="Shawn L Parrish"/>
+                                <TextBlock Text="@sidgeracing"/>
+                                <TextBlock Text="Simon A Todd"/>
+                                <TextBlock Text="Simon Racicot"/>
+                                <TextBlock Text="Stanislav Boldyryev"/>
+                                <TextBlock Text="Steve  T"/>
+                                <TextBlock Text="Steven Barker"/>
+                                <TextBlock Text="steven slater"/>
+                                <TextBlock Text="stuart h ware"/>
+                                <TextBlock Text="T"/>
+                                <TextBlock Text="Theodore J Tadeusiak"/>
+                                <TextBlock Text="Thomas M Crow"/>
+                                <TextBlock Text="Timothy Craig"/>
+                                <TextBlock Text="Timothy Moore"/>
+                                <TextBlock Text="Todd Hayne"/>
+                                <TextBlock Text="Tom Weston"/>
+                                <TextBlock Text="Tomáš Šulek"/>
+                                <TextBlock Text="Tony M"/>
+                                <TextBlock Text="Travis Rhoads"/>
+                                <TextBlock Text="Tripp Lanier"/>
+                                <TextBlock Text="Tyler Hagan"/>
+                                <TextBlock Text="V A Parnell Jr MD"/>
+                                <TextBlock Text="William Daily Jr"/>
+                                <TextBlock Text="xiaofan shi"/>
+                                <TextBlock Text="Yafar Abdala."/>
+                                <TextBlock Text="YAMINE TAIEB"/>
+                                <TextBlock Text="Yann LE DOUSSAL"/>
+                                <TextBlock Text="zdenek.kaska"/>
+                                <TextBlock Text="arcaias"/>
+                                <TextBlock Text="f1iq.bsky.social"/>
+
+                            </UniformGrid>
+
+                        </StackPanel>
 
                     </GroupBox>
 

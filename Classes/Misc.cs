@@ -8,6 +8,8 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+using IWshRuntimeLibrary;
+
 using PInvoke;
 
 namespace MarvinsAIRARefactored.Classes;
@@ -120,7 +122,7 @@ public class Misc
 		{
 			app.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
 
-			if ( File.Exists( filePath ) )
+			if ( System.IO.File.Exists( filePath ) )
 			{
 				using var reader = new ResXResourceReader( filePath );
 
@@ -171,5 +173,53 @@ public class Misc
 		}
 
 		return false;
+	}
+
+	public static void BringExistingInstanceToFront()
+	{
+		var current = Process.GetCurrentProcess();
+
+		foreach ( var process in Process.GetProcessesByName( current.ProcessName ) )
+		{
+			if ( process.Id != current.Id )
+			{
+				var handle = process.MainWindowHandle;
+
+				if ( handle != IntPtr.Zero )
+				{
+					User32.ShowWindow( handle, User32.WindowShowStyle.SW_RESTORE );
+					User32.SetForegroundWindow( handle );
+				}
+
+				break;
+			}
+		}
+	}
+
+	public static void SetStartWithWindows( bool enable )
+	{
+		var startupPath = Environment.GetFolderPath( Environment.SpecialFolder.Startup );
+		var shortcutPath = Path.Combine( startupPath, "MarvinsAIRA Refactored.lnk" );
+
+		if ( enable )
+		{
+			if ( !System.IO.File.Exists( shortcutPath ) )
+			{
+				var shell = new WshShell();
+
+				var shortcut = (IWshShortcut) shell.CreateShortcut( shortcutPath );
+
+				shortcut.TargetPath = Environment.ProcessPath;
+				shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				shortcut.Save();
+			}
+		}
+		else
+		{
+			if ( System.IO.File.Exists( shortcutPath ) )
+			{
+				System.IO.File.Delete( shortcutPath );
+			}
+		}
 	}
 }

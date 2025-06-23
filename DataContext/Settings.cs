@@ -3695,6 +3695,75 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region App - Start with Windows
+
+	private bool _appStartWithWindows = false;
+
+	public bool AppStartWithWindows
+	{
+		get => _appStartWithWindows;
+
+		set
+		{
+			if ( value != _appStartWithWindows )
+			{
+				_appStartWithWindows = value;
+
+				OnPropertyChanged();
+			}
+
+			Misc.SetStartWithWindows( _appStartWithWindows );
+		}
+	}
+
+	#endregion
+
+	#region App - Start minimized
+
+	private bool _appStartMinimized = false;
+
+	public bool AppStartMinimized
+	{
+		get => _appStartMinimized;
+
+		set
+		{
+			if ( value != _appStartMinimized )
+			{
+				_appStartMinimized = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region App - Minimize to system tray
+
+	private bool _appMinimizeToSystemTray = false;
+
+	public bool AppMinimizeToSystemTray
+	{
+		get => _appMinimizeToSystemTray;
+
+		set
+		{
+			if ( value != _appMinimizeToSystemTray )
+			{
+				_appMinimizeToSystemTray = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance;
+
+			app?.MainWindow.UpdateNotifyIcon();
+		}
+	}
+
+	#endregion
+
 	#region App - UI scale
 
 	private float _appUIScale = 1f;
@@ -3713,10 +3782,6 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 			}
-
-			var app = App.Instance;
-
-			app?.MainWindow.UpdateScale();
 
 			AppUIScaleString = $"{_appUIScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}

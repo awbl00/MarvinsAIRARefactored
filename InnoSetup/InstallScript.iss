@@ -49,6 +49,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Dirs]
 Name: "{userdocs}\MarvinsAIRA Refactored"
 Name: "{userdocs}\MarvinsAIRA Refactored\Languages"
+Name: "{userdocs}\MarvinsAIRA Refactored\Sounds"
 
 [Files]
 Source: "C:\Users\marvi\Documents\GitHub\MarvinsAIRARefactored\bin\publish\*"; DestDir: "{app}"; Flags: ignoreversion
@@ -62,3 +63,9 @@ Name: "{autodesktop}\{#MyAppIconName}"; Filename: "{app}\{#MyAppExeName}"; Tasks
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[InstallDelete]
+Type: files; Name: "{userstartup}\MarvinsAIRA Refactored.lnk"
+
+[UninstallDelete]
+Type: files; Name: "{userstartup}\MarvinsAIRA Refactored.lnk"

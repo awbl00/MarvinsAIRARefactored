@@ -59,7 +59,10 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root"
+    xmlns=""
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -122,7 +125,7 @@
     <comment>Racing wheel</comment>
   </data>
   <data name="App" xml:space="preserve">
-    <value>Настройки приложения</value>
+    <value>Настройки</value>
     <comment>Tab item</comment>
   </data>
   <data name="AppTitle" xml:space="preserve">
@@ -198,7 +201,7 @@
     <comment>Racing wheel</comment>
   </data>
   <data name="RacingWheel" xml:space="preserve">
-    <value>Настройки руля</value>
+    <value>Руль</value>
     <comment>Tab item</comment>
   </data>
   <data name="SteeringDevice" xml:space="preserve">
@@ -254,7 +257,7 @@
     <comment>Tab item</comment>
   </data>
   <data name="ConnectToAdminBoxx" xml:space="preserve">
-    <value>Connect To AdminBoxx</value>
+    <value>Подключиться к AdminBoxx</value>
     <comment>AdminBoxx</comment>
   </data>
   <data name="UpdateButtonMappings" xml:space="preserve">
@@ -262,7 +265,7 @@
     <comment>Window title</comment>
   </data>
   <data name="PressTheRecordButton" xml:space="preserve">
-    <value>[Нажмите кнопку "запись"]</value>
+    <value>[Нажмите кнопку &quot;запись&quot;]</value>
     <comment>Button mapping</comment>
   </data>
   <data name="Button" xml:space="preserve">
@@ -310,7 +313,7 @@
     <comment>Abbreviation for percent</comment>
   </data>
   <data name="CompressionRate" xml:space="preserve">
-    <value>Compression Rate</value>
+    <value>Степень сжатия</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="Device" xml:space="preserve">
@@ -347,7 +350,7 @@
   </data>
   <data name="OtherFeatures" xml:space="preserve">
     <value>Иное</value>
-    <comment>Racing wheel</comment>
+    <comment>Racing wheel, Pedals</comment>
   </data>
   <data name="Switches" xml:space="preserve">
     <value>Switches</value>
@@ -470,7 +473,7 @@
     <comment>Pedal effects list</comment>
   </data>
   <data name="RPM" xml:space="preserve">
-    <value>RPM</value>
+    <value>Обороты (RPM)</value>
     <comment>Pedal effects list</comment>
   </data>
   <data name="None" xml:space="preserve">
@@ -578,7 +581,7 @@
     <comment>AdminBoxx</comment>
   </data>
   <data name="DeltaLimiterBias" xml:space="preserve">
-    <value>Delta Limiter Bias</value>
+    <value>Смещение (Delta Limiter Bias)</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="Output" xml:space="preserve">
@@ -668,5 +671,125 @@
   <data name="GearChangeShiftIntoNeutral" xml:space="preserve">
     <value>Переключение передачи - включение нейтральной</value>
     <comment>Pedals</comment>
+  </data>
+  <data name="AlwaysEnableFFB" xml:space="preserve">
+    <value>Выдавать FFB даже оно включено в iRacing</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="ClutchPedalHaptics" xml:space="preserve">
+    <value>Хаптика сцепления</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="BrakePedalHaptics" xml:space="preserve">
+    <value>Хаптика тормоза</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="ThrottlePedalHaptics" xml:space="preserve">
+    <value>Хаптика газа</value>
+    <comment>Graph</comment>
+  </data>
+  <data name="NoiseDamper" xml:space="preserve">
+    <value>Снижение шумов</value>
+    <comment>Pedals</comment>
+  </data>
+  <data name="AppWindow" xml:space="preserve">
+    <value>Окно приложения</value>
+    <comment>App</comment>
+  </data>
+  <data name="UIScale" xml:space="preserve">
+    <value>Масштаб интерфейса</value>
+    <comment>App</comment>
+  </data>
+  <data name="CloudService" xml:space="preserve">
+    <value>Облачный сервис</value>
+    <comment>App</comment>
+  </data>
+  <data name="CheckNow" xml:space="preserve">
+    <value>Проверить сейчас</value>
+    <comment>App</comment>
+  </data>
+  <data name="CheckingForUpdate" xml:space="preserve">
+    <value>Проверка обновлений...</value>
+    <comment>Status</comment>
+  </data>
+  <data name="DownloadingUpdate" xml:space="preserve">
+    <value>Загрузка обновления...</value>
+    <comment>Status</comment>
+  </data>
+  <data name="Contribute" xml:space="preserve">
+    <value>Поучаствовать</value>
+    <comment>Tab item</comment>
+  </data>
+  <data name="BuyMeACoffee" xml:space="preserve">
+    <value>Купить мне кофе!</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="DonationsText" xml:space="preserve">
+    <value>Пожертвования абсолютно добровольные.Я никогда не буду брать плату за использование MAIRA. Но всё же они очень приятны и хорошо мотивируют продолжать работать над приложением. Большое спасибо всем, кто уже сделал пожертвование! Это можно сделать по ссылке:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donations" xml:space="preserve">
+    <value>Пожертвование</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donors" xml:space="preserve">
+    <value>Доноры</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="SuperDonors" xml:space="preserve">
+    <value>Супер Доноры</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Donate" xml:space="preserve">
+    <value>Пожертвовать</value>
+    <comment>Tab item</comment>
+  </data>
+  <data name="CodeContributions" xml:space="preserve">
+    <value>Программисты</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationContributions" xml:space="preserve">
+    <value>Переводчики</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="CodeContributionsText" xml:space="preserve">
+    <value>Если вы разрабатываете на C# и хотите помочь с кодом, то вот ссылка на GitHub репозиторий:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationContributionsText" xml:space="preserve">
+    <value>Если вы знаете несколько языков, то можете помочь с переводом приложения на все языки мира! Больше информации как это сделать в Дискорде:</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="TranslationsDiscordChannel" xml:space="preserve">
+    <value>Канал Дискорда про переводы</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="GitHubRepository" xml:space="preserve">
+    <value>Репозиторий GitHub</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="Contributors" xml:space="preserve">
+    <value>Участники</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="ShowWindow" xml:space="preserve">
+    <value>Показать окно</value>
+    <comment>System tray icon</comment>
+  </data>
+  <data name="ExitApp" xml:space="preserve">
+    <value>Выйти из приложения</value>
+    <comment>System tray icon</comment>
+  </data>
+  <data name="MinimizeToSystemTray" xml:space="preserve">
+    <value>Сворачивать в трей вместо панели задач</value>
+    <comment>App</comment>
+  </data>
+  <data name="StartMinimized" xml:space="preserve">
+    <value>Запускать свёрнутым</value>
+    <comment>App</comment>
+  </data>
+  <data name="StartWithWindows" xml:space="preserve">
+    <value>Запускать со стартом Windows</value>
+    <comment>App</comment>
   </data>
 </root>

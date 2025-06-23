@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,6 +7,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
+using Application = System.Windows.Application;
+using Brushes = System.Windows.Media.Brushes;
 using ScrollEventArgs = System.Windows.Controls.Primitives.ScrollEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
 
@@ -14,7 +17,6 @@ using Simagic;
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Components;
 using MarvinsAIRARefactored.PInvoke;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace MarvinsAIRARefactored.Windows;
 
@@ -27,6 +29,8 @@ public partial class MainWindow : Window
 	private string? _installerFilePath = null;
 
 	private bool _initialized = false;
+
+	private NotifyIcon? _notifyIcon = null;
 
 	public MainWindow()
 	{
@@ -45,6 +49,7 @@ public partial class MainWindow : Window
 			Components.Localization.SetLanguageComboBoxItemsSource( App_Language_ComboBox );
 
 			AdminBoxx_TabItem.Visibility = Visibility.Collapsed;
+			Debug_TabItem.Visibility = Visibility.Collapsed;
 
 			app.Logger.WriteLine( "[MainWindow] <<< Constructor" );
 		}
@@ -122,16 +127,9 @@ public partial class MainWindow : Window
 
 				UpdateStatus();
 				UpdatePedalsDevice();
+				UpdateNotifyIcon();
 			}
 		} );
-	}
-
-	public void UpdateScale()
-	{
-		var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
-
-		RootScaleTransform.ScaleX = settings.AppUIScale;
-		RootScaleTransform.ScaleY = settings.AppUIScale;
 	}
 
 	public void UpdateStatus()
@@ -365,6 +363,83 @@ public partial class MainWindow : Window
 		}
 	}
 
+	public void UpdateNotifyIcon()
+	{
+		var app = App.Instance;
+
+		if ( app != null )
+		{
+			Dispatcher.BeginInvoke( () =>
+			{
+				var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
+
+				if ( _notifyIcon != null )
+				{
+					_notifyIcon.Visible = false;
+
+					_notifyIcon.Dispose();
+				}
+
+				if ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+				{
+					var resourceStream = Application.GetResourceStream( new Uri( "pack://application:,,,/MarvinsAIRARefactored;component/Artwork/white_icon.ico" ) ).Stream;
+
+					_notifyIcon = new()
+					{
+						Icon = new Icon( resourceStream ),
+						Visible = true,
+						Text = localization[ "AppTitle" ],
+						ContextMenuStrip = new ContextMenuStrip()
+					};
+
+					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ShowWindow" ], null, ( s, e ) => MakeWindowVisible() );
+					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ExitApp" ], null, ( s, e ) => ExitApp() );
+
+					_notifyIcon.MouseClick += ( s, e ) =>
+					{
+						if ( e.Button == MouseButtons.Left )
+						{
+							MakeWindowVisible();
+						}
+						else if ( e.Button == MouseButtons.Right )
+						{
+							_notifyIcon.ContextMenuStrip?.Show( System.Windows.Forms.Cursor.Position );
+						}
+					};
+				}
+			} );
+		}
+	}
+
+	public void MakeWindowVisible()
+	{
+		Show();
+
+		WindowState = WindowState.Normal;
+
+		Activate();
+
+		if ( !MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppTopmostWindowEnabled )
+		{
+			Topmost = true;
+			Topmost = false;
+		}
+
+		Focus();
+	}
+
+	private void ExitApp()
+	{
+		if ( _notifyIcon != null )
+		{
+			_notifyIcon.Visible = false;
+
+			_notifyIcon.Dispose();
+
+			Close();
+		}
+	}
+
 	private void UpdateTabItemIsVisible()
 	{
 		if ( WindowState == WindowState.Minimized )
@@ -398,13 +473,16 @@ public partial class MainWindow : Window
 	{
 		if ( _initialized )
 		{
-			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+			if ( IsVisible && ( WindowState == WindowState.Normal ) )
+			{
+				var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 
-			var rectangle = settings.AppWindowPositionAndSize;
+				var rectangle = settings.AppWindowPositionAndSize;
 
-			rectangle.Location = new System.Drawing.Point( (int) Left, (int) Top );
+				rectangle.Location = new System.Drawing.Point( (int) RestoreBounds.Left, (int) RestoreBounds.Top );
 
-			settings.AppWindowPositionAndSize = rectangle;
+				settings.AppWindowPositionAndSize = rectangle;
+			}
 		}
 	}
 
@@ -412,13 +490,39 @@ public partial class MainWindow : Window
 	{
 		if ( _initialized )
 		{
-			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+			if ( IsVisible && ( WindowState == WindowState.Normal ) )
+			{
+				var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 
-			var rectangle = settings.AppWindowPositionAndSize;
+				var rectangle = settings.AppWindowPositionAndSize;
 
-			rectangle.Size = new System.Drawing.Size( (int) Width, (int) Height );
+				rectangle.Size = new System.Drawing.Size( (int) RestoreBounds.Width, (int) RestoreBounds.Height );
 
-			settings.AppWindowPositionAndSize = rectangle;
+				settings.AppWindowPositionAndSize = rectangle;
+			}
+		}
+	}
+
+	private void Window_StateChanged( object sender, EventArgs e )
+	{
+		if ( MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+		{
+			if ( WindowState == WindowState.Minimized )
+			{
+				Hide();
+			}
+		}
+
+		UpdateTabItemIsVisible();
+	}
+
+	private void Window_Closing( object sender, CancelEventArgs e )
+	{
+		if ( _notifyIcon != null )
+		{
+			_notifyIcon.Visible = false;
+
+			_notifyIcon.Dispose();
 		}
 	}
 
@@ -444,7 +548,7 @@ public partial class MainWindow : Window
 
 	private void TabControl_SelectionChanged( object sender, SelectionChangedEventArgs e )
 	{
-		if ( e.Source is TabControl tabControl )
+		if ( e.Source is TabControl )
 		{
 			UpdateTabItemIsVisible();
 		}
@@ -624,6 +728,13 @@ public partial class MainWindow : Window
 		{
 			await app.CloudService.CheckForUpdates( true );
 		}
+	}
+
+	private void Hyperlink_RequestNavigate( object sender, System.Windows.Navigation.RequestNavigateEventArgs e )
+	{
+		Process.Start( new ProcessStartInfo( e.Uri.AbsoluteUri ) { UseShellExecute = true } );
+
+		e.Handled = true;
 	}
 
 	private void Debug_AlanLeReset_Click( object sender, RoutedEventArgs e )
