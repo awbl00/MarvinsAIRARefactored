@@ -16,6 +16,10 @@ public partial class UpdateButtonMappingsWindow : Window
 	{
 		WindowIsOpen = true;
 
+		var app = App.Instance;
+
+		app?.MainWindow.MakeWindowVisible();
+
 		InitializeComponent();
 
 		_buttonMappings = buttonMappings;

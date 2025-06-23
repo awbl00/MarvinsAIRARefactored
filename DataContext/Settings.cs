@@ -3639,10 +3639,6 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
-
-			app?.MainWindow.UpdateScale();
-
 			AppUIScaleString = $"{_appUIScale * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}

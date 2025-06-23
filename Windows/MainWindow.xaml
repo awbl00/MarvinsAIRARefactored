@@ -60,7 +60,7 @@
     <Grid>
 
         <Grid.LayoutTransform>
-            <ScaleTransform x:Name="RootScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+            <ScaleTransform x:Name="RootScaleTransform" ScaleX="{Binding Settings.AppUIScale}" ScaleY="{Binding Settings.AppUIScale}"/>
         </Grid.LayoutTransform>
 
         <Grid.RowDefinitions>

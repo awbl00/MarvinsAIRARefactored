@@ -132,14 +132,6 @@ public partial class MainWindow : Window
 		} );
 	}
 
-	public void UpdateScale()
-	{
-		var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
-
-		RootScaleTransform.ScaleX = settings.AppUIScale;
-		RootScaleTransform.ScaleY = settings.AppUIScale;
-	}
-
 	public void UpdateStatus()
 	{
 		Dispatcher.BeginInvoke( () =>
@@ -389,14 +381,14 @@ public partial class MainWindow : Window
 						ContextMenuStrip = new ContextMenuStrip()
 					};
 
-					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ShowWindow" ], null, ( s, e ) => RestoreFromTray() );
+					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ShowWindow" ], null, ( s, e ) => MakeWindowVisible() );
 					_notifyIcon.ContextMenuStrip.Items.Add( localization[ "ExitApp" ], null, ( s, e ) => ExitApp() );
 
 					_notifyIcon.MouseClick += ( s, e ) =>
 					{
 						if ( e.Button == MouseButtons.Left )
 						{
-							RestoreFromTray();
+							MakeWindowVisible();
 						}
 						else if ( e.Button == MouseButtons.Right )
 						{
@@ -408,7 +400,7 @@ public partial class MainWindow : Window
 		}
 	}
 
-	private void RestoreFromTray()
+	public void MakeWindowVisible()
 	{
 		Show();
 
@@ -509,6 +501,8 @@ public partial class MainWindow : Window
 				Hide();
 			}
 		}
+
+		UpdateTabItemIsVisible();
 	}
 
 	private void Window_Closing( object sender, CancelEventArgs e )
@@ -543,7 +537,7 @@ public partial class MainWindow : Window
 
 	private void TabControl_SelectionChanged( object sender, SelectionChangedEventArgs e )
 	{
-		if ( e.Source is TabControl tabControl )
+		if ( e.Source is TabControl )
 		{
 			UpdateTabItemIsVisible();
 		}
