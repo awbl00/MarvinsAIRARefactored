@@ -298,7 +298,7 @@
     <comment>Liste des algorithmes du volant</comment>
   </data>
   <data name="ZeAlanLeTwist" xml:space="preserve">
-    <value>Ze Alan Le Twist</value>
+    <value></value>
     <comment>Liste des algorithmes du volant</comment>
   </data>
   <data name="CompressionRateUnits" xml:space="preserve">

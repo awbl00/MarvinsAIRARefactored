@@ -9,9 +9,9 @@ public partial class NewVersionAvailableWindow : Window
 
 	public NewVersionAvailableWindow( string currentVersion, string changeLog )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		app?.MainWindow.MakeWindowVisible();
+		app.MainWindow.MakeWindowVisible();
 
 		InitializeComponent();
 

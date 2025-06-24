@@ -152,43 +152,37 @@ public partial class AdminBoxx
 
 	public bool Connect()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		IsConnected = _usbSerialPortHelper.Open();
+
+		if ( IsConnected )
 		{
-			IsConnected = _usbSerialPortHelper.Open();
+			_pingCounter = 100;
 
-			if ( IsConnected )
-			{
-				_pingCounter = 100;
-
-				UpdateColors( _blueNoiseLedOrder, true );
-			}
-
-			app.Dispatcher.BeginInvoke( () =>
-			{
-				app.MainWindow.AdminBoxx_ConnectToAdminBoxx_MairaSwitch.IsOn = IsConnected;
-			} );
+			UpdateColors( _blueNoiseLedOrder, true );
 		}
+
+		app.Dispatcher.BeginInvoke( () =>
+		{
+			app.MainWindow.AdminBoxx_ConnectToAdminBoxx_MairaSwitch.IsOn = IsConnected;
+		} );
 
 		return IsConnected;
 	}
 
 	public void Disconnect()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		IsConnected = false;
+
+		_usbSerialPortHelper.Close();
+
+		app.Dispatcher.BeginInvoke( () =>
 		{
-			IsConnected = false;
-
-			_usbSerialPortHelper.Close();
-
-			app.Dispatcher.BeginInvoke( () =>
-			{
-				app.MainWindow.AdminBoxx_ConnectToAdminBoxx_MairaSwitch.IsOn = false;
-			} );
-		}
+			app.MainWindow.AdminBoxx_ConnectToAdminBoxx_MairaSwitch.IsOn = false;
+		} );
 	}
 
 	public void ResendAllLEDs( (int x, int y)[]? pattern = null )
@@ -259,177 +253,171 @@ public partial class AdminBoxx
 
 	public void ReplayPlayingChanged()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			_replayEnabled = ( app.Simulator.IsReplayPlaying );
+		_replayEnabled = ( app.Simulator.IsReplayPlaying );
 
-			UpdateColors( _blueNoiseLedOrder, false );
-		}
+		UpdateColors( _blueNoiseLedOrder, false );
 	}
 
 	public void SessionFlagsChanged()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		// yellow flag / caution flag
+
+		if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Yellow | IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
 		{
-			// yellow flag / caution flag
-
-			if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Yellow | IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
+			if ( !_shownYellowFlag )
 			{
-				if ( !_shownYellowFlag )
-				{
-					_shownYellowFlag = true;
+				_shownYellowFlag = true;
 
-					WaveFlag( Yellow, 2 );
-				}
+				WaveFlag( Yellow, 2 );
 			}
-			else
+		}
+		else
+		{
+			_shownYellowFlag = false;
+		}
+
+		// one lap to green
+
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.OneLapToGreen ) != 0 )
+		{
+			if ( !_shownOneLapToGreenFlag )
 			{
-				_shownYellowFlag = false;
+				_shownOneLapToGreenFlag = true;
+
+				WaveFlag( Yellow, 1 );
 			}
+		}
+		else
+		{
+			_shownOneLapToGreenFlag = false;
+		}
 
-			// one lap to green
+		// start ready
 
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.OneLapToGreen ) != 0 )
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartReady ) != 0 )
+		{
+			if ( !_shownStartReadyFlag )
 			{
-				if ( !_shownOneLapToGreenFlag )
-				{
-					_shownOneLapToGreenFlag = true;
+				_shownStartReadyFlag = true;
 
-					WaveFlag( Yellow, 1 );
-				}
+				WaveFlag( Red, 1 );
 			}
-			else
+		}
+		else
+		{
+			_shownStartReadyFlag = false;
+		}
+
+		// start set
+
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartSet ) != 0 )
+		{
+			if ( !_shownStartSetFlag )
 			{
-				_shownOneLapToGreenFlag = false;
+				_shownStartSetFlag = true;
+
+				WaveFlag( Yellow, 1 );
 			}
+		}
+		else
+		{
+			_shownStartSetFlag = false;
+		}
 
-			// start ready
+		// start go / green flag
 
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartReady ) != 0 )
+		if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Green | IRacingSdkEnum.Flags.StartGo ) ) != 0 )
+		{
+			if ( !_shownGreenFlag )
 			{
-				if ( !_shownStartReadyFlag )
-				{
-					_shownStartReadyFlag = true;
+				_shownGreenFlag = true;
 
-					WaveFlag( Red, 1 );
-				}
+				WaveFlag( Green, 1 );
 			}
-			else
+		}
+		else
+		{
+			_shownGreenFlag = false;
+		}
+
+		// white flag
+
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.White ) != 0 )
+		{
+			if ( !_shownWhiteFlag )
 			{
-				_shownStartReadyFlag = false;
+				_shownWhiteFlag = true;
+
+				WaveFlag( White, 3 );
 			}
+		}
+		else
+		{
+			_shownWhiteFlag = false;
+		}
 
-			// start set
+		// checkered flag
 
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.StartSet ) != 0 )
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Checkered ) != 0 )
+		{
+			if ( !_shownCheckeredFlag )
 			{
-				if ( !_shownStartSetFlag )
-				{
-					_shownStartSetFlag = true;
+				_shownCheckeredFlag = true;
 
-					WaveFlag( Yellow, 1 );
-				}
+				WaveFlag( White, 5, true );
 			}
-			else
+		}
+		else
+		{
+			_shownCheckeredFlag = false;
+		}
+
+		// black flag
+
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Black ) != 0 )
+		{
+			if ( !_shownBlackFlag )
 			{
-				_shownStartSetFlag = false;
+				_shownBlackFlag = true;
+
+				WaveBlackFlag();
 			}
+		}
+		else
+		{
+			_shownBlackFlag = false;
+		}
 
-			// start go / green flag
-
-			if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Green | IRacingSdkEnum.Flags.StartGo ) ) != 0 )
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Blue ) != 0 )
+		{
+			if ( !_shownBlueFlag )
 			{
-				if ( !_shownGreenFlag )
-				{
-					_shownGreenFlag = true;
+				_shownBlueFlag = true;
 
-					WaveFlag( Green, 1 );
-				}
+				WaveFlag( Blue, 1 );
 			}
-			else
+		}
+		else
+		{
+			_shownBlueFlag = false;
+		}
+
+		if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Red ) != 0 )
+		{
+			if ( !_shownRedFlag )
 			{
-				_shownGreenFlag = false;
+				_shownRedFlag = true;
+
+				WaveFlag( Red, 3 );
 			}
-
-			// white flag
-
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.White ) != 0 )
-			{
-				if ( !_shownWhiteFlag )
-				{
-					_shownWhiteFlag = true;
-
-					WaveFlag( White, 3 );
-				}
-			}
-			else
-			{
-				_shownWhiteFlag = false;
-			}
-
-			// checkered flag
-
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Checkered ) != 0 )
-			{
-				if ( !_shownCheckeredFlag )
-				{
-					_shownCheckeredFlag = true;
-
-					WaveFlag( White, 5, true );
-				}
-			}
-			else
-			{
-				_shownCheckeredFlag = false;
-			}
-
-			// black flag
-
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Black ) != 0 )
-			{
-				if ( !_shownBlackFlag )
-				{
-					_shownBlackFlag = true;
-
-					WaveBlackFlag();
-				}
-			}
-			else
-			{
-				_shownBlackFlag = false;
-			}
-
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Blue ) != 0 )
-			{
-				if ( !_shownBlueFlag )
-				{
-					_shownBlueFlag = true;
-
-					WaveFlag( Blue, 1 );
-				}
-			}
-			else
-			{
-				_shownBlueFlag = false;
-			}
-
-			if ( (int) ( app.Simulator.SessionFlags & IRacingSdkEnum.Flags.Red ) != 0 )
-			{
-				if ( !_shownRedFlag )
-				{
-					_shownRedFlag = true;
-
-					WaveFlag( Red, 3 );
-				}
-			}
-			else
-			{
-				_shownRedFlag = false;
-			}
+		}
+		else
+		{
+			_shownRedFlag = false;
 		}
 	}
 
@@ -472,36 +460,33 @@ public partial class AdminBoxx
 
 	private void UpdateColors( (int x, int y)[] pattern, bool forceUpdate )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		if ( !app.Simulator.IsConnected )
 		{
-			if ( !app.Simulator.IsConnected )
+			SetAllLEDsToColor( Disabled, _wavingFlagLedOrder, forceUpdate );
+
+			SetLEDToColor( 0, 1, Red, forceUpdate );
+			SetLEDToColor( 0, 2, Yellow, forceUpdate );
+
+			_connectState = 0;
+			_connectCounter = 15;
+		}
+		else
+		{
+			if ( _inNumpadMode )
 			{
-				SetAllLEDsToColor( Disabled, _wavingFlagLedOrder, forceUpdate );
-
-				SetLEDToColor( 0, 1, Red, forceUpdate );
-				SetLEDToColor( 0, 2, Yellow, forceUpdate );
-
-				_connectState = 0;
-				_connectCounter = 15;
+				SetAllLEDsToColorArray( _numpadEnabledColors, pattern, forceUpdate );
 			}
 			else
 			{
-				if ( _inNumpadMode )
+				if ( _replayEnabled )
 				{
-					SetAllLEDsToColorArray( _numpadEnabledColors, pattern, forceUpdate );
+					SetAllLEDsToColorArray( _playbackEnabledColors, pattern, forceUpdate );
 				}
 				else
 				{
-					if ( _replayEnabled )
-					{
-						SetAllLEDsToColorArray( _playbackEnabledColors, pattern, forceUpdate );
-					}
-					else
-					{
-						SetAllLEDsToColorArray( _playbackDisabledColors, pattern, forceUpdate );
-					}
+					SetAllLEDsToColorArray( _playbackDisabledColors, pattern, forceUpdate );
 				}
 			}
 		}
@@ -572,807 +557,714 @@ public partial class AdminBoxx
 
 	private void OnDataReceived( object? sender, string data )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		if ( !app.Simulator.IsConnected )
 		{
-			if ( !app.Simulator.IsConnected )
+			return;
+		}
+
+		var match = ButtonPressRegex.Match( data );
+
+		if ( match.Success )
+		{
+			var y = int.Parse( match.Groups[ 1 ].Value );
+			var x = int.Parse( match.Groups[ 2 ].Value );
+
+			app.Logger.WriteLine( $"[AdminBoxx] Button press detected: row={y}, col={x}" );
+
+			switch ( y )
 			{
-				return;
-			}
-
-			var match = ButtonPressRegex.Match( data );
-
-			if ( match.Success )
-			{
-				var y = int.Parse( match.Groups[ 1 ].Value );
-				var x = int.Parse( match.Groups[ 2 ].Value );
-
-				app.Logger.WriteLine( $"[AdminBoxx] Button press detected: row={y}, col={x}" );
-
-				switch ( y )
+				case 0:
 				{
-					case 0:
+					switch ( x )
 					{
-						switch ( x )
-						{
-							case 0: DoYellowFlag(); break;
-							case 1: DoNumber( 1 ); break;
-							case 2: DoNumber( 2 ); break;
-							case 3: DoNumber( 3 ); break;
-							case 4: DoBlackFlag(); break;
-							case 5: DoClearFlag(); break;
-							case 6: DoClearAllFlags(); break;
-							case 7: DoChat(); break;
-						}
-
-						break;
+						case 0: DoYellowFlag(); break;
+						case 1: DoNumber( 1 ); break;
+						case 2: DoNumber( 2 ); break;
+						case 3: DoNumber( 3 ); break;
+						case 4: DoBlackFlag(); break;
+						case 5: DoClearFlag(); break;
+						case 6: DoClearAllFlags(); break;
+						case 7: DoChat(); break;
 					}
 
-					case 1:
-					{
-						switch ( x )
-						{
-							case 0: DoTogglePaceMode(); break;
-							case 1: DoNumber( 4 ); break;
-							case 2: DoNumber( 5 ); break;
-							case 3: DoNumber( 6 ); break;
-							case 4: DoWaveByDriver(); break;
-							case 5: DoEndOfLineDriver(); break;
-							case 6: DoDisqualifyDriver(); break;
-							case 7: DoRemoveDriver(); break;
-						}
+					break;
+				}
 
-						break;
+				case 1:
+				{
+					switch ( x )
+					{
+						case 0: DoTogglePaceMode(); break;
+						case 1: DoNumber( 4 ); break;
+						case 2: DoNumber( 5 ); break;
+						case 3: DoNumber( 6 ); break;
+						case 4: DoWaveByDriver(); break;
+						case 5: DoEndOfLineDriver(); break;
+						case 6: DoDisqualifyDriver(); break;
+						case 7: DoRemoveDriver(); break;
 					}
 
-					case 2:
-					{
-						switch ( x )
-						{
-							case 0: DoPlusOneLap(); break;
-							case 1: DoNumber( 7 ); break;
-							case 2: DoNumber( 8 ); break;
-							case 3: DoNumber( 9 ); break;
-							case 4: DoAdvanceToNextSession(); break;
-							case 5: DoLive(); break;
-							case 6: DoGoToPreviousIncident(); break;
-							case 7: DoGoToNextIncident(); break;
-						}
+					break;
+				}
 
-						break;
+				case 2:
+				{
+					switch ( x )
+					{
+						case 0: DoPlusOneLap(); break;
+						case 1: DoNumber( 7 ); break;
+						case 2: DoNumber( 8 ); break;
+						case 3: DoNumber( 9 ); break;
+						case 4: DoAdvanceToNextSession(); break;
+						case 5: DoLive(); break;
+						case 6: DoGoToPreviousIncident(); break;
+						case 7: DoGoToNextIncident(); break;
 					}
 
-					case 3:
-					{
-						switch ( x )
-						{
-							case 0: DoMinusOneLap(); break;
-							case 1: DoEscape(); break;
-							case 2: DoNumber( 0 ); break;
-							case 3: DoEnter(); break;
-							case 4: DoSlowMotion(); break;
-							case 5: DoReverse(); break;
-							case 6: DoForward(); break;
-							case 7: DoFastForward(); break;
-						}
+					break;
+				}
 
-						break;
+				case 3:
+				{
+					switch ( x )
+					{
+						case 0: DoMinusOneLap(); break;
+						case 1: DoEscape(); break;
+						case 2: DoNumber( 0 ); break;
+						case 3: DoEnter(); break;
+						case 4: DoSlowMotion(); break;
+						case 5: DoReverse(); break;
+						case 6: DoForward(); break;
+						case 7: DoFastForward(); break;
 					}
+
+					break;
 				}
 			}
-			else
-			{
-				app.Logger.WriteLine( $"[AdminBoxx] Unrecognized message: \"{data}\"" );
-			}
+		}
+		else
+		{
+			app.Logger.WriteLine( $"[AdminBoxx] Unrecognized message: \"{data}\"" );
 		}
 	}
 
 	private void DoNumber( int number )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( $"[AdminBoxx] DoNumber( {number} ) >>>" );
+
+		if ( _inNumpadMode )
 		{
-			app.Logger.WriteLine( $"[AdminBoxx] DoNumber( {number} ) >>>" );
+			_carNumber += $"{number}";
 
-			if ( _inNumpadMode )
+			switch ( number )
 			{
-				_carNumber += $"{number}";
-
-				switch ( number )
-				{
-					case 0: SetLEDToColor( 3, 2, Red, false ); break;
-					case 1: SetLEDToColor( 0, 1, Red, false ); break;
-					case 2: SetLEDToColor( 0, 2, Red, false ); break;
-					case 3: SetLEDToColor( 0, 3, Red, false ); break;
-					case 4: SetLEDToColor( 1, 1, Red, false ); break;
-					case 5: SetLEDToColor( 1, 2, Red, false ); break;
-					case 6: SetLEDToColor( 1, 3, Red, false ); break;
-					case 7: SetLEDToColor( 2, 1, Red, false ); break;
-					case 8: SetLEDToColor( 2, 2, Red, false ); break;
-					case 9: SetLEDToColor( 2, 3, Red, false ); break;
-				}
-
-				app.AudioManager.Play( $"{number}", DataContext.DataContext.Instance.Settings.AdminBoxxVolume );
+				case 0: SetLEDToColor( 3, 2, Red, false ); break;
+				case 1: SetLEDToColor( 0, 1, Red, false ); break;
+				case 2: SetLEDToColor( 0, 2, Red, false ); break;
+				case 3: SetLEDToColor( 0, 3, Red, false ); break;
+				case 4: SetLEDToColor( 1, 1, Red, false ); break;
+				case 5: SetLEDToColor( 1, 2, Red, false ); break;
+				case 6: SetLEDToColor( 1, 3, Red, false ); break;
+				case 7: SetLEDToColor( 2, 1, Red, false ); break;
+				case 8: SetLEDToColor( 2, 2, Red, false ); break;
+				case 9: SetLEDToColor( 2, 3, Red, false ); break;
 			}
 
-			app.Logger.WriteLine( $"[AdminBoxx] <<< DoNumber( {number} )" );
+			app.AudioManager.Play( $"{number}", DataContext.DataContext.Instance.Settings.AdminBoxxVolume );
 		}
+
+		app.Logger.WriteLine( $"[AdminBoxx] <<< DoNumber( {number} )" );
 	}
 
 	private void DoEscape()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoEscape >>>" );
+
+		if ( _inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoEscape >>>" );
+			LeaveNumpadMode( false );
 
-			if ( _inNumpadMode )
-			{
-				LeaveNumpadMode( false );
-
-				PlayAudio( "cancel" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoEscape" );
+			PlayAudio( "cancel" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoEscape" );
 	}
 
 	private void DoEnter()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoEnter >>>" );
+
+		if ( _inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoEnter >>>" );
-
-			if ( _inNumpadMode )
+			if ( !_carNumberIsRequired || ( _carNumber != string.Empty ) )
 			{
-				if ( !_carNumberIsRequired || ( _carNumber != string.Empty ) )
-				{
-					LeaveNumpadMode( true );
+				LeaveNumpadMode( true );
 
-					if ( _carNumberCallback != ChatCallback )
-					{
-						PlayAudio( "enter" );
-					}
+				if ( _carNumberCallback != ChatCallback )
+				{
+					PlayAudio( "enter" );
 				}
 			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoEnter" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoEnter" );
 	}
 
 	private void DoYellowFlag()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoYellowFlag >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoYellowFlag >>>" );
-
-			if ( !_inNumpadMode )
+			if ( ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) == 0 )
 			{
-				if ( ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) == 0 )
-				{
-					app.ChatQueue.SendMessage( "!yellow" );
+				app.ChatQueue.SendMessage( "!yellow" );
 
-					PlayAudio( "throw_caution_flag" );
-				}
+				PlayAudio( "throw_caution_flag" );
 			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoYellowFlag" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoYellowFlag" );
 	}
 
 	private void DoBlackFlag()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoBlackFlag >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoBlackFlag >>>" );
+			EnterNumpadMode( BlackFlagCallback );
 
-			if ( !_inNumpadMode )
+			SetLEDToColor( 0, 4, Cyan, false );
+
+			PlayAudio( "black_flag_stop_and_go" );
+		}
+		else if ( _carNumberCallback == BlackFlagCallback )
+		{
+			_blackFlagDriveThrough = !_blackFlagDriveThrough;
+
+			if ( _blackFlagDriveThrough )
 			{
-				EnterNumpadMode( BlackFlagCallback );
+				SetLEDToColor( 0, 4, Yellow, false );
 
-				SetLEDToColor( 0, 4, Cyan, false );
+				PlayAudio( "black_flag_drive_through" );
+			}
+			else
+			{
+				SetLEDToColor( 0, 4, Red, false );
 
 				PlayAudio( "black_flag_stop_and_go" );
 			}
-			else if ( _carNumberCallback == BlackFlagCallback )
-			{
-				_blackFlagDriveThrough = !_blackFlagDriveThrough;
-
-				if ( _blackFlagDriveThrough )
-				{
-					SetLEDToColor( 0, 4, Yellow, false );
-
-					PlayAudio( "black_flag_drive_through" );
-				}
-				else
-				{
-					SetLEDToColor( 0, 4, Red, false );
-
-					PlayAudio( "black_flag_stop_and_go" );
-				}
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoBlackFlag" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoBlackFlag" );
 	}
 
 	private void BlackFlagCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] BlackFlagCallback >>>" );
+
+		if ( _blackFlagDriveThrough )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] BlackFlagCallback >>>" );
-
-			if ( _blackFlagDriveThrough )
-			{
-				app.ChatQueue.SendMessage( $"!black #{_carNumber} D" );
-			}
-			else
-			{
-				app.ChatQueue.SendMessage( $"!black #{_carNumber}" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< BlackFlagCallback" );
+			app.ChatQueue.SendMessage( $"!black #{_carNumber} D" );
 		}
+		else
+		{
+			app.ChatQueue.SendMessage( $"!black #{_carNumber}" );
+		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< BlackFlagCallback" );
 	}
 
 	private void DoClearFlag()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoClearFlag >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoClearFlag >>>" );
+			EnterNumpadMode( ClearFlagCallback );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( ClearFlagCallback );
+			SetLEDToColor( 0, 5, Cyan, false );
 
-				SetLEDToColor( 0, 5, Cyan, false );
-
-				PlayAudio( "clear_black_flag" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoClearFlag" );
+			PlayAudio( "clear_black_flag" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoClearFlag" );
 	}
 
 	private void ClearFlagCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] ClearFlagCallback >>>" );
+		app.Logger.WriteLine( "[AdminBoxx] ClearFlagCallback >>>" );
 
-			app.ChatQueue.SendMessage( $"!clear #{_carNumber}" );
+		app.ChatQueue.SendMessage( $"!clear #{_carNumber}" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< ClearFlagCallback" );
-		}
+		app.Logger.WriteLine( "[AdminBoxx] <<< ClearFlagCallback" );
 	}
 
 	private void DoClearAllFlags()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoClearAllFlags >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoClearAllFlags >>>" );
+			app.ChatQueue.SendMessage( "!clearall" );
 
-			if ( !_inNumpadMode )
-			{
-				app.ChatQueue.SendMessage( "!clearall" );
-
-				PlayAudio( "clear_all_black_flags" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoClearAllFlags" );
+			PlayAudio( "clear_all_black_flags" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoClearAllFlags" );
 	}
 
 	private void DoChat()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoChat >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoChat >>>" );
+			EnterNumpadMode( ChatCallback, false );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( ChatCallback, false );
-
-				PlayAudio( "chat_toggle" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoChat" );
+			PlayAudio( "chat_toggle" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoChat" );
 	}
 
 	private void ChatCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] ChatCallback >>>" );
+
+		if ( _carNumber == string.Empty )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] ChatCallback >>>" );
+			_driverChatDisabled.Clear();
 
-			if ( _carNumber == string.Empty )
+			if ( _globalChatEnabled )
 			{
-				_driverChatDisabled.Clear();
+				app.ChatQueue.SendMessage( "!nchat" );
 
-				if ( _globalChatEnabled )
-				{
-					app.ChatQueue.SendMessage( "!nchat" );
+				_globalChatEnabled = false;
 
-					_globalChatEnabled = false;
-
-					PlayAudio( "chat_disabled" );
-				}
-				else
-				{
-					app.ChatQueue.SendMessage( "!chat" );
-
-					PlayAudio( "chat_enabled" );
-
-					_globalChatEnabled = true;
-				}
-			}
-			else if ( _driverChatDisabled.Contains( _carNumber ) )
-			{
-				app.ChatQueue.SendMessage( $"!chat #{_carNumber}" );
-
-				_driverChatDisabled.Remove( _carNumber );
+				PlayAudio( "chat_disabled" );
 			}
 			else
 			{
-				app.ChatQueue.SendMessage( $"!nchat #{_carNumber}" );
+				app.ChatQueue.SendMessage( "!chat" );
 
-				_driverChatDisabled.Add( _carNumber );
+				PlayAudio( "chat_enabled" );
+
+				_globalChatEnabled = true;
 			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< ChatCallback" );
 		}
+		else if ( _driverChatDisabled.Contains( _carNumber ) )
+		{
+			app.ChatQueue.SendMessage( $"!chat #{_carNumber}" );
+
+			_driverChatDisabled.Remove( _carNumber );
+		}
+		else
+		{
+			app.ChatQueue.SendMessage( $"!nchat #{_carNumber}" );
+
+			_driverChatDisabled.Add( _carNumber );
+		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< ChatCallback" );
 	}
 
 	private void DoTogglePaceMode()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoTogglePaceMode >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoTogglePaceMode >>>" );
+			_singleFilePaceMode = !_singleFilePaceMode;
 
-			if ( !_inNumpadMode )
+			if ( _singleFilePaceMode )
 			{
-				_singleFilePaceMode = !_singleFilePaceMode;
+				app.ChatQueue.SendMessage( "!restart single" );
 
-				if ( _singleFilePaceMode )
-				{
-					app.ChatQueue.SendMessage( "!restart single" );
-
-					PlayAudio( "single_file" );
-				}
-				else
-				{
-					app.ChatQueue.SendMessage( "!restart double" );
-
-					PlayAudio( "double_file" );
-				}
+				PlayAudio( "single_file" );
 			}
+			else
+			{
+				app.ChatQueue.SendMessage( "!restart double" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoTogglePaceMode" );
+				PlayAudio( "double_file" );
+			}
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoTogglePaceMode" );
 	}
 
 	private void DoWaveByDriver()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoWaveByDriver >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoWaveByDriver >>>" );
+			EnterNumpadMode( WaveByDriverCallback );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( WaveByDriverCallback );
+			SetLEDToColor( 1, 4, Cyan, false );
 
-				SetLEDToColor( 1, 4, Cyan, false );
-
-				PlayAudio( "wave_by_driver" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoWaveByDriver" );
+			PlayAudio( "wave_by_driver" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoWaveByDriver" );
 	}
 
 	private void WaveByDriverCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] WaveByDriverCallback >>>" );
+		app.Logger.WriteLine( "[AdminBoxx] WaveByDriverCallback >>>" );
 
-			app.ChatQueue.SendMessage( $"!waveby #{_carNumber}" );
+		app.ChatQueue.SendMessage( $"!waveby #{_carNumber}" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< WaveByDriverCallback" );
-		}
+		app.Logger.WriteLine( "[AdminBoxx] <<< WaveByDriverCallback" );
 	}
 
 	private void DoEndOfLineDriver()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoEndOfLineDriver >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoEndOfLineDriver >>>" );
+			EnterNumpadMode( EndOfLineDriverCallback );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( EndOfLineDriverCallback );
+			SetLEDToColor( 1, 5, Cyan, false );
 
-				SetLEDToColor( 1, 5, Cyan, false );
-
-				PlayAudio( "end_of_line_driver" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoEndOfLineDriver" );
+			PlayAudio( "end_of_line_driver" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoEndOfLineDriver" );
 	}
 
 	private void EndOfLineDriverCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] EndOfLineDriverCallback >>>" );
+		app.Logger.WriteLine( "[AdminBoxx] EndOfLineDriverCallback >>>" );
 
-			app.ChatQueue.SendMessage( $"!eol #{_carNumber}" );
+		app.ChatQueue.SendMessage( $"!eol #{_carNumber}" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< EndOfLineDriverCallback" );
-		}
+		app.Logger.WriteLine( "[AdminBoxx] <<< EndOfLineDriverCallback" );
 	}
 
 	private void DoDisqualifyDriver()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoDisqualifyDriver >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoDisqualifyDriver >>>" );
+			EnterNumpadMode( DisqualifyDriverCallback );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( DisqualifyDriverCallback );
+			SetLEDToColor( 1, 6, Cyan, false );
 
-				SetLEDToColor( 1, 6, Cyan, false );
-
-				PlayAudio( "disqualify_driver" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoDisqualifyDriver" );
+			PlayAudio( "disqualify_driver" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoDisqualifyDriver" );
 	}
 
 	private void DisqualifyDriverCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] DisqualifyDriverCallback >>>" );
+		app.Logger.WriteLine( "[AdminBoxx] DisqualifyDriverCallback >>>" );
 
-			app.ChatQueue.SendMessage( $"!dq #{_carNumber}" );
+		app.ChatQueue.SendMessage( $"!dq #{_carNumber}" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< DisqualifyDriverCallback" );
-		}
+		app.Logger.WriteLine( "[AdminBoxx] <<< DisqualifyDriverCallback" );
 	}
 
 	private void DoRemoveDriver()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoRemoveDriver >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoRemoveDriver >>>" );
+			EnterNumpadMode( RemoveDriverCallback );
 
-			if ( !_inNumpadMode )
-			{
-				EnterNumpadMode( RemoveDriverCallback );
+			SetLEDToColor( 1, 7, Cyan, false );
 
-				SetLEDToColor( 1, 7, Cyan, false );
-
-				PlayAudio( "remove_driver" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoRemoveDriver" );
+			PlayAudio( "remove_driver" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoRemoveDriver" );
 	}
 
 	private void RemoveDriverCallback()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] RemoveDriverCallback >>>" );
+		app.Logger.WriteLine( "[AdminBoxx] RemoveDriverCallback >>>" );
 
-			app.ChatQueue.SendMessage( $"!remove #{_carNumber}" );
+		app.ChatQueue.SendMessage( $"!remove #{_carNumber}" );
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< RemoveDriverCallback" );
-		}
+		app.Logger.WriteLine( "[AdminBoxx] <<< RemoveDriverCallback" );
 	}
 
 	private void DoPlusOneLap()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoPlusOneLap >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoPlusOneLap >>>" );
+			app.ChatQueue.SendMessage( "!pacelaps +1" );
 
-			if ( !_inNumpadMode )
-			{
-				app.ChatQueue.SendMessage( "!pacelaps +1" );
-
-				PlayAudio( "plus_one_lap" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoPlusOneLap" );
+			PlayAudio( "plus_one_lap" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoPlusOneLap" );
 	}
 
 	private void DoAdvanceToNextSession()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoAdvanceToNextSession >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoAdvanceToNextSession >>>" );
+			app.ChatQueue.SendMessage( "!advance" );
 
-			if ( !_inNumpadMode )
-			{
-				app.ChatQueue.SendMessage( "!advance" );
-
-				PlayAudio( "advance_to_next_session" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoAdvanceToNextSession" );
+			PlayAudio( "advance_to_next_session" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoAdvanceToNextSession" );
 	}
 
 	private void DoLive()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoLive >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoLive >>>" );
+			app.Simulator.IRSDK.ReplaySetPlayPosition( IRacingSdkEnum.RpyPosMode.End, 0 );
+			app.Simulator.IRSDK.ReplaySetPlaySpeed( 16, false );
 
-			if ( !_inNumpadMode && _replayEnabled )
-			{
-				app.Simulator.IRSDK.ReplaySetPlayPosition( IRacingSdkEnum.RpyPosMode.End, 0 );
-				app.Simulator.IRSDK.ReplaySetPlaySpeed( 16, false );
-
-				PlayAudio( "live" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoLive" );
+			PlayAudio( "live" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoLive" );
 	}
 
 	private void DoGoToPreviousIncident()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoGoToPreviousIncident >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoGoToPreviousIncident >>>" );
+			app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.PrevIncident );
 
-			if ( !_inNumpadMode && _replayEnabled )
-			{
-				app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.PrevIncident );
-
-				PlayAudio( "previous_incident" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoGoToPreviousIncident" );
+			PlayAudio( "previous_incident" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoGoToPreviousIncident" );
 	}
 
 	private void DoGoToNextIncident()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoGoToNextIncident >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoGoToNextIncident >>>" );
+			app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.NextIncident );
 
-			if ( !_inNumpadMode && _replayEnabled )
-			{
-				app.Simulator.IRSDK.ReplaySearch( IRacingSdkEnum.RpySrchMode.NextIncident );
-
-				PlayAudio( "next_incident" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoGoToNextIncident" );
+			PlayAudio( "next_incident" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoGoToNextIncident" );
 	}
 
 	private void DoMinusOneLap()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoMinusOneLap >>>" );
+
+		if ( !_inNumpadMode )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoMinusOneLap >>>" );
+			app.ChatQueue.SendMessage( "!pacelaps -1" );
 
-			if ( !_inNumpadMode )
-			{
-				app.ChatQueue.SendMessage( "!pacelaps -1" );
-
-				PlayAudio( "minus_one_lap" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoMinusOneLap" );
+			PlayAudio( "minus_one_lap" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoMinusOneLap" );
 	}
 
 	private void DoSlowMotion()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoSlowMotion >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoSlowMotion >>>" );
+			var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
-			if ( !_inNumpadMode && _replayEnabled )
+			if ( !app.Simulator.ReplayPlaySlowMotion )
 			{
-				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
-
-				if ( !app.Simulator.ReplayPlaySlowMotion )
+				if ( app.Simulator.ReplayPlaySpeed >= 0 )
 				{
-					if ( app.Simulator.ReplayPlaySpeed >= 0 )
-					{
-						replayPlaySpeed = 1;
-					}
-					else
-					{
-						replayPlaySpeed = -1;
-					}
+					replayPlaySpeed = 1;
 				}
 				else
 				{
-					if ( app.Simulator.ReplayPlaySpeed >= 0 )
-					{
-						replayPlaySpeed++;
-					}
-					else
-					{
-						replayPlaySpeed--;
-					}
-				}
-
-				app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, true );
-
-				PlayAudio( "slow_motion" );
-			}
-
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoSlowMotion" );
-		}
-	}
-
-	private void DoReverse()
-	{
-		var app = App.Instance;
-
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[AdminBoxx] DoReverse >>>" );
-
-			if ( !_inNumpadMode && _replayEnabled )
-			{
-				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
-
-				if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed > 0 ) )
-				{
 					replayPlaySpeed = -1;
+				}
+			}
+			else
+			{
+				if ( app.Simulator.ReplayPlaySpeed >= 0 )
+				{
+					replayPlaySpeed++;
 				}
 				else
 				{
 					replayPlaySpeed--;
 				}
-
-				app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
-
-				PlayAudio( "rewind" );
 			}
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoReverse" );
+			app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, true );
+
+			PlayAudio( "slow_motion" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoSlowMotion" );
+	}
+
+	private void DoReverse()
+	{
+		var app = App.Instance!;
+
+		app.Logger.WriteLine( "[AdminBoxx] DoReverse >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
+		{
+			var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
+
+			if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed > 0 ) )
+			{
+				replayPlaySpeed = -1;
+			}
+			else
+			{
+				replayPlaySpeed--;
+			}
+
+			app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
+
+			PlayAudio( "rewind" );
+		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoReverse" );
 	}
 
 	private void DoForward()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[AdminBoxx] DoForward >>>" );
+
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			app.Logger.WriteLine( "[AdminBoxx] DoForward >>>" );
+			var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
 
-			if ( !_inNumpadMode && _replayEnabled )
+			if ( replayPlaySpeed != 1 )
 			{
-				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
+				replayPlaySpeed = 1;
 
-				if ( replayPlaySpeed != 1 )
-				{
-					replayPlaySpeed = 1;
+				PlayAudio( "play" );
+			}
+			else
+			{
+				replayPlaySpeed = 0;
 
-					PlayAudio( "play" );
-				}
-				else
-				{
-					replayPlaySpeed = 0;
-
-					PlayAudio( "pause" );
-				}
-
-				app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
+				PlayAudio( "pause" );
 			}
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoForward" );
+			app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoForward" );
 	}
 
 	private void DoFastForward()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		if ( !_inNumpadMode && _replayEnabled )
 		{
-			if ( !_inNumpadMode && _replayEnabled )
+			app.Logger.WriteLine( "[AdminBoxx] DoFastForward >>>" );
+
+			var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
+
+			if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed <= 0 ) )
 			{
-				app.Logger.WriteLine( "[AdminBoxx] DoFastForward >>>" );
-
-				var replayPlaySpeed = app.Simulator.ReplayPlaySpeed;
-
-				if ( app.Simulator.ReplayPlaySlowMotion || ( replayPlaySpeed <= 0 ) )
-				{
-					replayPlaySpeed = 2;
-				}
-				else
-				{
-					replayPlaySpeed++;
-				}
-
-				app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
-
-				PlayAudio( "fast_forward" );
+				replayPlaySpeed = 2;
+			}
+			else
+			{
+				replayPlaySpeed++;
 			}
 
-			app.Logger.WriteLine( "[AdminBoxx] <<< DoFastForward" );
+			app.Simulator.IRSDK.ReplaySetPlaySpeed( replayPlaySpeed, false );
+
+			PlayAudio( "fast_forward" );
 		}
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< DoFastForward" );
 	}
 
 	#endregion
 
 	private static void PlayAudio( string key )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		app?.AudioManager.Play( key, DataContext.DataContext.Instance.Settings.AdminBoxxVolume );
+		app.AudioManager.Play( key, DataContext.DataContext.Instance.Settings.AdminBoxxVolume );
 	}
 
 	private void OnPortClosed( object? sender, EventArgs e )

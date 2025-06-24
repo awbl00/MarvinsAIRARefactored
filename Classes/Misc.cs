@@ -25,35 +25,32 @@ public class Misc
 
 	public static void DisableThrottling()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[Misc] DisableThrottling >>>" );
+
+		var processInformationSize = Marshal.SizeOf<Kernel32.PROCESS_POWER_THROTTLING_STATE>();
+
+		var processInformation = new Kernel32.PROCESS_POWER_THROTTLING_STATE()
 		{
-			app.Logger.WriteLine( "[Misc] DisableThrottling >>>" );
+			Version = 1,
+			ControlMask = (Kernel32.ProcessorPowerThrottlingFlags) 4, // PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION
+			StateMask = 0
+		};
 
-			var processInformationSize = Marshal.SizeOf<Kernel32.PROCESS_POWER_THROTTLING_STATE>();
+		var processInformationPtr = Marshal.AllocHGlobal( processInformationSize );
 
-			var processInformation = new Kernel32.PROCESS_POWER_THROTTLING_STATE()
-			{
-				Version = 1,
-				ControlMask = (Kernel32.ProcessorPowerThrottlingFlags) 4, // PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION
-				StateMask = 0
-			};
+		Marshal.StructureToPtr( processInformation, processInformationPtr, false );
 
-			var processInformationPtr = Marshal.AllocHGlobal( processInformationSize );
+		var processHandle = Process.GetCurrentProcess().Handle;
 
-			Marshal.StructureToPtr( processInformation, processInformationPtr, false );
+		Kernel32.SafeObjectHandle safeHandle = new Kernel32.SafeObjectHandle( processHandle, ownsHandle: false );
 
-			var processHandle = Process.GetCurrentProcess().Handle;
+		_ = Kernel32.SetProcessInformation( safeHandle, Kernel32.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, processInformationPtr, (uint) processInformationSize );
 
-			Kernel32.SafeObjectHandle safeHandle = new Kernel32.SafeObjectHandle( processHandle, ownsHandle: false );
+		Marshal.FreeHGlobal( processInformationPtr );
 
-			_ = Kernel32.SetProcessInformation( safeHandle, Kernel32.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling, processInformationPtr, (uint) processInformationSize );
-
-			Marshal.FreeHGlobal( processInformationPtr );
-
-			app.Logger.WriteLine( "[Misc] <<< DisableThrottling" );
-		}
+		app.Logger.WriteLine( "[Misc] <<< DisableThrottling" );
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -83,7 +80,7 @@ public class Misc
 		var c = 2.0f * v0 - 5.0f * v1 + 4.0f * v2 - v3;
 		var d = -v0 + 3.0f * v1 - 3.0f * v2 + v3;
 
-		return 0.5f * ( a +  b * t  +  c * t * t  +  d * t * t * t  );
+		return 0.5f * ( a + b * t + c * t * t + d * t * t * t );
 	}
 
 	public static void ForcePropertySetters( object obj )
@@ -116,48 +113,45 @@ public class Misc
 	{
 		var dictionary = new Dictionary<string, string>();
 
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
+
+		if ( System.IO.File.Exists( filePath ) )
 		{
-			app.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
+			using var reader = new ResXResourceReader( filePath );
 
-			if ( System.IO.File.Exists( filePath ) )
+			reader.UseResXDataNodes = true;
+
+			foreach ( DictionaryEntry entry in reader )
 			{
-				using var reader = new ResXResourceReader( filePath );
+				var key = entry.Key.ToString();
 
-				reader.UseResXDataNodes = true;
-
-				foreach ( DictionaryEntry entry in reader )
+				if ( key != null )
 				{
-					var key = entry.Key.ToString();
-
-					if ( key != null )
+					if ( entry.Value is ResXDataNode node )
 					{
-						if ( entry.Value is ResXDataNode node )
-						{
-							var valueAsString = node.GetValue( (ITypeResolutionService?) null )?.ToString();
+						var valueAsString = node.GetValue( (ITypeResolutionService?) null )?.ToString();
 
-							if ( valueAsString != null )
-							{
-								dictionary[ key ] = valueAsString;
-							}
+						if ( valueAsString != null )
+						{
+							dictionary[ key ] = valueAsString;
 						}
-						else
-						{
-							var valueAsString = entry.Value?.ToString();
+					}
+					else
+					{
+						var valueAsString = entry.Value?.ToString();
 
-							if ( valueAsString != null )
-							{
-								dictionary[ key ] = valueAsString;
-							}
+						if ( valueAsString != null )
+						{
+							dictionary[ key ] = valueAsString;
 						}
 					}
 				}
 			}
-
-			app.Logger.WriteLine( "[Misc] <<< LoadResx" );
 		}
+
+		app.Logger.WriteLine( "[Misc] <<< LoadResx" );
 
 		return dictionary;
 	}

@@ -23,7 +23,7 @@ public class LFE
 	private const int _frameSizeInSamples = _500HzTo8KhzScale * _batchCount;
 	private const int _frameSizeInBytes = _frameSizeInSamples * _bytesPerSample;
 
-//	private readonly Lock _lock = new();
+	//	private readonly Lock _lock = new();
 
 	public Guid? NextRecordingDeviceGuid { private get; set; } = null;
 
@@ -32,7 +32,7 @@ public class LFE
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		get
 		{
-//			using ( _lock.EnterScope() )
+			// using ( _lock.EnterScope() )
 			{
 				var magnitude = _magnitude[ _pingPongIndex, _batchIndex ];
 
@@ -58,85 +58,73 @@ public class LFE
 
 	public void Initialize()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[LFE] Initialize >>>" );
+		app.Logger.WriteLine( "[LFE] Initialize >>>" );
 
-			EnumerateDevices();
+		EnumerateDevices();
 
-			_workerThread.Start();
+		_workerThread.Start();
 
-			app.Logger.WriteLine( "[LFE] <<< Initialize" );
-		}
+		app.Logger.WriteLine( "[LFE] <<< Initialize" );
 	}
 
 	public void Shutdown()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[LFE] Shutdown >>>" );
+		app.Logger.WriteLine( "[LFE] Shutdown >>>" );
 
-			_running = false;
+		_running = false;
 
-			_autoResetEvent.Set();
+		_autoResetEvent.Set();
 
-			app.Logger.WriteLine( "[LFE] <<< Shutdown" );
-		}
+		app.Logger.WriteLine( "[LFE] <<< Shutdown" );
 	}
 
 	public void SetMairaComboBoxItemsSource( MairaComboBox mairaComboBox )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[LFE] SetMairaComboBoxItemsSource >>>" );
+		app.Logger.WriteLine( "[LFE] SetMairaComboBoxItemsSource >>>" );
 
-			var dictionary = new Dictionary<Guid, string>();
+		var dictionary = new Dictionary<Guid, string>();
 
-			_captureDeviceList.ToList().ForEach( keyValuePair => dictionary[ keyValuePair.Key ] = keyValuePair.Value );
+		_captureDeviceList.ToList().ForEach( keyValuePair => dictionary[ keyValuePair.Key ] = keyValuePair.Value );
 
-			mairaComboBox.ItemsSource = dictionary.OrderBy( keyValuePair => keyValuePair.Value );
-			mairaComboBox.SelectedValue = DataContext.DataContext.Instance.Settings.RacingWheelLFERecordingDeviceGuid;
+		mairaComboBox.ItemsSource = dictionary.OrderBy( keyValuePair => keyValuePair.Value );
+		mairaComboBox.SelectedValue = DataContext.DataContext.Instance.Settings.RacingWheelLFERecordingDeviceGuid;
 
-			app.Logger.WriteLine( "[LFE] <<< SetMairaComboBoxItemsSource" );
-		}
+		app.Logger.WriteLine( "[LFE] <<< SetMairaComboBoxItemsSource" );
 	}
 
 	private void EnumerateDevices()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[LFE] EnumerateDevices >>>" );
+
+		_captureDeviceList.Clear();
+
+		_captureDeviceList.Add( Guid.Empty, DataContext.DataContext.Instance.Localization[ "Disabled" ] );
+
+		var deviceInformationList = DirectSoundCapture.GetDevices();
+
+		foreach ( var deviceInformation in deviceInformationList )
 		{
-			app.Logger.WriteLine( "[LFE] EnumerateDevices >>>" );
-
-			_captureDeviceList.Clear();
-
-			_captureDeviceList.Add( Guid.Empty, DataContext.DataContext.Instance.Localization[ "Disabled" ] );
-
-			var deviceInformationList = DirectSoundCapture.GetDevices();
-
-			foreach ( var deviceInformation in deviceInformationList )
+			if ( deviceInformation.DriverGuid != Guid.Empty )
 			{
-				if ( deviceInformation.DriverGuid != Guid.Empty )
-				{
-					app.Logger.WriteLine( $"[LFE] Description: {deviceInformation.Description}" );
-					app.Logger.WriteLine( $"[LFE] Module name: {deviceInformation.ModuleName}" );
-					app.Logger.WriteLine( $"[LFE] Driver GUID: {deviceInformation.DriverGuid}" );
+				app.Logger.WriteLine( $"[LFE] Description: {deviceInformation.Description}" );
+				app.Logger.WriteLine( $"[LFE] Module name: {deviceInformation.ModuleName}" );
+				app.Logger.WriteLine( $"[LFE] Driver GUID: {deviceInformation.DriverGuid}" );
 
-					_captureDeviceList.Add( deviceInformation.DriverGuid, deviceInformation.Description );
+				_captureDeviceList.Add( deviceInformation.DriverGuid, deviceInformation.Description );
 
-					app.Logger.WriteLine( $"[LFE] ---" );
-				}
+				app.Logger.WriteLine( $"[LFE] ---" );
 			}
-
-			app.Logger.WriteLine( "[LFE] <<< EnumerateDevices" );
 		}
+
+		app.Logger.WriteLine( "[LFE] <<< EnumerateDevices" );
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -219,7 +207,7 @@ public class LFE
 				_magnitude[ pingPongIndex, batchIndex ] = amplitudeSum / _500HzTo8KhzScale;
 			}
 
-//			using ( _lock.EnterScope() )
+			// using ( _lock.EnterScope() )
 			{
 				_batchIndex = 0;
 				_pingPongIndex = pingPongIndex;
@@ -233,18 +221,15 @@ public class LFE
 	{
 		var _byteSpan = new Span<byte>( new byte[ _frameSizeInBytes ] );
 
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		var directSound = app.LFE;
+
+		while ( directSound._running )
 		{
-			var directSound = app.LFE;
+			var signalReceived = directSound._autoResetEvent.WaitOne( 250 );
 
-			while ( directSound._running )
-			{
-				var signalReceived = directSound._autoResetEvent.WaitOne( 250 );
-
-				directSound.Update( app, signalReceived, _byteSpan );
-			}
+			directSound.Update( app, signalReceived, _byteSpan );
 		}
 	}
 }

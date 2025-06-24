@@ -219,23 +219,20 @@ public partial class MairaKnob : UserControl
 
 	private void Label_PreviewMouseRightButtonDown( object sender, MouseButtonEventArgs e )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		e.Handled = true;
+
+		if ( ContextSwitches != null )
 		{
-			e.Handled = true;
+			app.Logger.WriteLine( "[MairaKnob] Showing update context switches window" );
 
-			if ( ContextSwitches != null )
+			var updateContextSwitchesWindow = new UpdateContextSwitchesWindow( ContextSwitches )
 			{
-				app.Logger.WriteLine( "[MairaKnob] Showing update context switches window" );
+				Owner = app.MainWindow
+			};
 
-				var updateContextSwitchesWindow = new UpdateContextSwitchesWindow( ContextSwitches )
-				{
-					Owner = app.MainWindow
-				};
-
-				updateContextSwitchesWindow.ShowDialog();
-			}
+			updateContextSwitchesWindow.ShowDialog();
 		}
 	}
 

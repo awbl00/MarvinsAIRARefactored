@@ -62,31 +62,28 @@ public class Debug
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public void AddFFBSample( float deltaMilliseconds, float steeringWheelTorque60Hz, float steeringWheelTorque500Hz, float inputLFEMagnitude, float outputTorque )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		if ( _ffbSampleIndex < _ffbSamples.Length )
 		{
-			if ( _ffbSampleIndex < _ffbSamples.Length )
+			_ffbSamples[ _ffbSampleIndex++ ] = new FFBSample()
 			{
-				_ffbSamples[ _ffbSampleIndex++ ] = new FFBSample()
-				{
-					deltaMilliseconds = deltaMilliseconds,
-					steeringWheelTorque60Hz = steeringWheelTorque60Hz,
-					steeringWheelTorque500Hz = steeringWheelTorque500Hz,
-					inputLFEMagnitude = inputLFEMagnitude,
-					outputTorque = outputTorque,
-					simulatorSteeringWheelAngle = app.Simulator.SteeringWheelAngle,
-					directInputWheelPosition = app.DirectInput.ForceFeedbackWheelPosition,
-					directInputWheelVelocity = app.DirectInput.ForceFeedbackWheelVelocity,
-					velocityX = app.Simulator.VelocityX,
-					velocityY = app.Simulator.VelocityY,
-					gear = app.Simulator.Gear,
-					clutch = app.Simulator.Clutch,
-					brake = app.Simulator.Brake,
-					throttle = app.Simulator.Throttle,
-					lapDistPct = app.Simulator.LapDistPct
-				};
-			}
+				deltaMilliseconds = deltaMilliseconds,
+				steeringWheelTorque60Hz = steeringWheelTorque60Hz,
+				steeringWheelTorque500Hz = steeringWheelTorque500Hz,
+				inputLFEMagnitude = inputLFEMagnitude,
+				outputTorque = outputTorque,
+				simulatorSteeringWheelAngle = app.Simulator.SteeringWheelAngle,
+				directInputWheelPosition = app.DirectInput.ForceFeedbackWheelPosition,
+				directInputWheelVelocity = app.DirectInput.ForceFeedbackWheelVelocity,
+				velocityX = app.Simulator.VelocityX,
+				velocityY = app.Simulator.VelocityY,
+				gear = app.Simulator.Gear,
+				clutch = app.Simulator.Clutch,
+				brake = app.Simulator.Brake,
+				throttle = app.Simulator.Throttle,
+				lapDistPct = app.Simulator.LapDistPct
+			};
 		}
 	}
 

@@ -26,22 +26,19 @@ public class ContextSwitches : INotifyPropertyChanged
 	{
 		if ( !_initializing )
 		{
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			if ( app != null )
+			if ( propertyName != null )
 			{
-				if ( propertyName != null )
+				var property = GetType().GetProperty( propertyName );
+
+				if ( property != null )
 				{
-					var property = GetType().GetProperty( propertyName );
-
-					if ( property != null )
-					{
-						app.Logger.WriteLine( $"[ContextSwitches] {propertyName} = {property.GetValue( this )}" );
-					}
+					app.Logger.WriteLine( $"[ContextSwitches] {propertyName} = {property.GetValue( this )}" );
 				}
-
-				app.SettingsFile.QueueForSerialization = true;
 			}
+
+			app.SettingsFile.QueueForSerialization = true;
 		}
 
 		PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );

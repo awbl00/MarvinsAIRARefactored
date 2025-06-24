@@ -9,9 +9,9 @@ public partial class RunInstallerWindow : Window
 
 	public RunInstallerWindow( string localFilePath )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		app?.MainWindow.MakeWindowVisible();
+		app.MainWindow.MakeWindowVisible();
 
 		InitializeComponent();
 	}

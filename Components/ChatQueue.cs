@@ -13,16 +13,13 @@ public partial class ChatQueue
 
 	public void SendMessage( string message )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( $"[ChatQueue] Sending message: {message}" );
+
+		if ( app.Simulator.IsConnected )
 		{
-			app.Logger.WriteLine( $"[ChatQueue] Sending message: {message}" );
-
-			if ( app.Simulator.IsConnected )
-			{
-				_messageList.Add( $"{message}\r" );
-			}
+			_messageList.Add( $"{message}\r" );
 		}
 	}
 

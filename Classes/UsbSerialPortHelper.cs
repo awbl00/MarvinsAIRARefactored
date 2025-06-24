@@ -22,41 +22,38 @@ public class UsbSerialPortHelper( string vid, string pid ) : IDisposable
 
 	public string? FindPortName()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		using var searcher = new ManagementObjectSearcher( "SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM%'" );
+
+		foreach ( var device in searcher.Get() )
 		{
-			using var searcher = new ManagementObjectSearcher( "SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM%'" );
+			var name = device[ "Name" ]?.ToString();
+			var deviceId = device[ "PNPDeviceID" ]?.ToString();
 
-			foreach ( var device in searcher.Get() )
+			if ( !string.IsNullOrEmpty( name ) && !string.IsNullOrEmpty( deviceId ) )
 			{
-				var name = device[ "Name" ]?.ToString();
-				var deviceId = device[ "PNPDeviceID" ]?.ToString();
-
-				if ( !string.IsNullOrEmpty( name ) && !string.IsNullOrEmpty( deviceId ) )
+				if ( deviceId.Contains( $"VID_{_vid}", StringComparison.OrdinalIgnoreCase ) && deviceId.Contains( $"PID_{_pid}", StringComparison.OrdinalIgnoreCase ) )
 				{
-					if ( deviceId.Contains( $"VID_{_vid}", StringComparison.OrdinalIgnoreCase ) && deviceId.Contains( $"PID_{_pid}", StringComparison.OrdinalIgnoreCase ) )
+					if ( !deviceId.Contains( "MI_00", StringComparison.OrdinalIgnoreCase ) )
 					{
-						if ( !deviceId.Contains( "MI_00", StringComparison.OrdinalIgnoreCase ) )
+						var start = name.IndexOf( "(COM" );
+						var end = name.IndexOf( ')', start );
+
+						if ( ( start >= 0 ) && ( end >= 0 ) )
 						{
-							var start = name.IndexOf( "(COM" );
-							var end = name.IndexOf( ')', start );
+							var portName = name.Substring( start + 1, end - start - 1 );
 
-							if ( ( start >= 0 ) && ( end >= 0 ) )
-							{
-								var portName = name.Substring( start + 1, end - start - 1 );
+							app.Logger.WriteLine( $"[UsbSerialPortHelper] Device found on port {portName}" );
 
-								app.Logger.WriteLine( $"[UsbSerialPortHelper] Device found on port {portName}" );
-
-								return portName;
-							}
+							return portName;
 						}
 					}
 				}
 			}
-
-			app.Logger.WriteLine( "[UsbSerialPortHelper] Device not found" );
 		}
+
+		app.Logger.WriteLine( "[UsbSerialPortHelper] Device not found" );
 
 		return null;
 	}
@@ -65,41 +62,38 @@ public class UsbSerialPortHelper( string vid, string pid ) : IDisposable
 	{
 		var serialPortOpened = false;
 
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		app.Logger.WriteLine( "[UsbSerialPortHelper] Open >>>" );
+
+		using ( _lock.EnterScope() )
 		{
-			app.Logger.WriteLine( "[UsbSerialPortHelper] Open >>>" );
+			var portName = FindPortName();
 
-			using ( _lock.EnterScope() )
+			if ( portName != null )
 			{
-				var portName = FindPortName();
-
-				if ( portName != null )
+				_serialPort = new SerialPort( portName, baudRate, parity, dataBits, stopBits )
 				{
-					_serialPort = new SerialPort( portName, baudRate, parity, dataBits, stopBits )
-					{
-						Handshake = Handshake.None,
-						Encoding = Encoding.ASCII,
-						ReadTimeout = 3000,
-						WriteTimeout = 3000
-					};
+					Handshake = Handshake.None,
+					Encoding = Encoding.ASCII,
+					ReadTimeout = 3000,
+					WriteTimeout = 3000
+				};
 
-					_serialPort.DataReceived += OnDataReceived;
+				_serialPort.DataReceived += OnDataReceived;
 
-					_serialPort.Open();
-					_serialPort.DiscardInBuffer();
+				_serialPort.Open();
+				_serialPort.DiscardInBuffer();
 
-					_cancellationTokenSource = new();
+				_cancellationTokenSource = new();
 
-					_ = Task.Run( () => MonitorPort( _cancellationTokenSource.Token ) );
+				_ = Task.Run( () => MonitorPort( _cancellationTokenSource.Token ) );
 
-					serialPortOpened = true;
-				}
+				serialPortOpened = true;
 			}
-
-			app.Logger.WriteLine( "[UsbSerialPortHelper] <<< Open" );
 		}
+
+		app.Logger.WriteLine( "[UsbSerialPortHelper] <<< Open" );
 
 		return serialPortOpened;
 	}
@@ -108,9 +102,9 @@ public class UsbSerialPortHelper( string vid, string pid ) : IDisposable
 	{
 		if ( _serialPort != null )
 		{
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			app?.Logger.WriteLine( "[UsbSerialPortHelper] Closing serial port" );
+			app.Logger.WriteLine( "[UsbSerialPortHelper] Closing serial port" );
 
 			using ( _lock.EnterScope() )
 			{

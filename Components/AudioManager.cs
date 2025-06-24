@@ -29,30 +29,28 @@ namespace MarvinsAIRARefactored.Components
 
 		public void Initialize()
 		{
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			if ( app != null )
+			app.Logger.WriteLine( "[AudioManager] Initialize >>>" );
+
+			if ( !Directory.Exists( _soundsDirectory ) )
 			{
-				app.Logger.WriteLine( "[AudioManager] Initialize >>>" );
+				Directory.CreateDirectory( _soundsDirectory );
+			}
 
-				if ( !Directory.Exists( _soundsDirectory ) )
-				{
-					Directory.CreateDirectory( _soundsDirectory );
-				}
+			_fileSystemWatcher = new FileSystemWatcher( _soundsDirectory, "*.wav" )
+			{
+				NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
+				EnableRaisingEvents = true,
+				IncludeSubdirectories = false
+			};
 
-				_fileSystemWatcher = new FileSystemWatcher( _soundsDirectory, "*.wav" )
-				{
-					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
-					EnableRaisingEvents = true,
-					IncludeSubdirectories = false
-				};
+			_fileSystemWatcher.Changed += OnSoundFileChanged;
+			_fileSystemWatcher.Created += OnSoundFileChanged;
+			_fileSystemWatcher.Renamed += OnSoundFileChanged;
 
-				_fileSystemWatcher.Changed += OnSoundFileChanged;
-				_fileSystemWatcher.Created += OnSoundFileChanged;
-				_fileSystemWatcher.Renamed += OnSoundFileChanged;
-
-				string[] soundKeys = [
-					"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "cancel", "enter",
+			string[] soundKeys = [
+				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "cancel", "enter",
 					"double_file", "single_file",
 					"plus_one_lap", "minus_one_lap",
 					"throw_caution_flag", "advance_to_next_session",
@@ -61,42 +59,38 @@ namespace MarvinsAIRARefactored.Components
 					"wave_by_driver", "end_of_line_driver", "remove_driver", "disqualify_driver",
 					"live", "pause", "play", "slow_motion", "fast_forward", "rewind", "next_incident", "previous_incident",
 					"volume"
-				];
+			];
 
-				foreach ( var soundKey in soundKeys )
-				{
-					var path = Path.Combine( _soundsDirectory, $"{soundKey}.wav" );
+			foreach ( var soundKey in soundKeys )
+			{
+				var path = Path.Combine( _soundsDirectory, $"{soundKey}.wav" );
 
-					LoadSound( path );
-				}
-
-				app.Logger.WriteLine( "[AudioManager] <<< Initialize" );
+				LoadSound( path );
 			}
+
+			app.Logger.WriteLine( "[AudioManager] <<< Initialize" );
 		}
 
 		private void OnSoundFileChanged( object sender, FileSystemEventArgs e )
 		{
 			Task.Delay( 1000 ).ContinueWith( _ =>
 			{
-				var app = App.Instance;
+				var app = App.Instance!;
 
-				if ( app != null )
+				app.Logger.WriteLine( "[AudioManager] OnSoundFileChanged >>>" );
+
+				try
 				{
-					app.Logger.WriteLine( "[AudioManager] OnSoundFileChanged >>>" );
+					LoadSound( e.FullPath );
 
-					try
-					{
-						LoadSound( e.FullPath );
-
-						app.Logger.WriteLine( $"[AudioManager] Hot-reloaded sound: {e.FullPath}" );
-					}
-					catch ( Exception exception )
-					{
-						app.Logger.WriteLine( $"[AudioManager] Failed to reload {e.FullPath}: {exception.Message}" );
-					}
-
-					app.Logger.WriteLine( "[AudioManager] <<< OnSoundFileChanged" );
+					app.Logger.WriteLine( $"[AudioManager] Hot-reloaded sound: {e.FullPath}" );
 				}
+				catch ( Exception exception )
+				{
+					app.Logger.WriteLine( $"[AudioManager] Failed to reload {e.FullPath}: {exception.Message}" );
+				}
+
+				app.Logger.WriteLine( "[AudioManager] <<< OnSoundFileChanged" );
 			} );
 		}
 

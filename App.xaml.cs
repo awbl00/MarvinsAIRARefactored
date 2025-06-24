@@ -298,16 +298,52 @@ public partial class App : Application
 				settings.RacingWheelDeltaLimiterBias -= 0.01f;
 			}
 
-			// racing wheel compression rate knob
+			// racing wheel slew compression threshold knob
 
-			if ( CheckMappedButtons( settings.RacingWheelCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( settings.RacingWheelSlewCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.RacingWheelCompressionRate += 0.01f;
+				settings.RacingWheelSlewCompressionThreshold += 1f;
 			}
 
-			if ( CheckMappedButtons( settings.RacingWheelCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( settings.RacingWheelSlewCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.RacingWheelCompressionRate -= 0.01f;
+				settings.RacingWheelSlewCompressionThreshold -= 1f;
+			}
+
+			// racing wheel slew compression rate knob
+
+			if ( CheckMappedButtons( settings.RacingWheelSlewCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelSlewCompressionRate += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.RacingWheelSlewCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelSlewCompressionRate -= 0.01f;
+			}
+
+			// racing wheel total compression threshold knob
+
+			if ( CheckMappedButtons( settings.RacingWheelTotalCompressionThresholdPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelTotalCompressionThreshold += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.RacingWheelTotalCompressionThresholdMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelTotalCompressionThreshold -= 0.01f;
+			}
+
+			// racing wheel total compression rate knob
+
+			if ( CheckMappedButtons( settings.RacingWheelTotalCompressionRatePlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelTotalCompressionRate += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.RacingWheelTotalCompressionRateMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelTotalCompressionRate -= 0.01f;
 			}
 
 			// racing wheel output minimum knob

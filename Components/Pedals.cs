@@ -38,45 +38,37 @@ public class Pedals
 
 	public void Initialize()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Graph.SetLayerColors( Graph.LayerIndex.ClutchPedalHaptics, 0f, 0f, 0.5f, 0f, 0f, 1f );
-			app.Graph.SetLayerColors( Graph.LayerIndex.BrakePedalHaptics, 0.5f, 0f, 0f, 1f, 0f, 0f );
-			app.Graph.SetLayerColors( Graph.LayerIndex.ThrottlePedalHaptics, 0f, 0.5f, 0f, 0f, 1f, 0f );
-		}
+		app.Graph.SetLayerColors( Graph.LayerIndex.ClutchPedalHaptics, 0f, 0f, 0.5f, 0f, 0f, 1f );
+		app.Graph.SetLayerColors( Graph.LayerIndex.BrakePedalHaptics, 0.5f, 0f, 0f, 1f, 0f, 0f );
+		app.Graph.SetLayerColors( Graph.LayerIndex.ThrottlePedalHaptics, 0f, 0.5f, 0f, 0f, 1f, 0f );
 	}
 
 	public void Refresh()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[Pedals] Refresh >>>" );
+		app.Logger.WriteLine( "[Pedals] Refresh >>>" );
 
-			PedalsDevice = _hpr.Initialize( DataContext.DataContext.Instance.Settings.PedalsEnabled );
+		PedalsDevice = _hpr.Initialize( DataContext.DataContext.Instance.Settings.PedalsEnabled );
 
-			app.Logger.WriteLine( $"[Pedals] Simagic HPR API reports: {PedalsDevice}" );
+		app.Logger.WriteLine( $"[Pedals] Simagic HPR API reports: {PedalsDevice}" );
 
-			app.MainWindow.UpdatePedalsDevice();
+		app.MainWindow.UpdatePedalsDevice();
 
-			app.Logger.WriteLine( "[Pedals] <<< Refresh" );
-		}
+		app.Logger.WriteLine( "[Pedals] <<< Refresh" );
 	}
 
 	public static void SetMairaComboBoxItemsSource( MairaComboBox mairaComboBox )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
-		{
-			app.Logger.WriteLine( "[Pedals] SetMairaComboBoxItemsSource >>>" );
+		app.Logger.WriteLine( "[Pedals] SetMairaComboBoxItemsSource >>>" );
 
-			var selectedEffect = mairaComboBox.SelectedValue as Effect?;
+		var selectedEffect = mairaComboBox.SelectedValue as Effect?;
 
-			var dictionary = new Dictionary<Effect, string>
+		var dictionary = new Dictionary<Effect, string>
 			{
 				{ Effect.None, DataContext.DataContext.Instance.Localization[ "None" ] },
 				{ Effect.GearChange, DataContext.DataContext.Instance.Localization[ "GearChange" ] },
@@ -88,35 +80,31 @@ public class Pedals
 				{ Effect.ClutchSlip, DataContext.DataContext.Instance.Localization[ "ClutchSlip" ] },
 			};
 
-			mairaComboBox.ItemsSource = dictionary;
+		mairaComboBox.ItemsSource = dictionary;
 
-			if ( selectedEffect != null )
-			{
-				mairaComboBox.SelectedValue = selectedEffect;
-			}
-			else
-			{
-				mairaComboBox.SelectedValue = Effect.None;
-			}
-
-			app.Logger.WriteLine( "[Pedals] <<< SetMairaComboBoxItemsSource" );
+		if ( selectedEffect != null )
+		{
+			mairaComboBox.SelectedValue = selectedEffect;
 		}
+		else
+		{
+			mairaComboBox.SelectedValue = Effect.None;
+		}
+
+		app.Logger.WriteLine( "[Pedals] <<< SetMairaComboBoxItemsSource" );
 	}
 
 	public void UpdateGraph()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		for ( var i = 0; i < 3; i++ )
 		{
-			for ( var i = 0; i < 3; i++ )
-			{
-				_cycles[ i ] += _frequency[ i ] * MathF.Tau / 500f;
+			_cycles[ i ] += _frequency[ i ] * MathF.Tau / 500f;
 
-				var amplitude = MathF.Sin( _cycles[ i ] ) * _amplitude[ i ];
+			var amplitude = MathF.Sin( _cycles[ i ] ) * _amplitude[ i ];
 
-				app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + i, amplitude, amplitude );
-			}
+			app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + i, amplitude, amplitude );
 		}
 	}
 

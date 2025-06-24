@@ -17,40 +17,37 @@ public class Settings : INotifyPropertyChanged
 
 	public void OnPropertyChanged( [CallerMemberName] string? propertyName = null )
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		if ( ( propertyName != null ) && !propertyName.EndsWith( "String" ) )
 		{
-			if ( ( propertyName != null ) && !propertyName.EndsWith( "String" ) )
+			var property = GetType().GetProperty( propertyName );
+
+			if ( property != null )
 			{
-				var property = GetType().GetProperty( propertyName );
+				app.Logger.WriteLine( $"[Settings] {propertyName} = {property.GetValue( this )}" );
 
-				if ( property != null )
+				var contextSwitchesPropertyName = $"{propertyName}ContextSwitches";
+
+				var contextSwitchesProperty = GetType().GetProperty( contextSwitchesPropertyName );
+
+				if ( contextSwitchesProperty != null )
 				{
-					app.Logger.WriteLine( $"[Settings] {propertyName} = {property.GetValue( this )}" );
+					var contextSwitches = (ContextSwitches?) contextSwitchesProperty.GetValue( this );
 
-					var contextSwitchesPropertyName = $"{propertyName}ContextSwitches";
-
-					var contextSwitchesProperty = GetType().GetProperty( contextSwitchesPropertyName );
-
-					if ( contextSwitchesProperty != null )
+					if ( contextSwitches != null )
 					{
-						var contextSwitches = (ContextSwitches?) contextSwitchesProperty.GetValue( this );
+						var context = new Context( contextSwitches );
 
-						if ( contextSwitches != null )
-						{
-							var context = new Context( contextSwitches );
+						var contextSettings = FindContextSettings( context );
 
-							var contextSettings = FindContextSettings( context );
-
-							UpdateToContextSettings( contextSettings );
-						}
+						UpdateToContextSettings( contextSettings );
 					}
 				}
 			}
-
-			app.SettingsFile.QueueForSerialization = true;
 		}
+
+		app.SettingsFile.QueueForSerialization = true;
 
 		PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
 	}
@@ -63,40 +60,37 @@ public class Settings : INotifyPropertyChanged
 
 	public void UpdateFromContextSettings()
 	{
-		var app = App.Instance;
+		var app = App.Instance!;
 
-		if ( app != null )
+		var destinationProperties = typeof( Settings ).GetProperties( BindingFlags.Public | BindingFlags.Instance );
+
+		foreach ( var destinationProperty in destinationProperties )
 		{
-			var destinationProperties = typeof( Settings ).GetProperties( BindingFlags.Public | BindingFlags.Instance );
-
-			foreach ( var destinationProperty in destinationProperties )
+			if ( destinationProperty.CanWrite && !destinationProperty.Name.EndsWith( "String" ) )
 			{
-				if ( destinationProperty.CanWrite && !destinationProperty.Name.EndsWith( "String" ) )
+				var contextSwitchesPropertyName = $"{destinationProperty.Name}ContextSwitches";
+
+				var contextSwitchesProperty = GetType().GetProperty( contextSwitchesPropertyName );
+
+				if ( contextSwitchesProperty != null )
 				{
-					var contextSwitchesPropertyName = $"{destinationProperty.Name}ContextSwitches";
+					var contextSwitches = (ContextSwitches?) contextSwitchesProperty.GetValue( this );
 
-					var contextSwitchesProperty = GetType().GetProperty( contextSwitchesPropertyName );
-
-					if ( contextSwitchesProperty != null )
+					if ( contextSwitches != null )
 					{
-						var contextSwitches = (ContextSwitches?) contextSwitchesProperty.GetValue( this );
+						var context = new Context( contextSwitches );
 
-						if ( contextSwitches != null )
+						var contextSettings = FindContextSettings( context );
+
+						var sourceProperty = typeof( ContextSettings ).GetProperty( destinationProperty.Name );
+
+						if ( sourceProperty != null )
 						{
-							var context = new Context( contextSwitches );
+							var value = sourceProperty.GetValue( contextSettings );
 
-							var contextSettings = FindContextSettings( context );
+							app.Logger.WriteLine( $"[Settings] Setting {destinationProperty.Name} = {value} ({context.WheelbaseGuid}|{context.CarName}|{context.TrackName}|{context.TrackConfigurationName}|{context.WetDryName})" );
 
-							var sourceProperty = typeof( ContextSettings ).GetProperty( destinationProperty.Name );
-
-							if ( sourceProperty != null )
-							{
-								var value = sourceProperty.GetValue( contextSettings );
-
-								app.Logger.WriteLine( $"[Settings] Setting {destinationProperty.Name} = {value} ({context.WheelbaseGuid}|{context.CarName}|{context.TrackName}|{context.TrackConfigurationName}|{context.WetDryName})" );
-
-								destinationProperty.SetValue( this, value );
-							}
+							destinationProperty.SetValue( this, value );
 						}
 					}
 				}
@@ -158,12 +152,9 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 
-				var app = App.Instance;
+				var app = App.Instance!;
 
-				if ( app != null )
-				{
-					app.RacingWheel.NextRacingWheelGuid = _racingWheelSteeringDeviceGuid;
-				}
+				app.RacingWheel.NextRacingWheelGuid = _racingWheelSteeringDeviceGuid;
 			}
 		}
 	}
@@ -187,9 +178,9 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			app?.MainWindow.UpdateRacingWheelPowerButton();
+			app.MainWindow.UpdateRacingWheelPowerButton();
 		}
 	}
 
@@ -229,7 +220,14 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
 			RacingWheelMaxForceString = $"{_racingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
+
+			UpdateRacingWheelSlewCompressionThresholdString();
+			UpdateRacingWheelTotalCompressionThresholdString();
 		}
 	}
 
@@ -333,9 +331,11 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			app?.MainWindow.UpdateRacingWheelAlgorithmControls();
+			app.MainWindow.UpdateRacingWheelAlgorithmControls();
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
 		}
 	}
 
@@ -361,6 +361,10 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
 
 			RacingWheelDetailBoostString = $"{_racingWheelDetailBoost * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
@@ -392,7 +396,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Racing wheel - Delta limit
 
-	private float _racingWheelDeltaLimit = 32.4f;
+	private float _racingWheelDeltaLimit = 500f;
 
 	public float RacingWheelDeltaLimit
 	{
@@ -400,7 +404,7 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp( value, 0f, 99.9f );
+			value = Math.Clamp( value, 0f, 3000f );
 
 			if ( value != _racingWheelDeltaLimit )
 			{
@@ -409,7 +413,11 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			RacingWheelDeltaLimitString = $"{_racingWheelDeltaLimit:F1}{DataContext.Instance.Localization[ "DeltaLimitUnits" ]}";
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			RacingWheelDeltaLimitString = $"{_racingWheelDeltaLimit:F0}{DataContext.Instance.Localization[ "DeltaLimitUnits" ]}";
 		}
 	}
 
@@ -455,6 +463,10 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
 
 			RacingWheelDetailBoostBiasString = $"{_racingWheelDetailBoostBias * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
@@ -503,6 +515,10 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
 			RacingWheelDeltaLimiterBiasString = $"{_racingWheelDeltaLimiterBias * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
@@ -531,50 +547,216 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Racing wheel - Compression rate
+	#region Racing wheel - Slew compression threshold
 
-	private float _racingWheelCompressionRate = 0.1f;
-
-	public float RacingWheelCompressionRate
+	private float _racingWheelSlewCompressionThreshold = 2f;
+	public float RacingWheelSlewCompressionThreshold
 	{
-		get => _racingWheelCompressionRate;
+		get => _racingWheelSlewCompressionThreshold;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 350f );
+
+			if ( value != _racingWheelSlewCompressionThreshold )
+			{
+				_racingWheelSlewCompressionThreshold = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			UpdateRacingWheelSlewCompressionThresholdString();
+		}
+	}
+
+	private string _racingWheelSlewCompressionThresholdString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelSlewCompressionThresholdString
+	{
+		get => _racingWheelSlewCompressionThresholdString;
+
+		set
+		{
+			if ( value != _racingWheelSlewCompressionThresholdString )
+			{
+				_racingWheelSlewCompressionThresholdString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelSlewCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelSlewCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSlewCompressionThresholdMinusButtonMappings { get; set; } = new();
+
+	private void UpdateRacingWheelSlewCompressionThresholdString()
+	{
+		RacingWheelSlewCompressionThresholdString = $"{_racingWheelSlewCompressionThreshold * DataContext.Instance.Settings.RacingWheelMaxForce / 1000f:F2}{DataContext.Instance.Localization[ "SlewUnits" ]}";
+	}
+
+	#endregion
+
+	#region Racing wheel - Slew compression rate
+
+	private float _racingWheelSlewCompressionRate = 0.65f;
+
+	public float RacingWheelSlewCompressionRate
+	{
+		get => _racingWheelSlewCompressionRate;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _racingWheelCompressionRate )
+			if ( value != _racingWheelSlewCompressionRate )
 			{
-				_racingWheelCompressionRate = value;
+				_racingWheelSlewCompressionRate = value;
 
 				OnPropertyChanged();
 			}
 
-			RacingWheelCompressionRateString = $"{_racingWheelCompressionRate * 100f:F0}{DataContext.Instance.Localization[ "CompressionRateUnits" ]}";
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			RacingWheelSlewCompressionRateString = $"{_racingWheelSlewCompressionRate * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _racingWheelCompressionRateString = string.Empty;
+	private string _racingWheelSlewCompressionRateString = string.Empty;
 
 	[XmlIgnore]
-	public string RacingWheelCompressionRateString
+	public string RacingWheelSlewCompressionRateString
 	{
-		get => _racingWheelCompressionRateString;
+		get => _racingWheelSlewCompressionRateString;
 
 		set
 		{
-			if ( value != _racingWheelCompressionRateString )
+			if ( value != _racingWheelSlewCompressionRateString )
 			{
-				_racingWheelCompressionRateString = value;
+				_racingWheelSlewCompressionRateString = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches RacingWheelCompressionRateContextSwitches { get; set; } = new( true, true, false, false, false );
-	public ButtonMappings RacingWheelCompressionRatePlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelCompressionRateMinusButtonMappings { get; set; } = new();
+	public ContextSwitches RacingWheelSlewCompressionRateContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelSlewCompressionRatePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSlewCompressionRateMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Total compression threshold
+
+	private float _racingWheelTotalCompressionThreshold = 0.65f;
+
+	public float RacingWheelTotalCompressionThreshold
+	{
+		get => _racingWheelTotalCompressionThreshold;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _racingWheelTotalCompressionThreshold )
+			{
+				_racingWheelTotalCompressionThreshold = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			UpdateRacingWheelTotalCompressionThresholdString();
+		}
+	}
+
+	private string _racingWheelTotalCompressionThresholdString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelTotalCompressionThresholdString
+	{
+		get => _racingWheelTotalCompressionThresholdString;
+
+		set
+		{
+			if ( value != _racingWheelTotalCompressionThresholdString )
+			{
+				_racingWheelTotalCompressionThresholdString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelTotalCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelTotalCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalCompressionThresholdMinusButtonMappings { get; set; } = new();
+
+	private void UpdateRacingWheelTotalCompressionThresholdString()
+	{
+		RacingWheelTotalCompressionThresholdString = $"{_racingWheelTotalCompressionThreshold * DataContext.Instance.Settings.RacingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
+	}
+
+	#endregion
+
+	#region Racing wheel - Total compression rate
+
+	private float _racingWheelTotalCompressionRate = 0.75f;
+
+	public float RacingWheelTotalCompressionRate
+	{
+		get => _racingWheelTotalCompressionRate;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _racingWheelTotalCompressionRate )
+			{
+				_racingWheelTotalCompressionRate = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			RacingWheelTotalCompressionRateString = $"{_racingWheelTotalCompressionRate * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _racingWheelTotalCompressionRateString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelTotalCompressionRateString
+	{
+		get => _racingWheelTotalCompressionRateString;
+
+		set
+		{
+			if ( value != _racingWheelTotalCompressionRateString )
+			{
+				_racingWheelTotalCompressionRateString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelTotalCompressionRateContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelTotalCompressionRatePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalCompressionRateMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -756,12 +938,9 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 
-				var app = App.Instance;
+				var app = App.Instance!;
 
-				if ( app != null )
-				{
-					app.LFE.NextRecordingDeviceGuid = _racingWheelLFERecordingDeviceGuid;
-				}
+				app.LFE.NextRecordingDeviceGuid = _racingWheelLFERecordingDeviceGuid;
 			}
 		}
 	}
@@ -1348,9 +1527,9 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			app?.MainWindow.UpdateRacingWheelPowerButton();
+			app.MainWindow.UpdateRacingWheelPowerButton();
 		}
 	}
 
@@ -1373,14 +1552,11 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			if ( app != null )
+			if ( !app.SettingsFile.PauseSerialization )
 			{
-				if ( !app.SettingsFile.PauseSerialization )
-				{
-					app.Pedals.Refresh();
-				}
+				app.Pedals.Refresh();
 			}
 		}
 	}
@@ -3470,9 +3646,9 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 
-				var app = App.Instance;
+				var app = App.Instance!;
 
-				app?.MainWindow.RefreshWindow();
+				app.MainWindow.RefreshWindow();
 
 				Misc.ForcePropertySetters( this );
 			}
@@ -3498,12 +3674,9 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			if ( app != null )
-			{
-				app.MainWindow.Topmost = _appTopmostWindowEnabled;
-			}
+			app.MainWindow.Topmost = _appTopmostWindowEnabled;
 		}
 	}
 
@@ -3612,9 +3785,9 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance;
+			var app = App.Instance!;
 
-			app?.MainWindow.UpdateNotifyIcon();
+			app.MainWindow.UpdateNotifyIcon();
 		}
 	}
 
