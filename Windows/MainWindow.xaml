@@ -128,13 +128,9 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[MaxForce]}" Value="{Binding Settings.RacingWheelMaxForce, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelMaxForceString}" SmallValueChangeStep="0.01" LargeValueChangeStep="1" RotationMultiplier="1" ContextSwitches="{Binding Settings.RacingWheelMaxForceContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelMaxForcePlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelMaxForceMinusButtonMappings}" DefaultValue="50"/>
-                                <controls:MairaKnob Grid.Column="1" Margin="10,0,10,0" Title="{Binding Localization[AutoMargin]}" Value="{Binding Settings.RacingWheelAutoMargin, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelAutoMarginString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="1" ContextSwitches="{Binding Settings.RacingWheelAutoMarginContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelAutoMarginPlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelAutoMarginMinusButtonMappings}" DefaultValue="0"/>
-
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <controls:MairaMappableButton x:Name="RacingWheel_Auto_MairaMappableButton" Margin="10,0,10,0" Title="{Binding Localization[Auto]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_magic.png" ButtonMappings="{Binding Settings.RacingWheelAutoButtonMappings}" Click="RacingWheel_Auto_MairaMappableButton_Click"/>
-                                    <controls:MairaMappableButton x:Name="RacingWheel_Clear_MairaMappableButton" Margin="10,0,10,0" Title="{Binding Localization[Clear]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_zero.png" ButtonMappings="{Binding Settings.RacingWheelClearButtonMappings}" Click="RacingWheel_Clear_MairaMappableButton_Click"/>
-                                </StackPanel>
+                                <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[WheelForce]}" Value="{Binding Settings.RacingWheelWheelForce, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelWheelForceString}" SmallValueChangeStep="0.01" LargeValueChangeStep="1" RotationMultiplier="1" ContextSwitches="{Binding Settings.RacingWheelWheelForceContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelWheelForcePlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelWheelForceMinusButtonMappings}" DefaultValue="5"/>
+                                <controls:MairaKnob Grid.Column="1" Margin="10,0,10,0" Title="{Binding Localization[Strength]}" Value="{Binding Settings.RacingWheelStrength, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelStrengthString}" SmallValueChangeStep="0.001" LargeValueChangeStep="1" RotationMultiplier="0.1" ContextSwitches="{Binding Settings.RacingWheelStrengthContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelStrengthPlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelStrengthMinusButtonMappings}" DefaultValue="0.1"/>
+                                <controls:MairaKnob Grid.Column="2" Margin="10,0,10,0" Title="{Binding Localization[MaxForce]}" Value="{Binding Settings.RacingWheelMaxForce, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelMaxForceString}" SmallValueChangeStep="0.01" LargeValueChangeStep="1" RotationMultiplier="1" ContextSwitches="{Binding Settings.RacingWheelMaxForceContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelMaxForcePlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelMaxForceMinusButtonMappings}" DefaultValue="50"/>
 
                             </Grid>
 
@@ -146,20 +142,31 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0" Margin="40,0,40,0">
-                                    <Label Content="{Binding Localization[CurrentForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_CurrentForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[AutoMargin]}" Value="{Binding Settings.RacingWheelAutoMargin, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelAutoMarginString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="1" ContextSwitches="{Binding Settings.RacingWheelAutoMarginContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelAutoMarginPlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelAutoMarginMinusButtonMappings}" DefaultValue="0"/>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <controls:MairaMappableButton x:Name="RacingWheel_Set_MairaMappableButton" Margin="10,0,10,0" Title="{Binding Localization[Set]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_magic.png" ButtonMappings="{Binding Settings.RacingWheelSetButtonMappings}" Click="RacingWheel_Set_MairaMappableButton_Click"/>
+                                    <controls:MairaMappableButton x:Name="RacingWheel_Clear_MairaMappableButton" Margin="10,0,10,0" Title="{Binding Localization[Clear]}" ButtonIcon="/MarvinsAIRARefactored;component/artwork/icon_zero.png" ButtonMappings="{Binding Settings.RacingWheelClearButtonMappings}" Click="RacingWheel_Clear_MairaMappableButton_Click"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="1" Margin="40,0,40,0">
-                                    <Label Content="{Binding Localization[PeakForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_PeakForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                <Grid Grid.Column="2" VerticalAlignment="Center">
 
-                                <StackPanel Grid.Column="2" Margin="40,0,40,0">
-                                    <Label Content="{Binding Localization[AutoForce]}" HorizontalAlignment="Center" Padding="0"/>
-                                    <Label x:Name="RacingWheel_AutoForce_Label" Content="0.00 Nm" FontSize="37" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <Label Content="{Binding Localization[CurrentForce]}" HorizontalAlignment="Center" Padding="0"/>
+                                        <Label x:Name="RacingWheel_CurrentForce_Label" Margin="0,15,0,20" Content="0.0 Nm" FontSize="35" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1">
+                                        <Label Content="{Binding Localization[AutoForce]}" HorizontalAlignment="Center" Padding="0"/>
+                                        <Label x:Name="RacingWheel_AutoForce_Label" Margin="0,15,0,20" Content="0.0 Nm" FontSize="35" FontFamily="pack://application:,,,/MarvinsAIRARefactored;component/Fonts/#Digital-7 Mono" Foreground="PaleGreen" Padding="0" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                </Grid>
 
                             </Grid>
 
@@ -205,10 +212,6 @@
 
                             </Grid>
 
-                            <Border Margin="10,10,10,20" BorderThickness="1" BorderBrush="Gray" Background="#80000000">
-                                <Image x:Name="Algorithm_Image" Height="201" Width="3840" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality"/>
-                            </Border>
-
                         </StackPanel>
 
                     </GroupBox>
@@ -228,6 +231,14 @@
                             <controls:MairaKnob Grid.Column="2" Margin="10,0,10,0" Title="{Binding Localization[Curve]}" Value="{Binding Settings.RacingWheelOutputCurve, Mode=TwoWay}" ValueString="{Binding Settings.RacingWheelOutputCurveString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.RacingWheelOutputCurveContextSwitches}" PlusButtonMappings="{Binding Settings.RacingWheelOutputCurvePlusButtonMappings}" MinusButtonMappings="{Binding Settings.RacingWheelOutputCurveMinusButtonMappings}" ShowCurve="True" DefaultValue="0"/>
 
                         </Grid>
+
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding Localization[Preview]}" Margin="0,10,0,0">
+
+                        <Border Margin="10,20,10,20" BorderThickness="1" BorderBrush="Gray" Background="#80000000">
+                            <Image x:Name="RacingWheel_AlgorithmPreview_Image" Height="301" Width="3840" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
 
                     </GroupBox>
 

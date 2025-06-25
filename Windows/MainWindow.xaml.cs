@@ -257,7 +257,7 @@ public partial class MainWindow : Window
 
 			RacingWheel_Test_MairaMappableButton.Disabled = disableButtons;
 			RacingWheel_Reset_MairaMappableButton.Disabled = disableButtons;
-			RacingWheel_Auto_MairaMappableButton.Disabled = disableButtons;
+			RacingWheel_Set_MairaMappableButton.Disabled = disableButtons;
 			RacingWheel_Clear_MairaMappableButton.Disabled = disableButtons;
 		} );
 	}
@@ -295,11 +295,12 @@ public partial class MainWindow : Window
 					break;
 
 				case RacingWheel.Algorithm.ZeAlanLeTwist:
-					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
 					racingWheelSlewCompressionThresholdVisibility = Visibility.Visible;
 					racingWheelSlewCompressionRateVisibility = Visibility.Visible;
 					racingWheelTotalCompressionThresholdVisibility = Visibility.Visible;
 					racingWheelTotalCompressionRateVisibility = Visibility.Visible;
+
+					racingWheelAlgorithmRowTwoGridVisibility = Visibility.Visible;
 					racingWheelCurbProtectionGroupBoxVisibility = Visibility.Visible;
 					break;
 			}
@@ -547,7 +548,7 @@ public partial class MainWindow : Window
 		app.RacingWheel.ResetForceFeedback = true;
 	}
 
-	private void RacingWheel_Auto_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	private void RacingWheel_Set_MairaMappableButton_Click( object sender, RoutedEventArgs e )
 	{
 		var app = App.Instance!;
 

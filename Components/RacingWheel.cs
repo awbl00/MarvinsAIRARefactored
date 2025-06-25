@@ -74,7 +74,7 @@ public class RacingWheel
 		app.Graph.SetLayerColors( Graph.LayerIndex.InputLFE, 0.1f, 0.5f, 1f, 1f, 1f, 1f );
 		app.Graph.SetLayerColors( Graph.LayerIndex.OutputTorque, 0f, 1f, 1f, 0f, 1f, 1f );
 
-		_algorithmPreviewGraphBase.Initialize( app.MainWindow.Algorithm_Image );
+		_algorithmPreviewGraphBase.Initialize( app.MainWindow.RacingWheel_AlgorithmPreview_Image );
 
 		app.Logger.WriteLine( "[RacingWheel] <<< Initialize" );
 	}
@@ -93,7 +93,7 @@ public class RacingWheel
 				{ Algorithm.DeltaLimiter, DataContext.DataContext.Instance.Localization[ "DeltaLimiter" ] },
 				{ Algorithm.DetailBoosterOn60Hz, DataContext.DataContext.Instance.Localization[ "DetailBoosterOn60Hz" ] },
 				{ Algorithm.DeltaLimiterOn60Hz, DataContext.DataContext.Instance.Localization[ "DeltaLimiterOn60Hz" ] },
-				{ Algorithm.ZeAlanLeTwist, DataContext.DataContext.Instance.Localization[ "ZeAlanLeTwist" ] }
+//				{ Algorithm.ZeAlanLeTwist, DataContext.DataContext.Instance.Localization[ "ZeAlanLeTwist" ] }
 			};
 
 		mairaComboBox.ItemsSource = dictionary;
@@ -103,9 +103,13 @@ public class RacingWheel
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public float ProcessAlgorithm( ref float runningSteeringWheelTorque500Hz, float lastSteeringWheelTorque500Hz, float steeringWheelTorque60Hz, float steeringWheelTorque500Hz, float curbProtectionLerpFactor )
+	private static float ProcessAlgorithm( ref float runningSteeringWheelTorque500Hz, float lastSteeringWheelTorque500Hz, float steeringWheelTorque60Hz, float steeringWheelTorque500Hz, float curbProtectionLerpFactor )
 	{
+		// shortcut to settings
+
 		var settings = DataContext.DataContext.Instance.Settings;
+
+		// apply algorithm
 
 		var outputTorque = 0f;
 
@@ -219,6 +223,44 @@ public class RacingWheel
 				break;
 			}
 		}
+
+		// apply output curve
+
+		if ( settings.RacingWheelOutputCurve != 0f )
+		{
+			var power = Misc.CurveToPower( settings.RacingWheelOutputCurve );
+
+			outputTorque = MathF.Sign( outputTorque ) * MathF.Pow( MathF.Abs( outputTorque ), power );
+		}
+
+		// apply output maximum
+
+		if ( settings.RacingWheelOutputMaximum < 1f )
+		{
+			outputTorque = MathF.Min( outputTorque, settings.RacingWheelOutputMaximum );
+		}
+
+		// apply output minimum
+
+		if ( settings.RacingWheelOutputMinimum > 0f )
+		{
+			if ( outputTorque >= 0f )
+			{
+				if ( outputTorque < settings.RacingWheelOutputMinimum )
+				{
+					outputTorque = settings.RacingWheelOutputMinimum;
+				}
+			}
+			else
+			{
+				if ( outputTorque > -settings.RacingWheelOutputMinimum )
+				{
+					outputTorque = -settings.RacingWheelOutputMinimum;
+				}
+			}
+		}
+
+		// return calculated output torque
 
 		return outputTorque;
 	}
@@ -499,42 +541,6 @@ public class RacingWheel
 
 			_lastSteeringWheelTorque500Hz = steeringWheelTorque500Hz;
 
-			// apply output maximum
-
-			if ( settings.RacingWheelOutputMaximum < 1f )
-			{
-				outputTorque *= settings.RacingWheelOutputMaximum;
-			}
-
-			// apply output curve
-
-			if ( settings.RacingWheelOutputCurve != 0f )
-			{
-				var power = Misc.CurveToPower( settings.RacingWheelOutputCurve );
-
-				outputTorque = MathF.Sign( outputTorque ) * MathF.Pow( MathF.Abs( outputTorque ), power );
-			}
-
-			// apply output minimum
-
-			if ( settings.RacingWheelOutputMinimum > 0f )
-			{
-				if ( outputTorque >= 0f )
-				{
-					if ( outputTorque < settings.RacingWheelOutputMinimum )
-					{
-						outputTorque = settings.RacingWheelOutputMinimum;
-					}
-				}
-				else
-				{
-					if ( outputTorque > -settings.RacingWheelOutputMinimum )
-					{
-						outputTorque = -settings.RacingWheelOutputMinimum;
-					}
-				}
-			}
-
 			// apply crash protection
 
 			outputTorque *= crashProtectionScale;
@@ -641,8 +647,7 @@ public class RacingWheel
 
 	public void Tick( App app )
 	{
-		app.MainWindow.RacingWheel_PeakForce_Label.Content = $"{_peakTorque:F2}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
-		app.MainWindow.RacingWheel_AutoForce_Label.Content = $"{_autoTorque:F2}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
+		app.MainWindow.RacingWheel_AutoForce_Label.Content = $"{_autoTorque:F1}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
 
 		if ( UpdateAlgorithmPreview )
 		{
@@ -652,7 +657,8 @@ public class RacingWheel
 
 			_algorithmPreviewGraphBase.Reset();
 
-			var torqueArray = new float[ _algorithmPreviewGraphBase.BitmapWidth + 10 ];
+			var torqueArray60Hz = new float[ _algorithmPreviewGraphBase.BitmapWidth + 10 ];
+			var torqueArray500Hz = new float[ _algorithmPreviewGraphBase.BitmapWidth + 10 ];
 
 			for ( var x = 0; x < _algorithmPreviewGraphBase.BitmapWidth; x++ )
 			{
@@ -660,9 +666,14 @@ public class RacingWheel
 
 				var time = 10f * percent;
 
-				var normalizedInputTorque = MathF.Sin( time * 0.25f * MathF.Tau ) * 0.35f + MathF.Cos( time * 30f * MathF.Tau ) * MathF.Sin( time * MathF.Tau ) * 0.5f * MathF.Cos( percent * MathF.Tau );
+				var baseWave = MathF.Sin( time * 0.25f * MathF.Tau ) * 0.35f;
+				var detailWave = MathF.Cos( time * 40f * MathF.Tau ) * MathF.Sin( time * MathF.Tau ) * 0.5f * MathF.Sin( percent * MathF.PI );
 
-				torqueArray[ x ] = 35f * normalizedInputTorque;
+				var normalizedInputTorque60Hz = baseWave * percent;
+				var normalizedInputTorque500Hz = ( baseWave + detailWave ) * percent;
+
+				torqueArray60Hz[ x ] = 35f * normalizedInputTorque60Hz;
+				torqueArray500Hz[ x ] = 35f * normalizedInputTorque500Hz;
 			}
 
 			var runningTorque = 0f;
@@ -670,8 +681,8 @@ public class RacingWheel
 
 			for ( var x = 0; x < _algorithmPreviewGraphBase.BitmapWidth; x++ )
 			{
-				var inputTorque60Hz = torqueArray[ (int) ( MathF.Ceiling( x / 8.333f ) * 8.333f ) ];
-				var inputTorque500Hz = torqueArray[ x ];
+				var inputTorque60Hz = torqueArray60Hz[ (int) ( MathF.Ceiling( x / 8.333f ) * 8.333f ) ];
+				var inputTorque500Hz = torqueArray500Hz[ x ];
 
 				var outputTorque = ProcessAlgorithm( ref runningTorque, lastTorque500Hz, inputTorque60Hz, inputTorque500Hz, 0f );
 

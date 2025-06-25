@@ -7,12 +7,14 @@ public class ContextSettings
 {
 	public Guid RacingWheelSteeringDeviceGuid { get; set; }
 	public bool RacingWheelEnableForceFeedback { get; set; }
+	public float RacingWheelWheelMax { get; set; }
+	public float RacingWheelStrength { get; set; }
 	public float RacingWheelMaxForce { get; set; }
 	public float RacingWheelAutoMargin { get; set; }
 	public RacingWheel.Algorithm RacingWheelAlgorithm { get; set; }
 	public float RacingWheelDetailBoost { get; set; }
-	public float RacingWheelDeltaLimit { get; set; }
 	public float RacingWheelDetailBoostBias { get; set; }
+	public float RacingWheelDeltaLimit { get; set; }
 	public float RacingWheelDeltaLimiterBias { get; set; }
 	public float RacingWheelSlewCompressionThreshold { get; set; }
 	public float RacingWheelSlewCompressionRate { get; set; }

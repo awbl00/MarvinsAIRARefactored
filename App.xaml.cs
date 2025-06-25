@@ -238,7 +238,7 @@ public partial class App : Application
 
 			// racing wheel auto button
 
-			if ( CheckMappedButtons( settings.RacingWheelAutoButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( settings.RacingWheelSetButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
 				RacingWheel.AutoSetMaxForce = true;
 			}

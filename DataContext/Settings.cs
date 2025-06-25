@@ -11,6 +11,8 @@ namespace MarvinsAIRARefactored.DataContext;
 
 public class Settings : INotifyPropertyChanged
 {
+	private bool _updatingRacingWheelRelatedSettings = false;
+
 	#region INotifyProperty stuff
 
 	public event PropertyChangedEventHandler? PropertyChanged;
@@ -136,6 +138,44 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Related settings
+
+	private void UpdateRelatedRacingWheelSettings( [CallerMemberName] string? propertyName = null )
+	{
+		if ( !_updatingRacingWheelRelatedSettings )
+		{
+			_updatingRacingWheelRelatedSettings = true;
+
+			if ( propertyName == "RacingWheelWheelForce" )
+			{
+				RacingWheelMaxForce = RacingWheelWheelForce / RacingWheelStrength;
+			}
+			else if ( propertyName == "RacingWheelStrength" )
+			{
+				RacingWheelMaxForce = RacingWheelWheelForce / RacingWheelStrength;
+
+			}
+			else if ( propertyName == "RacingWheelMaxForce" )
+			{
+				RacingWheelStrength = RacingWheelWheelForce / RacingWheelMaxForce;
+			}
+
+			UpdateRacingWheelWheelForceString();
+			UpdateRacingWheelStrengthString();
+			UpdateRacingWheelMaxForceString();
+			UpdateRacingWheelSlewCompressionThresholdString();
+			UpdateRacingWheelTotalCompressionThresholdString();
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			_updatingRacingWheelRelatedSettings = false;
+		}
+	}
+
+	#endregion
+
 	#region Racing wheel - Device
 
 	private Guid _racingWheelSteeringDeviceGuid = Guid.Empty;
@@ -201,6 +241,110 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Racing wheel - Wheel force
+
+	private float _racingWheelWheelForce = 5f;
+
+	public float RacingWheelWheelForce
+	{
+		get => _racingWheelWheelForce;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 50f );
+
+			if ( value != _racingWheelWheelForce )
+			{
+				_racingWheelWheelForce = value;
+
+				OnPropertyChanged();
+			}
+
+			UpdateRelatedRacingWheelSettings();
+		}
+	}
+
+	private string _racingWheelWheelForceString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelWheelForceString
+	{
+		get => _racingWheelWheelForceString;
+
+		set
+		{
+			if ( value != _racingWheelWheelForceString )
+			{
+				_racingWheelWheelForceString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	private void UpdateRacingWheelWheelForceString()
+	{
+		RacingWheelWheelForceString = $"{_racingWheelWheelForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
+	}
+
+	public ContextSwitches RacingWheelWheelForceContextSwitches { get; set; } = new( true, false, false, false, false );
+	public ButtonMappings RacingWheelWheelForcePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelWheelForceMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Strength
+
+	private float _racingWheelStrength = 0.1f;
+
+	public float RacingWheelStrength
+	{
+		get => _racingWheelStrength;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _racingWheelStrength )
+			{
+				_racingWheelStrength = value;
+
+				OnPropertyChanged();
+			}
+
+			UpdateRelatedRacingWheelSettings();
+		}
+	}
+
+	private string _racingWheelStrengthString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelStrengthString
+	{
+		get => _racingWheelStrengthString;
+
+		set
+		{
+			if ( value != _racingWheelStrengthString )
+			{
+				_racingWheelStrengthString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	private void UpdateRacingWheelStrengthString()
+	{
+		RacingWheelStrengthString = $"{_racingWheelStrength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+	}
+
+	public ContextSwitches RacingWheelStrengthContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelStrengthPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelStrengthMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
 	#region Racing wheel - Max force
 
 	private float _racingWheelMaxForce = 50f;
@@ -211,7 +355,7 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp( value, 5f, 99.9f );
+			value = Math.Clamp( value, RacingWheelWheelForce, 300.0f );
 
 			if ( value != _racingWheelMaxForce )
 			{
@@ -220,14 +364,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance!;
-
-			app.RacingWheel.UpdateAlgorithmPreview = true;
-
-			RacingWheelMaxForceString = $"{_racingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
-
-			UpdateRacingWheelSlewCompressionThresholdString();
-			UpdateRacingWheelTotalCompressionThresholdString();
+			UpdateRelatedRacingWheelSettings();
 		}
 	}
 
@@ -247,6 +384,11 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 		}
+	}
+
+	private void UpdateRacingWheelMaxForceString()
+	{
+		RacingWheelMaxForceString = $"{_racingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
 	}
 
 	public ContextSwitches RacingWheelMaxForceContextSwitches { get; set; } = new( true, true, true, false, false );
@@ -302,9 +444,9 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Racing wheel - Auto
+	#region Racing wheel - Set
 
-	public ButtonMappings RacingWheelAutoButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSetButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -394,57 +536,6 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Racing wheel - Delta limit
-
-	private float _racingWheelDeltaLimit = 500f;
-
-	public float RacingWheelDeltaLimit
-	{
-		get => _racingWheelDeltaLimit;
-
-		set
-		{
-			value = Math.Clamp( value, 0f, 3000f );
-
-			if ( value != _racingWheelDeltaLimit )
-			{
-				_racingWheelDeltaLimit = value;
-
-				OnPropertyChanged();
-			}
-
-			var app = App.Instance!;
-
-			app.RacingWheel.UpdateAlgorithmPreview = true;
-
-			RacingWheelDeltaLimitString = $"{_racingWheelDeltaLimit:F0}{DataContext.Instance.Localization[ "DeltaLimitUnits" ]}";
-		}
-	}
-
-	private string _racingWheelDeltaLimitString = string.Empty;
-
-	[XmlIgnore]
-	public string RacingWheelDeltaLimitString
-	{
-		get => _racingWheelDeltaLimitString;
-
-		set
-		{
-			if ( value != _racingWheelDeltaLimitString )
-			{
-				_racingWheelDeltaLimitString = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	public ContextSwitches RacingWheelDeltaLimitContextSwitches { get; set; } = new( true, true, false, false, false );
-	public ButtonMappings RacingWheelDeltaLimitPlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelDeltaLimitMinusButtonMappings { get; set; } = new();
-
-	#endregion
-
 	#region Racing wheel - Detail boost bias
 
 	private float _racingWheelDetailBoostBias = 0.1f;
@@ -493,6 +584,57 @@ public class Settings : INotifyPropertyChanged
 	public ContextSwitches RacingWheelDetailBoostBiasContextSwitches { get; set; } = new( true, true, false, false, false );
 	public ButtonMappings RacingWheelDetailBoostBiasPlusButtonMappings { get; set; } = new();
 	public ButtonMappings RacingWheelDetailBoostBiasMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Delta limit
+
+	private float _racingWheelDeltaLimit = 500f;
+
+	public float RacingWheelDeltaLimit
+	{
+		get => _racingWheelDeltaLimit;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 3000f );
+
+			if ( value != _racingWheelDeltaLimit )
+			{
+				_racingWheelDeltaLimit = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
+			RacingWheelDeltaLimitString = $"{_racingWheelDeltaLimit:F0}{DataContext.Instance.Localization[ "DeltaLimitUnits" ]}";
+		}
+	}
+
+	private string _racingWheelDeltaLimitString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelDeltaLimitString
+	{
+		get => _racingWheelDeltaLimitString;
+
+		set
+		{
+			if ( value != _racingWheelDeltaLimitString )
+			{
+				_racingWheelDeltaLimitString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelDeltaLimitContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelDeltaLimitPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelDeltaLimitMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -565,11 +707,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance!;
-
-			app.RacingWheel.UpdateAlgorithmPreview = true;
-
-			UpdateRacingWheelSlewCompressionThresholdString();
+			UpdateRelatedRacingWheelSettings();
 		}
 	}
 
@@ -591,14 +729,14 @@ public class Settings : INotifyPropertyChanged
 		}
 	}
 
-	public ContextSwitches RacingWheelSlewCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
-	public ButtonMappings RacingWheelSlewCompressionThresholdPlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelSlewCompressionThresholdMinusButtonMappings { get; set; } = new();
-
 	private void UpdateRacingWheelSlewCompressionThresholdString()
 	{
 		RacingWheelSlewCompressionThresholdString = $"{_racingWheelSlewCompressionThreshold * DataContext.Instance.Settings.RacingWheelMaxForce / 1000f:F2}{DataContext.Instance.Localization[ "SlewUnits" ]}";
 	}
+
+	public ContextSwitches RacingWheelSlewCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelSlewCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelSlewCompressionThresholdMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -672,11 +810,7 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
-			var app = App.Instance!;
-
-			app.RacingWheel.UpdateAlgorithmPreview = true;
-
-			UpdateRacingWheelTotalCompressionThresholdString();
+			UpdateRelatedRacingWheelSettings();
 		}
 	}
 
@@ -698,14 +832,14 @@ public class Settings : INotifyPropertyChanged
 		}
 	}
 
-	public ContextSwitches RacingWheelTotalCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
-	public ButtonMappings RacingWheelTotalCompressionThresholdPlusButtonMappings { get; set; } = new();
-	public ButtonMappings RacingWheelTotalCompressionThresholdMinusButtonMappings { get; set; } = new();
-
 	private void UpdateRacingWheelTotalCompressionThresholdString()
 	{
 		RacingWheelTotalCompressionThresholdString = $"{_racingWheelTotalCompressionThreshold * DataContext.Instance.Settings.RacingWheelMaxForce:F1}{DataContext.Instance.Localization[ "TorqueUnits" ]}";
 	}
+
+	public ContextSwitches RacingWheelTotalCompressionThresholdContextSwitches { get; set; } = new( true, true, false, false, false );
+	public ButtonMappings RacingWheelTotalCompressionThresholdPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelTotalCompressionThresholdMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -779,6 +913,10 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
 			if ( _racingWheelOutputMinimum == 0f )
 			{
 				RacingWheelOutputMinimumString = DataContext.Instance.Localization[ "OFF" ];
@@ -833,6 +971,10 @@ public class Settings : INotifyPropertyChanged
 				OnPropertyChanged();
 			}
 
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+
 			if ( _racingWheelOutputMaximum == 1f )
 			{
 				RacingWheelOutputMaximumString = DataContext.Instance.Localization[ "OFF" ];
@@ -886,6 +1028,10 @@ public class Settings : INotifyPropertyChanged
 
 				OnPropertyChanged();
 			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
 
 			if ( _racingWheelOutputCurve == 0f )
 			{

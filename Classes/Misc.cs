@@ -113,9 +113,9 @@ public class Misc
 	{
 		var dictionary = new Dictionary<string, string>();
 
-		var app = App.Instance!;
+		var app = App.Instance;
 
-		app.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
+		app?.Logger.WriteLine( $"[Misc] LoadResx >>> ({filePath})" );
 
 		if ( System.IO.File.Exists( filePath ) )
 		{
@@ -151,7 +151,7 @@ public class Misc
 			}
 		}
 
-		app.Logger.WriteLine( "[Misc] <<< LoadResx" );
+		app?.Logger.WriteLine( "[Misc] <<< LoadResx" );
 
 		return dictionary;
 	}

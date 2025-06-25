@@ -513,6 +513,6 @@ public class Simulator
 
 	public void Tick( App app )
 	{
-		app.MainWindow.RacingWheel_CurrentForce_Label.Content = $"{MathF.Abs( SteeringWheelTorque_ST[ 5 ] ):F2}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
+		app.MainWindow.RacingWheel_CurrentForce_Label.Content = $"{MathF.Abs( SteeringWheelTorque_ST[ 5 ] ):F1}{DataContext.DataContext.Instance.Localization[ "TorqueUnits" ]}";
 	}
 }

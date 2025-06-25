@@ -325,10 +325,6 @@
     <value>Auto Margin</value>
     <comment>Racing wheel</comment>
   </data>
-  <data name="Auto" xml:space="preserve">
-    <value>Auto</value>
-    <comment>Racing wheel</comment>
-  </data>
   <data name="Clear" xml:space="preserve">
     <value>Clear</value>
     <comment>Racing wheel</comment>
@@ -808,5 +804,17 @@
   <data name="SlewUnits" xml:space="preserve">
     <value> Nm/ms</value>
     <comment>Abbreviation for Newton-meters per second</comment>
+  </data>
+  <data name="WheelForce" xml:space="preserve">
+    <value>Wheel Force</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Set</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Preview</value>
+    <comment>Racing wheel</comment>
   </data>
 </root>

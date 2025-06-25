@@ -325,10 +325,6 @@
     <value>Margem Automática</value>
     <comment>Racing wheel</comment>
   </data>
-  <data name="Auto" xml:space="preserve">
-    <value>Automático</value>
-    <comment>Racing wheel</comment>
-  </data>
   <data name="Clear" xml:space="preserve">
     <value>Limpar</value>
     <comment>Racing wheel</comment>
