@@ -297,10 +297,6 @@
     <value>Delta Limiter On 60 Hz</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
-  <data name="ZeAlanLeTwist" xml:space="preserve">
-    <value>Slew and Total Compression</value>
-    <comment>Racing wheel algorithms list</comment>
-  </data>
   <data name="CompressionRateUnits" xml:space="preserve">
     <value>%/Nm</value>
     <comment>Abbreviation for percent per Newton-meters</comment>
