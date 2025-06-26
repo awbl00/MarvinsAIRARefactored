@@ -470,7 +470,7 @@ public partial class AdminBoxx
 			SetLEDToColor( 0, 2, Yellow, forceUpdate );
 
 			_connectState = 0;
-			_connectCounter = 15;
+			_connectCounter = 45;
 		}
 		else
 		{
@@ -1306,6 +1306,9 @@ public partial class AdminBoxx
 	{
 		if ( _connectCounter > 0 )
 		{
+			_wavingFlagCounter = 0;
+			_testCounter = 0;
+
 			if ( Interlocked.Decrement( ref _connectCounter ) == 0 )
 			{
 				_connectCounter = 15;
@@ -1329,7 +1332,8 @@ public partial class AdminBoxx
 				}
 			}
 		}
-		else if ( _wavingFlagCounter > 0 )
+		
+		if ( _wavingFlagCounter > 0 )
 		{
 			if ( Interlocked.Decrement( ref _wavingFlagCounter ) == 0 )
 			{
@@ -1341,7 +1345,10 @@ public partial class AdminBoxx
 
 					if ( wavingFlagState / 2 >= _wavingFlagNumberOfTimes )
 					{
-						UpdateColors( _wavingFlagLedOrder, true );
+						if ( _testCounter == 0 )
+						{
+							UpdateColors( _wavingFlagLedOrder, true );
+						}
 					}
 					else
 					{
@@ -1360,7 +1367,8 @@ public partial class AdminBoxx
 				}
 			}
 		}
-		else if ( _testCounter > 0 )
+		
+		if ( _testCounter > 0 )
 		{
 			if ( Interlocked.Decrement( ref _testCounter ) == 0 )
 			{
