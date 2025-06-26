@@ -34,6 +34,7 @@ public class ContextSettings
 	public float RacingWheelParkedStrength { get; set; }
 	public float RacingWheelSoftLockStrength { get; set; }
 	public float RacingWheelFriction { get; set; }
+	public bool RacingWheelCenterWheelWhenNotInCar { get; set; }
 	public bool RacingWheelFadeEnabled { get; set; }
 	public Pedals.Effect PedalsClutchEffect1 { get; set; }
 	public float PedalsClutchEffect1Strength { get; set; }

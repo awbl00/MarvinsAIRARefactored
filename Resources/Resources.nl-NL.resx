@@ -189,10 +189,6 @@
     <value>UIT</value>
     <comment>Generic</comment>
   </data>
-  <data name="Output500HzTorque" xml:space="preserve">
-    <value>500 Hz Kracht</value>
-    <comment>Graph</comment>
-  </data>
   <data name="ParkedStrength" xml:space="preserve">
     <value>Sterkte bij stilstaan</value>
     <comment>Racing wheel</comment>
@@ -299,10 +295,6 @@
   </data>
   <data name="DeltaLimiterOn60Hz" xml:space="preserve">
     <value>Delta begrenzer op 60 Hz</value>
-    <comment>Racing wheel algorithms list</comment>
-  </data>
-  <data name="ZeAlanLeTwist" xml:space="preserve">
-    <value>Ze Alan Le Twist</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
   <data name="CompressionRateUnits" xml:space="preserve">
@@ -603,26 +595,6 @@
   </data>
   <data name="StandardDeviation" xml:space="preserve">
     <value>Standaard afwijking</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="TorqueInput60Hz" xml:space="preserve">
-    <value>60 Hz Torque Input</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="TorqueInput500Hz" xml:space="preserve">
-    <value>500 Hz Torque Input</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="TorqueOutput500Hz" xml:space="preserve">
-    <value>500 Hz Torque Output</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="TimerJitter500Hz" xml:space="preserve">
-    <value>500 Hz Timer Jitter</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="LFEInput500Hz" xml:space="preserve">
-    <value>500 Hz LFE Input</value>
     <comment>Graph</comment>
   </data>
   <data name="ABSEngaged" xml:space="preserve">

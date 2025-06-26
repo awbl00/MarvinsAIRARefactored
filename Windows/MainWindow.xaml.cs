@@ -47,7 +47,7 @@ public partial class MainWindow : Window
 		Components.Localization.SetLanguageComboBoxItemsSource( App_Language_ComboBox );
 
 		AdminBoxx_TabItem.Visibility = Visibility.Collapsed;
-		Debug_TabItem.Visibility = Visibility.Collapsed;
+		// Debug_TabItem.Visibility = Visibility.Collapsed;
 
 		app.Logger.WriteLine( "[MainWindow] <<< Constructor" );
 	}
@@ -102,6 +102,8 @@ public partial class MainWindow : Window
 			app.DirectInput.SetMairaComboBoxItemsSource( RacingWheel_SteeringDevice_ComboBox );
 
 			app.LFE.SetMairaComboBoxItemsSource( RacingWheel_LFERecordingDevice_ComboBox );
+
+			app.RecordingManager.SetMairaComboBoxItemsSource( RacingWheel_PreviewRecordings_ComboBox );
 
 			Graph.SetMairaComboBoxItemsSource( Graph_Statistics_ComboBox );
 
@@ -690,18 +692,18 @@ public partial class MainWindow : Window
 		e.Handled = true;
 	}
 
-	private void Debug_AlanLeReset_Click( object sender, RoutedEventArgs e )
+	private void Debug_ResetRecording_Click( object sender, RoutedEventArgs e )
 	{
 		var app = App.Instance!;
 
-		app.Debug.ResetFFBSamples();
+		app.RecordingManager.ResetRecording();
 	}
 
-	private void Debug_AlanLeDump_Click( object sender, RoutedEventArgs e )
+	private void Debug_SaveRecording_Click( object sender, RoutedEventArgs e )
 	{
 		var app = App.Instance!;
 
-		app.Debug.DumpFFBSamplesToCSVFile();
+		app.RecordingManager.SaveRecording();
 	}
 
 	public void Tick( App app )
