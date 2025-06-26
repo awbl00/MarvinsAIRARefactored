@@ -15,6 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Artwork\icon_left_small.png" />
+    <None Remove="Artwork\icon_right_small.png" />
+    <None Remove="Artwork\icon_up_small.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>0</VersionMinor>
@@ -32,9 +38,12 @@
     <Resource Include="Artwork\background_racingwheel.png" />
     <Resource Include="Artwork\icon_binoculars.png" />
     <Resource Include="Artwork\icon_cancel.png" />
+    <Resource Include="Artwork\icon_left_small.png" />
     <Resource Include="Artwork\icon_magic.png" />
     <Resource Include="Artwork\icon_record_off.png" />
+    <Resource Include="Artwork\icon_right_small.png" />
     <Resource Include="Artwork\icon_thumbs_up.png" />
+    <Resource Include="Artwork\icon_up_small.png" />
     <Resource Include="Artwork\icon_zero.png" />
     <Resource Include="Artwork\power_led_black.png" />
     <Resource Include="Artwork\round_button_disabled.png" />

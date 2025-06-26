@@ -15,7 +15,7 @@
         MinHeight="350"
         Width="1100"
         Height="550"
-        d:Height="2500"
+        d:Height="1800"
         ResizeMode="CanResizeWithGrip"
         WindowStyle="SingleBorderWindow"
         Closed="Window_Closed"
@@ -31,10 +31,10 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <ImageBrush x:Key="RacingWheelTabBackground" ImageSource="/artwork/background_racingwheel.png" Stretch="UniformToFill" Opacity="1"/>
-        <ImageBrush x:Key="PedalsTabBackground" ImageSource="/artwork/background_pedals.png" Stretch="UniformToFill" AlignmentX="Right" AlignmentY="Bottom" Opacity="1"/>
-        <ImageBrush x:Key="AdminBoxxTabBackground" ImageSource="/artwork/background_adminboxx.png" Stretch="UniformToFill" Opacity="1"/>
-        <ImageBrush x:Key="AppTabBackground" ImageSource="/artwork/background_app.png" Stretch="UniformToFill" Opacity="1"/>
+        <ImageBrush x:Key="RacingWheelTabBackground" ImageSource="/Artwork/background_racingwheel.png" Stretch="UniformToFill" Opacity="1"/>
+        <ImageBrush x:Key="PedalsTabBackground" ImageSource="/Artwork/background_pedals.png" Stretch="UniformToFill" AlignmentX="Right" AlignmentY="Bottom" Opacity="1"/>
+        <ImageBrush x:Key="AdminBoxxTabBackground" ImageSource="/Artwork/background_adminboxx.png" Stretch="UniformToFill" Opacity="1"/>
+        <ImageBrush x:Key="AppTabBackground" ImageSource="/Artwork/background_app.png" Stretch="UniformToFill" Opacity="1"/>
     </Window.Resources>
 
     <Window.Style>
@@ -243,7 +243,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Border Grid.Row="0" BorderThickness="3" BorderBrush="Gray" Background="#80000000" CornerRadius="5">
+                            <Border Grid.Row="0" BorderThickness="2" BorderBrush="#FFF" Background="#80000000" CornerRadius="5" Padding="0,0,0,6">
                                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=GroupBox}}">
                                     <Image x:Name="RacingWheel_AlgorithmPreview_Image" Height="301" Width="3840" RenderOptions.BitmapScalingMode="HighQuality"/>
                                 </ScrollViewer>
@@ -745,7 +745,7 @@
 
                 <StackPanel Margin="10,10,10,20">
 
-                    <Border Grid.Column="2" Margin="0,10,0,0" BorderThickness="3" BorderBrush="Gray" Background="#80000000" CornerRadius="5">
+                    <Border Grid.Column="2" Margin="0,10,0,0" BorderThickness="2" BorderBrush="#FFF" Background="#80000000" CornerRadius="5">
                         <Image x:Name="Graph_Image" Height="401" Width="3840" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Border>
 

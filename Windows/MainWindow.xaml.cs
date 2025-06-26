@@ -46,7 +46,7 @@ public partial class MainWindow : Window
 
 		Components.Localization.SetLanguageComboBoxItemsSource( App_Language_ComboBox );
 
-		AdminBoxx_TabItem.Visibility = Visibility.Collapsed;
+		// AdminBoxx_TabItem.Visibility = Visibility.Collapsed;
 		// Debug_TabItem.Visibility = Visibility.Collapsed;
 
 		app.Logger.WriteLine( "[MainWindow] <<< Constructor" );
