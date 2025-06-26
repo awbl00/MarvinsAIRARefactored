@@ -59,7 +59,10 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root"
+    xmlns=""
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -142,7 +145,7 @@
     <comment>Racing wheel</comment>
   </data>
   <data name="FadeForceFeedback" xml:space="preserve">
-    <value> Atenuar el force feedback al entrar o salir del coche</value>
+    <value>Atenuar el force feedback al entrar o salir del coche</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="Friction" xml:space="preserve">
@@ -242,7 +245,7 @@
     <comment>App</comment>
   </data>
   <data name="TorqueUnits" xml:space="preserve">
-    <value> Nm</value>
+    <value>Nm</value>
     <comment>Abbreviation for Newton-meters</comment>
   </data>
   <data name="DetailBoosterOn60Hz" xml:space="preserve">
@@ -262,7 +265,7 @@
     <comment>Window title</comment>
   </data>
   <data name="PressTheRecordButton" xml:space="preserve">
-    <value>[Pulsa el Botón de Grabar]</value>
+    <value>[Pulsa un botón para grabar]</value>
     <comment>Button mapping</comment>
   </data>
   <data name="Button" xml:space="preserve">
@@ -286,11 +289,11 @@
     <comment>Button mapping</comment>
   </data>
   <data name="DeltaLimit" xml:space="preserve">
-    <value> Límite de Delta</value>
+    <value>Límite de Delta</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="DeltaLimitUnits" xml:space="preserve">
-    <value> Nm/s</value>
+    <value>Nm/s</value>
     <comment>Abbreviation for Newton-meters per millisecond</comment>
   </data>
   <data name="DeltaLimiterOn60Hz" xml:space="preserve">
@@ -490,7 +493,7 @@
     <comment>Save conditions</comment>
   </data>
   <data name="PerWetDry" xml:space="preserve">
-    <value>Guardar esta Configuración</value>
+    <value>Por Mojado/Seco</value>
     <comment>Save conditions</comment>
   </data>
   <data name="Wet" xml:space="preserve">
@@ -594,7 +597,7 @@
     <comment>Graph</comment>
   </data>
   <data name="Variance" xml:space="preserve">
-    <value> Variación</value>
+    <value>Variación</value>
     <comment>Graph</comment>
   </data>
   <data name="StandardDeviation" xml:space="preserve">
@@ -614,7 +617,7 @@
     <comment>Graph</comment>
   </data>
   <data name="TimerJitter" xml:space="preserve">
-    <value> Jitter del Temporizador</value>
+    <value>Jitter del Temporizador</value>
     <comment>Graph</comment>
   </data>
   <data name="InputLFE" xml:space="preserve">
@@ -666,7 +669,7 @@
     <comment>Pedals</comment>
   </data>
   <data name="AlwaysEnableFFB" xml:space="preserve">
-    <value>Activar FFB aunque el FFB del simulador iRacing esté activado</value>
+    <value>Habilitar FFB incluso con el FFB de iRacing activo</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="ClutchPedalHaptics" xml:space="preserve">

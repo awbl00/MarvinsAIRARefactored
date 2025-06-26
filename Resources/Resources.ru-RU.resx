@@ -300,10 +300,6 @@
     <value>Уменьшение деталей (на 60гц)</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
-  <data name="ZeAlanLeTwist" xml:space="preserve">
-    <value>Алгоритм Алана</value>
-    <comment>Racing wheel algorithms list</comment>
-  </data>
   <data name="CompressionRateUnits" xml:space="preserve">
     <value>%/Нм</value>
     <comment>Abbreviation for percent per Newton-meters</comment>
@@ -669,7 +665,7 @@
     <comment>Pedals</comment>
   </data>
   <data name="AlwaysEnableFFB" xml:space="preserve">
-    <value>Выдавать FFB даже оно включено в iRacing</value>
+    <value>Выдавать FFB даже если оно включено в iRacing</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="ClutchPedalHaptics" xml:space="preserve">
@@ -818,6 +814,14 @@
   </data>
   <data name="Preview" xml:space="preserve">
     <value>Предпросмотр</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="NoRecordingsFound" xml:space="preserve">
+    <value>[Записей не найдено]</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="CenterWheelWhenNotInCar" xml:space="preserve">
+    <value>Центрировать руль, когда не в машине</value>
     <comment>Racing wheel</comment>
   </data>
 </root>

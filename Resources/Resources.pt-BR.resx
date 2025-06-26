@@ -300,10 +300,6 @@
     <value>Limite Delta 60 Hz</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
-  <data name="ZeAlanLeTwist" xml:space="preserve">
-    <value></value>
-    <comment>Racing wheel algorithms list</comment>
-  </data>
   <data name="CompressionRateUnits" xml:space="preserve">
     <value>%/Nm</value>
     <comment>Abbreviation for percent per Newton-meters</comment>
@@ -818,6 +814,14 @@
   </data>
   <data name="Preview" xml:space="preserve">
     <value>Prévia</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="NoRecordingsFound" xml:space="preserve">
+    <value>[Nenhum Dado Encontrado]</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="CenterWheelWhenNotInCar" xml:space="preserve">
+    <value>Centralizar volante quando não estiver no veículo</value>
     <comment>Racing wheel</comment>
   </data>
 </root>
