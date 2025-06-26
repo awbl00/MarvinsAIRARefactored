@@ -35,6 +35,7 @@ public partial class App : Application
 	public LFE LFE { get; private set; }
 	public MultimediaTimer MultimediaTimer { get; private set; }
 	public Simulator Simulator { get; private set; }
+	public RecordingManager RecordingManager { get; private set; }
 
 	public const int TimerPeriodInMilliseconds = 17;
 	public const int TimerTicksPerSecond = 1000 / TimerPeriodInMilliseconds;
@@ -70,6 +71,7 @@ public partial class App : Application
 		LFE = new();
 		MultimediaTimer = new();
 		Simulator = new();
+		RecordingManager = new();
 
 		_timer.Elapsed += OnTimer;
 	}
@@ -115,6 +117,7 @@ public partial class App : Application
 			LFE.Initialize();
 			MultimediaTimer.Initialize();
 			Simulator.Initialize();
+			RecordingManager.Initialize();
 
 			DirectInput.OnInput += OnInput;
 
@@ -210,6 +213,18 @@ public partial class App : Application
 			if ( CheckMappedButtons( settings.RacingWheelResetButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
 				RacingWheel.ResetForceFeedback = true;
+			}
+			
+			// racing wheel strength knob
+
+			if ( CheckMappedButtons( settings.RacingWheelStrengthPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelStrength += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.RacingWheelStrengthMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.RacingWheelStrength -= 0.01f;
 			}
 
 			// racing wheel max force knob
@@ -898,18 +913,18 @@ public partial class App : Application
 				settings.AdminBoxxVolume -= 0.01f;
 			}
 
-			// debug alan le reset
+			// debug reset recording
 
-			if ( CheckMappedButtons( settings.DebugAlanLeResetMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( settings.DebugResetRecordingMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				Debug.ResetFFBSamples();
+				RecordingManager.ResetRecording();
 			}
 
-			// debug alan le dump
+			// debug save recording
 
-			if ( CheckMappedButtons( settings.DebugAlanLeDumpMappings, deviceInstanceGuid, buttonNumber ) )
+			if ( CheckMappedButtons( settings.DebugSaveRecordingMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				Debug.DumpFFBSamplesToCSVFile();
+				RecordingManager.SaveRecording();
 			}
 		}
 	}

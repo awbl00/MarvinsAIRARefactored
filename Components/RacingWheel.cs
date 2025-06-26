@@ -1,8 +1,8 @@
 ﻿
+using System.Runtime.CompilerServices;
+
 using MarvinsAIRARefactored.Classes;
 using MarvinsAIRARefactored.Controls;
-using System.Runtime.CompilerServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MarvinsAIRARefactored.Components;
 
@@ -61,7 +61,7 @@ public class RacingWheel
 
 	private float _elapsedMilliseconds = 0f;
 
-	private GraphBase _algorithmPreviewGraphBase = new();
+	private readonly GraphBase _algorithmPreviewGraphBase = new();
 
 	public void Initialize()
 	{
@@ -527,7 +527,7 @@ public class RacingWheel
 				_curbProtectionTimerMS -= deltaMilliseconds;
 			}
 
-			app.Debug.Label_10 = $"curbProtectionLerpFactor = {curbProtectionLerpFactor * 100f:F0}%";
+			// app.Debug.Label_10 = $"curbProtectionLerpFactor = {curbProtectionLerpFactor * 100f:F0}%";
 
 			// grab the next LFE magnitude
 
@@ -590,11 +590,13 @@ public class RacingWheel
 			app.Debug.Label_5 = $"_fadeTimerMS = {_fadeTimerMS:F0}";
 			app.Debug.Label_6 = $"_lastUnfadedOutputTorque = {_lastUnfadedOutputTorque:F2}";
 
+			var fadeScale = 0f;
+
 			if ( _fadeTimerMS > 0f )
 			{
 				if ( _usingSteeringWheelTorqueData )
 				{
-					var fadeScale = _fadeTimerMS / _fadeInTimeMS;
+					fadeScale = _fadeTimerMS / _fadeInTimeMS;
 
 					app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F2}% (fading in)";
 
@@ -602,7 +604,7 @@ public class RacingWheel
 				}
 				else
 				{
-					var fadeScale = _fadeTimerMS / _fadeOutTimeMS;
+					fadeScale = _fadeTimerMS / _fadeOutTimeMS;
 
 					app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F0}% (fading out)";
 
@@ -616,6 +618,20 @@ public class RacingWheel
 				app.Debug.Label_7 = $"fadeScale = OFF";
 
 				_lastUnfadedOutputTorque = outputTorque;
+			}
+
+			// center wheel when not in car (fade also affects this)
+
+			if ( settings.RacingWheelCenterWheelWhenNotInCar )
+			{
+				if ( !app.Simulator.IsOnTrack )
+				{
+					var centeringForce = Math.Clamp( app.DirectInput.ForceFeedbackWheelPosition, -0.25f, 0.25f ) + 0.1f * app.DirectInput.ForceFeedbackWheelVelocity;
+
+					centeringForce = Math.Clamp( centeringForce, -1f, 1f );
+
+					outputTorque += centeringForce * ( 1f - fadeScale );
+				}
 			}
 
 			// add test signal torque
@@ -633,9 +649,9 @@ public class RacingWheel
 			app.Graph.UpdateLayer( Graph.LayerIndex.InputLFE, inputLFEMagnitude, inputLFEMagnitude );
 			app.Graph.UpdateLayer( Graph.LayerIndex.OutputTorque, outputTorque, outputTorque );
 
-			// update alan le dump
+			// update recording data
 
-			app.Debug.AddFFBSample( deltaMilliseconds, steeringWheelTorque60Hz, steeringWheelTorque500Hz, inputLFEMagnitude, outputTorque );
+			app.RecordingManager.AddRecordingData( steeringWheelTorque60Hz, steeringWheelTorque500Hz );
 		}
 		catch ( Exception exception )
 		{
@@ -657,39 +673,31 @@ public class RacingWheel
 
 			_algorithmPreviewGraphBase.Reset();
 
-			var torqueArray60Hz = new float[ _algorithmPreviewGraphBase.BitmapWidth + 10 ];
-			var torqueArray500Hz = new float[ _algorithmPreviewGraphBase.BitmapWidth + 10 ];
-
-			for ( var x = 0; x < _algorithmPreviewGraphBase.BitmapWidth; x++ )
-			{
-				var percent = (float) x / _algorithmPreviewGraphBase.BitmapWidth;
-
-				var time = 10f * percent;
-
-				var baseWave = MathF.Sin( time * 0.25f * MathF.Tau ) * 0.35f;
-				var detailWave = MathF.Cos( time * 40f * MathF.Tau ) * MathF.Sin( time * MathF.Tau ) * 0.5f * MathF.Sin( percent * MathF.PI );
-
-				var normalizedInputTorque60Hz = baseWave * percent;
-				var normalizedInputTorque500Hz = ( baseWave + detailWave ) * percent;
-
-				torqueArray60Hz[ x ] = 35f * normalizedInputTorque60Hz;
-				torqueArray500Hz[ x ] = 35f * normalizedInputTorque500Hz;
-			}
+			var recording = app.RecordingManager.Recording;
 
 			var runningTorque = 0f;
 			var lastTorque500Hz = 0f;
 
+			if ( recording != null )
+			{
+				runningTorque = recording.Data![ 0 ].InputTorque500Hz;
+				lastTorque500Hz = recording.Data![ 0 ].InputTorque500Hz;
+			}
+
 			for ( var x = 0; x < _algorithmPreviewGraphBase.BitmapWidth; x++ )
 			{
-				var inputTorque60Hz = torqueArray60Hz[ (int) ( MathF.Ceiling( x / 8.333f ) * 8.333f ) ];
-				var inputTorque500Hz = torqueArray500Hz[ x ];
+				if ( recording != null )
+				{
+					var inputTorque60Hz = recording.Data![ x ].InputTorque60Hz;
+					var inputTorque500Hz = recording.Data![ x ].InputTorque500Hz;
 
-				var outputTorque = ProcessAlgorithm( ref runningTorque, lastTorque500Hz, inputTorque60Hz, inputTorque500Hz, 0f );
+					var outputTorque = ProcessAlgorithm( ref runningTorque, lastTorque500Hz, inputTorque60Hz, inputTorque500Hz, 0f );
 
-				lastTorque500Hz = inputTorque500Hz;
+					lastTorque500Hz = inputTorque500Hz;
 
-				_algorithmPreviewGraphBase.Update( inputTorque500Hz / settings.RacingWheelMaxForce, 0.5f, 0f, 0f, 1f, 0.25f, 0.25f );
-				_algorithmPreviewGraphBase.Update( outputTorque, 0f, 0.5f, 0.5f, 0.25f, 1f, 1f );
+					_algorithmPreviewGraphBase.Update( inputTorque500Hz / settings.RacingWheelMaxForce, 0.5f, 0f, 0f, 1f, 0.25f, 0.25f );
+					_algorithmPreviewGraphBase.Update( outputTorque, 0f, 0.5f, 0.5f, 0.25f, 1f, 1f );
+				}
 
 				_algorithmPreviewGraphBase.FinishUpdates();
 			}

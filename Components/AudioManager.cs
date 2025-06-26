@@ -98,7 +98,7 @@ namespace MarvinsAIRARefactored.Components
 		{
 			if ( File.Exists( path ) )
 			{
-				string? key = Path.GetFileNameWithoutExtension( path )?.ToLower();
+				var key = Path.GetFileNameWithoutExtension( path )?.ToLower();
 
 				if ( key != null )
 				{

@@ -1068,6 +1068,31 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Racing wheel - Selected recording
+
+	private string _racingWheelSelectedRecording = string.Empty;
+
+	public string RacingWheelSelectedRecording
+	{
+		get => _racingWheelSelectedRecording;
+
+		set
+		{
+			if ( value != _racingWheelSelectedRecording )
+			{
+				_racingWheelSelectedRecording = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.RacingWheel.UpdateAlgorithmPreview = true;
+		}
+	}
+
+	#endregion
+
 	#region Racing wheel - LFE Recording Device
 
 	private Guid _racingWheelLFERecordingDeviceGuid = Guid.Empty;
@@ -1630,6 +1655,29 @@ public class Settings : INotifyPropertyChanged
 	public ContextSwitches RacingWheelFrictionContextSwitches { get; set; } = new( true, false, false, false, false );
 	public ButtonMappings RacingWheelFrictionPlusButtonMappings { get; set; } = new();
 	public ButtonMappings RacingWheelFrictionMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Center wheel when not in car
+
+	private bool _racingWheelCenterWheelWhenNotInCar = true;
+
+	public bool RacingWheelCenterWheelWhenNotInCar
+	{
+		get => _racingWheelCenterWheelWhenNotInCar;
+
+		set
+		{
+			if ( value != _racingWheelCenterWheelWhenNotInCar )
+			{
+				_racingWheelCenterWheelWhenNotInCar = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelCenterWheelWhenNotInCarContextSwitches { get; set; } = new( false, false, false, false, false );
 
 	#endregion
 
@@ -4005,8 +4053,8 @@ public class Settings : INotifyPropertyChanged
 
 	#region Debug (temporary)
 
-	public ButtonMappings DebugAlanLeResetMappings { get; set; } = new();
-	public ButtonMappings DebugAlanLeDumpMappings { get; set; } = new();
+	public ButtonMappings DebugResetRecordingMappings { get; set; } = new();
+	public ButtonMappings DebugSaveRecordingMappings { get; set; } = new();
 
 	#endregion
 }

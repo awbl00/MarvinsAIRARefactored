@@ -39,11 +39,6 @@ public class DataContext : INotifyPropertyChanged
 
 	public DataContext()
 	{
-		if ( DesignerProperties.GetIsInDesignMode( new DependencyObject() ) )
-		{
-			// System.Diagnostics.Debugger.Launch();
-		}
-
 		var app = App.Instance;
 
 		app?.Logger.WriteLine( "[DataContext] Constructor >>>" );
