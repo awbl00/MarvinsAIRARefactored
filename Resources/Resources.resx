@@ -813,4 +813,12 @@
     <value>Preview</value>
     <comment>Racing wheel</comment>
   </data>
+  <data name="NoRecordingsFound" xml:space="preserve">
+    <value>[No Recordings Found]</value>
+    <comment>Racing wheel</comment>
+  </data>
+  <data name="CenterWheelWhenNotInCar" xml:space="preserve">
+    <value>Center wheel when not in car</value>
+    <comment>Racing wheel</comment>
+  </data>
 </root>
