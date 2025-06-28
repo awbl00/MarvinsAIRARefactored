@@ -494,8 +494,6 @@ public class RacingWheel
 				ActivateCrashProtection = false;
 			}
 
-			app.Debug.Label_3 = $"_crashProtectionTimerMS = {_crashProtectionTimerMS:F0}";
-
 			var crashProtectionScale = 1f;
 
 			if ( _crashProtectionTimerMS > 0f )
@@ -504,8 +502,6 @@ public class RacingWheel
 
 				_crashProtectionTimerMS -= deltaMilliseconds;
 			}
-
-			app.Debug.Label_4 = $"crashProtectionScale = {crashProtectionScale * 100f:F0}";
 
 			// update curb protection
 
@@ -516,8 +512,6 @@ public class RacingWheel
 				ActivateCurbProtection = false;
 			}
 
-			app.Debug.Label_9 = $"_curbProtectionTimerMS = {_curbProtectionTimerMS:F0}";
-
 			var curbProtectionLerpFactor = 0f;
 
 			if ( _curbProtectionTimerMS > 0f )
@@ -526,8 +520,6 @@ public class RacingWheel
 
 				_curbProtectionTimerMS -= deltaMilliseconds;
 			}
-
-			// app.Debug.Label_10 = $"curbProtectionLerpFactor = {curbProtectionLerpFactor * 100f:F0}%";
 
 			// grab the next LFE magnitude
 
@@ -587,9 +579,6 @@ public class RacingWheel
 
 			// apply fade
 
-			app.Debug.Label_5 = $"_fadeTimerMS = {_fadeTimerMS:F0}";
-			app.Debug.Label_6 = $"_lastUnfadedOutputTorque = {_lastUnfadedOutputTorque:F2}";
-
 			var fadeScale = 0f;
 
 			if ( _fadeTimerMS > 0f )
@@ -598,15 +587,11 @@ public class RacingWheel
 				{
 					fadeScale = _fadeTimerMS / _fadeInTimeMS;
 
-					app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F2}% (fading in)";
-
 					outputTorque *= 1f - fadeScale;
 				}
 				else
 				{
 					fadeScale = _fadeTimerMS / _fadeOutTimeMS;
-
-					app.Debug.Label_7 = $"fadeScale = {fadeScale * 100f:F0}% (fading out)";
 
 					outputTorque = _lastUnfadedOutputTorque * fadeScale;
 				}
@@ -615,8 +600,6 @@ public class RacingWheel
 			}
 			else
 			{
-				app.Debug.Label_7 = $"fadeScale = OFF";
-
 				_lastUnfadedOutputTorque = outputTorque;
 			}
 

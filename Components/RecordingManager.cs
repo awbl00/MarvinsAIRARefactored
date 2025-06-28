@@ -165,8 +165,6 @@ public class RecordingManager : IDisposable
 			};
 
 			var app = App.Instance!;
-
-			app.Debug.Label_10 = $"{(float) _recordingDataIndex / _recordingData.Length * 100f:F1}";
 		}
 	}
 

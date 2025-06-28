@@ -153,7 +153,6 @@ public class Settings : INotifyPropertyChanged
 			else if ( propertyName == "RacingWheelStrength" )
 			{
 				RacingWheelMaxForce = RacingWheelWheelForce / RacingWheelStrength;
-
 			}
 			else if ( propertyName == "RacingWheelMaxForce" )
 			{
@@ -251,7 +250,9 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
-			value = Math.Clamp( value, 0f, 50f );
+			value = float.IsNaN( value ) ? 5f : value;
+
+			value = Math.Clamp( value, 2f, 50f );
 
 			if ( value != _racingWheelWheelForce )
 			{
@@ -303,6 +304,8 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
+			value = float.IsNaN( value ) ? 0.1f : value;
+
 			value = Math.Clamp( value, 0f, 1f );
 
 			if ( value != _racingWheelStrength )
@@ -355,6 +358,8 @@ public class Settings : INotifyPropertyChanged
 
 		set
 		{
+			value = float.IsNaN( value ) ? 50f : value;
+
 			value = Math.Clamp( value, RacingWheelWheelForce, 300.0f );
 
 			if ( value != _racingWheelMaxForce )
@@ -2960,7 +2965,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Wheel lock frequency
 
-	private float _pedalsWheelLockFrequency = 0.5f;
+	private float _pedalsWheelLockFrequency = 0.1f;
 
 	public float PedalsWheelLockFrequency
 	{
@@ -3077,7 +3082,7 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Wheel slip frequency
 
-	private float _pedalsWheelSpinFrequency = 0.5f;
+	private float _pedalsWheelSpinFrequency = 1f;
 
 	public float PedalsWheelSpinFrequency
 	{

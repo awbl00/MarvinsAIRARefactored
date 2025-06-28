@@ -380,8 +380,6 @@ public class Simulator
 
 		Velocity = MathF.Sqrt( VelocityX * VelocityX + VelocityY * VelocityY );
 
-		app.Debug.Label_1 = $"Velocity = {app.Simulator.Velocity:F2} m/s";
-
 		// get weather declared wet and reload settings if it was changed
 
 		WeatherDeclaredWet = _irsdk.Data.GetBool( _weatherDeclaredWetDatum );
@@ -409,8 +407,6 @@ public class Simulator
 		{
 			GForce = 0f;
 		}
-
-		app.Debug.Label_2 = $"GForce = {app.Simulator.GForce:F2} g";
 
 		// crash protection processing
 
@@ -469,8 +465,6 @@ public class Simulator
 				maxShockVelocity = MathF.Max( maxShockVelocity, MathF.Abs( RFShockVel_ST[ i ] ) );
 				maxShockVelocity = MathF.Max( maxShockVelocity, MathF.Abs( RRShockVel_ST[ i ] ) );
 			}
-
-			app.Debug.Label_8 = $"maxShockVelocity = {maxShockVelocity:F2} m/s";
 
 			if ( maxShockVelocity >= settings.RacingWheelCurbProtectionShockVelocity )
 			{
