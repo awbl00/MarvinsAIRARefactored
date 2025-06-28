@@ -829,4 +829,8 @@
     <value>Sensitivity</value>
     <comment>Pedals</comment>
   </data>
+  <data name="ZeAlanLeTwist" xml:space="preserve">
+    <value>Slew and Total Compression</value>
+    <comment>Racing wheel algorithms list</comment>
+  </data>
 </root>
