@@ -181,31 +181,32 @@ public class RacingWheel
 			{
 				var normalizedRunningTorque = runningSteeringWheelTorque500Hz / settings.RacingWheelMaxForce;
 
-				var normalizedDelta = (steeringWheelTorque500Hz - runningSteeringWheelTorque500Hz) / settings.RacingWheelMaxForce;
-				var normalizedDeltaAbs = MathF.Abs(normalizedDelta);
+				var normalizedDelta = ( steeringWheelTorque500Hz - runningSteeringWheelTorque500Hz ) / settings.RacingWheelMaxForce;
+				var normalizedDeltaAbs = MathF.Abs( normalizedDelta );
 
 				var deltaLimit = settings.RacingWheelSlewCompressionThreshold / 500f;
 
-				var oneMinusSlewCompressionRate = 0f;
-				if (MathF.Sign(normalizedDelta) == MathF.Sign(steeringWheelTorque500Hz))
+				float oneMinusSlewCompressionRate;
+
+				if ( MathF.Sign( normalizedDelta ) == MathF.Sign( steeringWheelTorque500Hz ) )
 				{
 					oneMinusSlewCompressionRate = 1f - settings.RacingWheelSlewCompressionRate;
 				}
 				else
 				{
-					oneMinusSlewCompressionRate = MathF.Max(0.75f, 1f - settings.RacingWheelSlewCompressionRate * 0.75f);
+					oneMinusSlewCompressionRate = MathF.Max( 0.75f, 1f - settings.RacingWheelSlewCompressionRate * 0.75f );
 				}
 
-				if (normalizedDeltaAbs > deltaLimit)
+				if ( normalizedDeltaAbs > deltaLimit )
 				{
-					normalizedRunningTorque += (deltaLimit + ((normalizedDeltaAbs - deltaLimit) * oneMinusSlewCompressionRate)) * MathF.Sign(normalizedDelta);
+					normalizedRunningTorque += ( deltaLimit + ( ( normalizedDeltaAbs - deltaLimit ) * oneMinusSlewCompressionRate ) ) * MathF.Sign( normalizedDelta );
 				}
 				else
 				{
 					normalizedRunningTorque += normalizedDelta;
 				}
 
-				var normalizedRunningTorqueAbs = MathF.Abs(normalizedRunningTorque);
+				var normalizedRunningTorqueAbs = MathF.Abs( normalizedRunningTorque );
 
 				var compressionThreshold = settings.RacingWheelTotalCompressionThreshold;
 				var compressionWidth = compressionThreshold;
@@ -213,16 +214,16 @@ public class RacingWheel
 
 				var oneMinusTotalCompressionRate = 1f - settings.RacingWheelTotalCompressionRate;
 
-				if ((normalizedRunningTorqueAbs > (compressionThreshold - halfCompressionWidth)) && (normalizedRunningTorqueAbs < (compressionThreshold + halfCompressionWidth)))
+				if ( ( normalizedRunningTorqueAbs > ( compressionThreshold - halfCompressionWidth ) ) && ( normalizedRunningTorqueAbs < ( compressionThreshold + halfCompressionWidth ) ) )
 				{
-					normalizedRunningTorqueAbs -= settings.RacingWheelTotalCompressionRate / 2f * (normalizedRunningTorqueAbs - compressionThreshold + halfCompressionWidth - (compressionWidth / MathF.PI * MathF.Sin(MathF.PI * (normalizedRunningTorqueAbs - compressionThreshold + halfCompressionWidth) / compressionWidth)));
+					normalizedRunningTorqueAbs -= settings.RacingWheelTotalCompressionRate / 2f * ( normalizedRunningTorqueAbs - compressionThreshold + halfCompressionWidth - ( compressionWidth / MathF.PI * MathF.Sin( MathF.PI * ( normalizedRunningTorqueAbs - compressionThreshold + halfCompressionWidth ) / compressionWidth ) ) );
 				}
-				else if (normalizedRunningTorqueAbs >= (compressionThreshold + halfCompressionWidth))
+				else if ( normalizedRunningTorqueAbs >= ( compressionThreshold + halfCompressionWidth ) )
 				{
-					normalizedRunningTorqueAbs = compressionThreshold + (normalizedRunningTorqueAbs - compressionThreshold) * oneMinusTotalCompressionRate;
+					normalizedRunningTorqueAbs = compressionThreshold + ( normalizedRunningTorqueAbs - compressionThreshold ) * oneMinusTotalCompressionRate;
 				}
 
-				normalizedRunningTorque = normalizedRunningTorqueAbs * MathF.Sign(normalizedRunningTorque);
+				normalizedRunningTorque = normalizedRunningTorqueAbs * MathF.Sign( normalizedRunningTorque );
 
 				runningSteeringWheelTorque500Hz = normalizedRunningTorque * settings.RacingWheelMaxForce;
 
