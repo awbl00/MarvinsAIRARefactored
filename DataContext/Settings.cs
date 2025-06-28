@@ -1729,6 +1729,31 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Racing wheel - Simple mode
+
+	private bool _racingWheelSimpleModeEnabled = false;
+
+	public bool RacingWheelSimpleModeEnabled
+	{
+		get => _racingWheelSimpleModeEnabled;
+
+		set
+		{
+			if ( value != _racingWheelSimpleModeEnabled )
+			{
+				_racingWheelSimpleModeEnabled = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.MainWindow.UpdateRacingWheelSimpleMode();
+		}
+	}
+
+	#endregion
+
 	#region Pedals - Enabled
 
 	private bool _pedalsEnabled = false;
@@ -1780,50 +1805,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Clutch effect 1 strength
+	#region Pedals - Clutch strength 1
 
-	private float _pedalsClutchEffect1Strength = 1f;
+	private float _pedalsClutchStrength1 = 1f;
 
-	public float PedalsClutchEffect1Strength
+	public float PedalsClutchStrength1
 	{
-		get => _pedalsClutchEffect1Strength;
+		get => _pedalsClutchStrength1;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsClutchEffect1Strength )
+			if ( value != _pedalsClutchStrength1 )
 			{
-				_pedalsClutchEffect1Strength = value;
+				_pedalsClutchStrength1 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsClutchEffect1StrengthString = $"{_pedalsClutchEffect1Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsClutchStrength1String = $"{_pedalsClutchStrength1 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsClutchEffect1StrengthString = string.Empty;
+	private string _pedalsClutchStrength1String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsClutchEffect1StrengthString
+	public string PedalsClutchStrength1String
 	{
-		get => _pedalsClutchEffect1StrengthString;
+		get => _pedalsClutchStrength1String;
 
 		set
 		{
-			if ( value != _pedalsClutchEffect1StrengthString )
+			if ( value != _pedalsClutchStrength1String )
 			{
-				_pedalsClutchEffect1StrengthString = value;
+				_pedalsClutchStrength1String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsClutchEffect1StrengthContextSwitches { get; set; } = new( false, false, false, false, false );
-	public ButtonMappings PedalsClutchEffect1StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsClutchEffect1StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsClutchStrength1ContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsClutchStrength1PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsClutchStrength1MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Clutch test 1
+
+	public ButtonMappings PedalsClutchTest1ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -1850,50 +1881,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Clutch effect 2 strength
+	#region Pedals - Clutch strength 2
 
-	private float _pedalsClutchEffect2Strength = 1f;
+	private float _pedalsClutchStrength2 = 1f;
 
-	public float PedalsClutchEffect2Strength
+	public float PedalsClutchStrength2
 	{
-		get => _pedalsClutchEffect2Strength;
+		get => _pedalsClutchStrength2;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsClutchEffect2Strength )
+			if ( value != _pedalsClutchStrength2 )
 			{
-				_pedalsClutchEffect2Strength = value;
+				_pedalsClutchStrength2 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsClutchEffect2StrengthString = $"{_pedalsClutchEffect2Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsClutchStrength2String = $"{_pedalsClutchStrength2 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsClutchEffect2StrengthString = string.Empty;
+	private string _pedalsClutchStrength2String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsClutchEffect2StrengthString
+	public string PedalsClutchStrength2String
 	{
-		get => _pedalsClutchEffect2StrengthString;
+		get => _pedalsClutchStrength2String;
 
 		set
 		{
-			if ( value != _pedalsClutchEffect2StrengthString )
+			if ( value != _pedalsClutchStrength2String )
 			{
-				_pedalsClutchEffect2StrengthString = value;
+				_pedalsClutchStrength2String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsClutchEffect2StrengthContextSwitches { get => PedalsClutchEffect1StrengthContextSwitches; set => PedalsClutchEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsClutchEffect2StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsClutchEffect2StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsClutchStrength2ContextSwitches { get => PedalsClutchStrength1ContextSwitches; set => PedalsClutchStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsClutchStrength2PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsClutchStrength2MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Clutch test 2
+
+	public ButtonMappings PedalsClutchTest2ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -1922,48 +1959,54 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Clutch effect 3 strength
 
-	private float _pedalsClutchEffect3Strength = 1f;
+	private float _pedalsClutchStrength3 = 1f;
 
-	public float PedalsClutchEffect3Strength
+	public float PedalsClutchStrength3
 	{
-		get => _pedalsClutchEffect3Strength;
+		get => _pedalsClutchStrength3;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsClutchEffect3Strength )
+			if ( value != _pedalsClutchStrength3 )
 			{
-				_pedalsClutchEffect3Strength = value;
+				_pedalsClutchStrength3 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsClutchEffect3StrengthString = $"{_pedalsClutchEffect3Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsClutchStrength3String = $"{_pedalsClutchStrength3 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsClutchEffect3StrengthString = string.Empty;
+	private string _pedalsClutchStrength3String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsClutchEffect3StrengthString
+	public string PedalsClutchStrength3String
 	{
-		get => _pedalsClutchEffect3StrengthString;
+		get => _pedalsClutchStrength3String;
 
 		set
 		{
-			if ( value != _pedalsClutchEffect3StrengthString )
+			if ( value != _pedalsClutchStrength3String )
 			{
-				_pedalsClutchEffect3StrengthString = value;
+				_pedalsClutchStrength3String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsClutchEffect3StrengthContextSwitches { get => PedalsClutchEffect1StrengthContextSwitches; set => PedalsClutchEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsClutchEffect3StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsClutchEffect3StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsClutchStrength3ContextSwitches { get => PedalsClutchStrength1ContextSwitches; set => PedalsClutchStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsClutchStrength3PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsClutchStrength3MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Clutch test 3
+
+	public ButtonMappings PedalsClutchTest3ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -1990,50 +2033,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Brake effect 1 strength
+	#region Pedals - Brake strength 1
 
-	private float _pedalsBrakeEffect1Strength = 1f;
+	private float _pedalsBrakeStrength1 = 1f;
 
-	public float PedalsBrakeEffect1Strength
+	public float PedalsBrakeStrength1
 	{
-		get => _pedalsBrakeEffect1Strength;
+		get => _pedalsBrakeStrength1;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsBrakeEffect1Strength )
+			if ( value != _pedalsBrakeStrength1 )
 			{
-				_pedalsBrakeEffect1Strength = value;
+				_pedalsBrakeStrength1 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsBrakeEffect1StrengthString = $"{_pedalsBrakeEffect1Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsBrakeStrength1String = $"{_pedalsBrakeStrength1 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsBrakeEffect1StrengthString = string.Empty;
+	private string _pedalsBrakeStrength1String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsBrakeEffect1StrengthString
+	public string PedalsBrakeStrength1String
 	{
-		get => _pedalsBrakeEffect1StrengthString;
+		get => _pedalsBrakeStrength1String;
 
 		set
 		{
-			if ( value != _pedalsBrakeEffect1StrengthString )
+			if ( value != _pedalsBrakeStrength1String )
 			{
-				_pedalsBrakeEffect1StrengthString = value;
+				_pedalsBrakeStrength1String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsBrakeEffect1StrengthContextSwitches { get; set; } = new( false, false, false, false, false );
-	public ButtonMappings PedalsBrakeEffect1StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsBrakeEffect1StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsBrakeStrength1ContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsBrakeStrength1PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsBrakeStrength1MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Brake test 1
+
+	public ButtonMappings PedalsBrakeTest1ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -2060,50 +2109,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Brake effect 2 strength
+	#region Pedals - Brake strength 2
 
-	private float _pedalsBrakeEffect2Strength = 1f;
+	private float _pedalsBrakeStrength2 = 1f;
 
-	public float PedalsBrakeEffect2Strength
+	public float PedalsBrakeStrength2
 	{
-		get => _pedalsBrakeEffect2Strength;
+		get => _pedalsBrakeStrength2;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsBrakeEffect2Strength )
+			if ( value != _pedalsBrakeStrength2 )
 			{
-				_pedalsBrakeEffect2Strength = value;
+				_pedalsBrakeStrength2 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsBrakeEffect2StrengthString = $"{_pedalsBrakeEffect2Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsBrakeStrength2String = $"{_pedalsBrakeStrength2 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsBrakeEffect2StrengthString = string.Empty;
+	private string _pedalsBrakeStrength2String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsBrakeEffect2StrengthString
+	public string PedalsBrakeStrength2String
 	{
-		get => _pedalsBrakeEffect2StrengthString;
+		get => _pedalsBrakeStrength2String;
 
 		set
 		{
-			if ( value != _pedalsBrakeEffect2StrengthString )
+			if ( value != _pedalsBrakeStrength2String )
 			{
-				_pedalsBrakeEffect2StrengthString = value;
+				_pedalsBrakeStrength2String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsBrakeEffect2StrengthContextSwitches { get => PedalsBrakeEffect1StrengthContextSwitches; set => PedalsBrakeEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsBrakeEffect2StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsBrakeEffect2StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsBrakeStrength2ContextSwitches { get => PedalsBrakeStrength1ContextSwitches; set => PedalsBrakeStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsBrakeStrength2PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsBrakeStrength2MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Brake test 2
+
+	public ButtonMappings PedalsBrakeTest2ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -2132,48 +2187,54 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Brake effect 3 strength
 
-	private float _pedalsBrakeEffect3Strength = 1f;
+	private float _pedalsBrakeStrength3 = 1f;
 
-	public float PedalsBrakeEffect3Strength
+	public float PedalsBrakeStrength3
 	{
-		get => _pedalsBrakeEffect3Strength;
+		get => _pedalsBrakeStrength3;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsBrakeEffect3Strength )
+			if ( value != _pedalsBrakeStrength3 )
 			{
-				_pedalsBrakeEffect3Strength = value;
+				_pedalsBrakeStrength3 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsBrakeEffect3StrengthString = $"{_pedalsBrakeEffect3Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsBrakeStrength3String = $"{_pedalsBrakeStrength3 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsBrakeEffect3StrengthString = string.Empty;
+	private string _pedalsBrakeStrength3String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsBrakeEffect3StrengthString
+	public string PedalsBrakeStrength3String
 	{
-		get => _pedalsBrakeEffect3StrengthString;
+		get => _pedalsBrakeStrength3String;
 
 		set
 		{
-			if ( value != _pedalsBrakeEffect3StrengthString )
+			if ( value != _pedalsBrakeStrength3String )
 			{
-				_pedalsBrakeEffect3StrengthString = value;
+				_pedalsBrakeStrength3String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsBrakeEffect3StrengthContextSwitches { get => PedalsBrakeEffect1StrengthContextSwitches; set => PedalsBrakeEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsBrakeEffect3StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsBrakeEffect3StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsBrakeStrength3ContextSwitches { get => PedalsBrakeStrength1ContextSwitches; set => PedalsBrakeStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsBrakeStrength3PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsBrakeStrength3MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Brake test 3
+
+	public ButtonMappings PedalsBrakeTest3ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -2200,50 +2261,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Throttle effect 1 strength
+	#region Pedals - Throttle strength 1
 
-	private float _pedalsThrottleEffect1Strength = 1f;
+	private float _pedalsThrottleStrength1 = 1f;
 
-	public float PedalsThrottleEffect1Strength
+	public float PedalsThrottleStrength1
 	{
-		get => _pedalsThrottleEffect1Strength;
+		get => _pedalsThrottleStrength1;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsThrottleEffect1Strength )
+			if ( value != _pedalsThrottleStrength1 )
 			{
-				_pedalsThrottleEffect1Strength = value;
+				_pedalsThrottleStrength1 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsThrottleEffect1StrengthString = $"{_pedalsThrottleEffect1Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsThrottleStrength1String = $"{_pedalsThrottleStrength1 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsThrottleEffect1StrengthString = string.Empty;
+	private string _pedalsThrottleStrength1String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsThrottleEffect1StrengthString
+	public string PedalsThrottleStrength1String
 	{
-		get => _pedalsThrottleEffect1StrengthString;
+		get => _pedalsThrottleStrength1String;
 
 		set
 		{
-			if ( value != _pedalsThrottleEffect1StrengthString )
+			if ( value != _pedalsThrottleStrength1String )
 			{
-				_pedalsThrottleEffect1StrengthString = value;
+				_pedalsThrottleStrength1String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsThrottleEffect1StrengthContextSwitches { get; set; } = new( false, false, false, false, false );
-	public ButtonMappings PedalsThrottleEffect1StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsThrottleEffect1StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsThrottleStrength1ContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsThrottleStrength1PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsThrottleStrength1MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Throttle test 1
+
+	public ButtonMappings PedalsThrottleTest1ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -2270,50 +2337,56 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
-	#region Pedals - Throttle effect 2 strength
+	#region Pedals - Throttle strength 2
 
-	private float _pedalsThrottleEffect2Strength = 1f;
+	private float _pedalsThrottleStrength2 = 1f;
 
-	public float PedalsThrottleEffect2Strength
+	public float PedalsThrottleStrength2
 	{
-		get => _pedalsThrottleEffect2Strength;
+		get => _pedalsThrottleStrength2;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsThrottleEffect2Strength )
+			if ( value != _pedalsThrottleStrength2 )
 			{
-				_pedalsThrottleEffect2Strength = value;
+				_pedalsThrottleStrength2 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsThrottleEffect2StrengthString = $"{_pedalsThrottleEffect2Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsThrottleStrength2String = $"{_pedalsThrottleStrength2 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsThrottleEffect2StrengthString = string.Empty;
+	private string _pedalsThrottleStrength2String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsThrottleEffect2StrengthString
+	public string PedalsThrottleStrength2String
 	{
-		get => _pedalsThrottleEffect2StrengthString;
+		get => _pedalsThrottleStrength2String;
 
 		set
 		{
-			if ( value != _pedalsThrottleEffect2StrengthString )
+			if ( value != _pedalsThrottleStrength2String )
 			{
-				_pedalsThrottleEffect2StrengthString = value;
+				_pedalsThrottleStrength2String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsThrottleEffect2StrengthContextSwitches { get => PedalsThrottleEffect1StrengthContextSwitches; set => PedalsThrottleEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsThrottleEffect2StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsThrottleEffect2StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsThrottleStrength2ContextSwitches { get => PedalsThrottleStrength1ContextSwitches; set => PedalsThrottleStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsThrottleStrength2PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsThrottleStrength2MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Throttle test 2
+
+	public ButtonMappings PedalsThrottleTest2ButtonMappings { get; set; } = new();
 
 	#endregion
 
@@ -2342,48 +2415,54 @@ public class Settings : INotifyPropertyChanged
 
 	#region Pedals - Throttle effect 3 strength
 
-	private float _pedalsThrottleEffect3Strength = 1f;
+	private float _pedalsThrottleStrength3 = 1f;
 
-	public float PedalsThrottleEffect3Strength
+	public float PedalsThrottleStrength3
 	{
-		get => _pedalsThrottleEffect3Strength;
+		get => _pedalsThrottleStrength3;
 
 		set
 		{
 			value = Math.Clamp( value, 0f, 1f );
 
-			if ( value != _pedalsThrottleEffect3Strength )
+			if ( value != _pedalsThrottleStrength3 )
 			{
-				_pedalsThrottleEffect3Strength = value;
+				_pedalsThrottleStrength3 = value;
 
 				OnPropertyChanged();
 			}
 
-			PedalsThrottleEffect3StrengthString = $"{_pedalsThrottleEffect3Strength * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+			PedalsThrottleStrength3String = $"{_pedalsThrottleStrength3 * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
 		}
 	}
 
-	private string _pedalsThrottleEffect3StrengthString = string.Empty;
+	private string _pedalsThrottleStrength3String = string.Empty;
 
 	[XmlIgnore]
-	public string PedalsThrottleEffect3StrengthString
+	public string PedalsThrottleStrength3String
 	{
-		get => _pedalsThrottleEffect3StrengthString;
+		get => _pedalsThrottleStrength3String;
 
 		set
 		{
-			if ( value != _pedalsThrottleEffect3StrengthString )
+			if ( value != _pedalsThrottleStrength3String )
 			{
-				_pedalsThrottleEffect3StrengthString = value;
+				_pedalsThrottleStrength3String = value;
 
 				OnPropertyChanged();
 			}
 		}
 	}
 
-	public ContextSwitches PedalsThrottleEffect3StrengthContextSwitches { get => PedalsThrottleEffect1StrengthContextSwitches; set => PedalsThrottleEffect1StrengthContextSwitches = value; }
-	public ButtonMappings PedalsThrottleEffect3StrengthPlusButtonMappings { get; set; } = new();
-	public ButtonMappings PedalsThrottleEffect3StrengthMinusButtonMappings { get; set; } = new();
+	public ContextSwitches PedalsThrottleStrength3ContextSwitches { get => PedalsThrottleStrength1ContextSwitches; set => PedalsThrottleStrength1ContextSwitches = value; }
+	public ButtonMappings PedalsThrottleStrength3PlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsThrottleStrength3MinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Throttle test 3
+
+	public ButtonMappings PedalsThrottleTest3ButtonMappings { get; set; } = new();
 
 	#endregion
 

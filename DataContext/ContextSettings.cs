@@ -37,23 +37,23 @@ public class ContextSettings
 	public bool RacingWheelCenterWheelWhenNotInCar { get; set; }
 	public bool RacingWheelFadeEnabled { get; set; }
 	public Pedals.Effect PedalsClutchEffect1 { get; set; }
-	public float PedalsClutchEffect1Strength { get; set; }
+	public float PedalsClutchStrength1 { get; set; }
 	public Pedals.Effect PedalsClutchEffect2 { get; set; }
-	public float PedalsClutchEffect2Strength { get; set; }
+	public float PedalsClutchStrength2 { get; set; }
 	public Pedals.Effect PedalsClutchEffect3 { get; set; }
-	public float PedalsClutchEffect3Strength { get; set; }
+	public float PedalsClutchStrength3 { get; set; }
 	public Pedals.Effect PedalsBrakeEffect1 { get; set; }
-	public float PedalsBrakeEffect1Strength { get; set; }
+	public float PedalsBrakeStrength1 { get; set; }
 	public Pedals.Effect PedalsBrakeEffect2 { get; set; }
-	public float PedalsBrakeEffect2Strength { get; set; }
+	public float PedalsBrakeStrength2 { get; set; }
 	public Pedals.Effect PedalsBrakeEffect3 { get; set; }
-	public float PedalsBrakeEffect3Strength { get; set; }
+	public float PedalsBrakeStrength3 { get; set; }
 	public Pedals.Effect PedalsThrottleEffect1 { get; set; }
-	public float PedalsThrottleEffect1Strength { get; set; }
+	public float PedalsThrottleStrength1 { get; set; }
 	public Pedals.Effect PedalsThrottleEffect2 { get; set; }
-	public float PedalsThrottleEffect2Strength { get; set; }
+	public float PedalsThrottleStrength2 { get; set; }
 	public Pedals.Effect PedalsThrottleEffect3 { get; set; }
-	public float PedalsThrottleEffect3Strength { get; set; }
+	public float PedalsThrottleStrength3 { get; set; }
 	public float PedalsShiftIntoGearFrequency { get; set; }
 	public float PedalsShiftIntoGearAmplitude { get; set; }
 	public float PedalsShiftIntoGearDuration { get; set; }

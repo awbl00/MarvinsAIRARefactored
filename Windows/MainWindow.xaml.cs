@@ -109,15 +109,15 @@ public partial class MainWindow : Window
 
 			RacingWheel.SetMairaComboBoxItemsSource( RacingWheel_Algorithm_ComboBox );
 
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Clutch_Effect_ComboBox_1 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Clutch_Effect_ComboBox_2 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Clutch_Effect_ComboBox_3 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Brake_Effect_ComboBox_1 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Brake_Effect_ComboBox_2 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Brake_Effect_ComboBox_3 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_1 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_2 );
-			Pedals.SetMairaComboBoxItemsSource( Pedals_Throttle_Effect_ComboBox_3 );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ClutchEffect1_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ClutchEffect2_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ClutchEffect3_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_BrakeEffect1_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_BrakeEffect2_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_BrakeEffect3_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ThrottleEffect1_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ThrottleEffect2_ComboBox );
+			Pedals.SetMairaComboBoxItemsSource( Pedals_ThrottleEffect3_ComboBox );
 
 			UpdateStatus();
 			UpdatePedalsDevice();
@@ -318,6 +318,16 @@ public partial class MainWindow : Window
 
 			RacingWheel_AlgorithmRowTwo_Grid.Visibility = racingWheelAlgorithmRowTwoGridVisibility;
 			RacingWheel_CurbProtection_GroupBox.Visibility = racingWheelCurbProtectionGroupBoxVisibility;
+		} );
+	}
+
+	public void UpdateRacingWheelSimpleMode()
+	{
+		Dispatcher.BeginInvoke( () =>
+		{
+			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+
+			Misc.ApplyToTaggedElements( MainGrid, "Complex", element => element.Visibility = settings.RacingWheelSimpleModeEnabled ? Visibility.Collapsed : Visibility.Visible );
 		} );
 	}
 
@@ -562,6 +572,69 @@ public partial class MainWindow : Window
 		var app = App.Instance!;
 
 		app.RacingWheel.ClearPeakTorque = true;
+	}
+
+	private void Pedals_ClutchTest1_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 0, 0 );
+	}
+
+	private void Pedals_ClutchTest2_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 0, 1 );
+	}
+
+	private void Pedals_ClutchTest3_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 0, 2 );
+	}
+
+	private void Pedals_BrakeTest1_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 1, 0 );
+	}
+
+	private void Pedals_BrakeTest2_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 1, 1 );
+	}
+
+	private void Pedals_BrakeTest3_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 1, 2 );
+	}
+
+	private void Pedals_ThrottleTest1_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 2, 0 );
+	}
+
+	private void Pedals_ThrottleTest2_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 2, 1 );
+	}
+
+	private void Pedals_ThrottleTest3_MairaMappableButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Pedals.StartTest( 2, 2 );
 	}
 
 	private void Simulator_HeaderData_HeaderDataViewer_MouseWheel( object sender, MouseWheelEventArgs e )

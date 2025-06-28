@@ -65,8 +65,6 @@ public class Simulator
 	private bool? _isReplayPlayingLastFrame = null;
 	private IRacingSdkEnum.Flags? _sessionFlagsLastFrame = null;
 
-	private int? _lastPedalUpdateFrame = null;
-
 	private IRacingSdkDatum? _brakeABSactiveDatum = null;
 	private IRacingSdkDatum? _brakeDatum = null;
 	private IRacingSdkDatum? _cfShockVel_STDatum = null;
@@ -177,8 +175,6 @@ public class Simulator
 		_velocityLastFrame = null;
 		_weatherDeclaredWetLastFrame = null;
 		_isReplayPlayingLastFrame = null;
-
-		_lastPedalUpdateFrame = null;
 
 		app.RacingWheel.UseSteeringWheelTorqueData = false;
 		app.RacingWheel.SuspendForceFeedback = true;
@@ -489,15 +485,6 @@ public class Simulator
 		// poll direct input devices
 
 		app.DirectInput.PollDevices( deltaSeconds );
-
-		// update pedals at 20 fps
-
-		if ( ( _lastPedalUpdateFrame == null ) || ( _irsdk.Data.TickCount >= ( _lastPedalUpdateFrame + 3 ) ) )
-		{
-			_lastPedalUpdateFrame = _irsdk.Data.TickCount;
-
-			app.Pedals.Update( app );
-		}
 
 		// trigger the app worker thread
 

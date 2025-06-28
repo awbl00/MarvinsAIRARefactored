@@ -20,9 +20,19 @@ public class Pedals
 		ClutchSlip
 	};
 
+	private const float DeltaSeconds = 1f / 20f;
+	private const float TestDuration = 3f;
+	private const int UpdateInterval = 3;
+
 	public HPR.PedalsDevice PedalsDevice { get; private set; }
 
-	private const float deltaSeconds = 1f / 20f;
+	private int _pedalUpdateCounter = UpdateInterval;
+
+	private bool _testing = false;
+	private bool _testJustStarted = false;
+	private int _testPedalIndex = 0;
+	private int _testEffectIndex = 0;
+	private float _testTimer = 0f;
 
 	private readonly HPR _hpr = new();
 
@@ -94,6 +104,15 @@ public class Pedals
 		app.Logger.WriteLine( "[Pedals] <<< SetMairaComboBoxItemsSource" );
 	}
 
+	public void StartTest( int pedalIndex, int effectIndex )
+	{
+		_testPedalIndex = pedalIndex;
+		_testEffectIndex = effectIndex;
+		_testTimer = 0f;
+		_testJustStarted = true;
+		_testing = true;
+	}
+
 	public void UpdateGraph()
 	{
 		var app = App.Instance!;
@@ -108,36 +127,51 @@ public class Pedals
 		}
 	}
 
-	public void Update( App app )
+	private void Update( App app )
 	{
 		// update gear change effect timer
 
 		if ( _gearChangeTimer > 0f )
 		{
-			_gearChangeTimer -= deltaSeconds;
+			_gearChangeTimer -= DeltaSeconds;
 		}
 
-		// if we aren't on track then just shut off all HPRs
+		// update test timer
 
-		if ( !app.Simulator.IsOnTrack || ( app.Simulator.SimMode != "full" ) )
+		if ( _testing )
 		{
-			_hpr.VibratePedal( HPR.Channel.Clutch, HPR.State.Off, 0, 0 );
-			_hpr.VibratePedal( HPR.Channel.Brake, HPR.State.Off, 0, 0 );
-			_hpr.VibratePedal( HPR.Channel.Throttle, HPR.State.Off, 0, 0 );
+			_testTimer += DeltaSeconds;
 
-			_frequency[ 0 ] = 0f;
-			_frequency[ 1 ] = 0f;
-			_frequency[ 2 ] = 0f;
+			if ( _testTimer >= TestDuration )
+			{
+				_testing = false;
+			}
+		}
 
-			_amplitude[ 0 ] = 0f;
-			_amplitude[ 1 ] = 0f;
-			_amplitude[ 2 ] = 0f;
+		// if we aren't on track then just shut off all HPRs (unless we are testing)
 
-			_cycles[ 0 ] = 0f;
-			_cycles[ 1 ] = 0f;
-			_cycles[ 2 ] = 0f;
+		if ( !_testing )
+		{
+			if ( !app.Simulator.IsOnTrack || ( app.Simulator.SimMode != "full" ) )
+			{
+				_hpr.VibratePedal( HPR.Channel.Clutch, HPR.State.Off, 0, 0 );
+				_hpr.VibratePedal( HPR.Channel.Brake, HPR.State.Off, 0, 0 );
+				_hpr.VibratePedal( HPR.Channel.Throttle, HPR.State.Off, 0, 0 );
 
-			return;
+				_frequency[ 0 ] = 0f;
+				_frequency[ 1 ] = 0f;
+				_frequency[ 2 ] = 0f;
+
+				_amplitude[ 0 ] = 0f;
+				_amplitude[ 1 ] = 0f;
+				_amplitude[ 2 ] = 0f;
+
+				_cycles[ 0 ] = 0f;
+				_cycles[ 1 ] = 0f;
+				_cycles[ 2 ] = 0f;
+
+				return;
+			}
 		}
 
 		// shortcut to settings
@@ -151,19 +185,19 @@ public class Pedals
 			_gearLastFrame = app.Simulator.Gear;
 		}
 
-		if ( app.Simulator.Gear != _gearLastFrame )
+		if ( _testJustStarted || ( app.Simulator.Gear != _gearLastFrame ) )
 		{
-			if ( app.Simulator.Gear == 0 )
-			{
-				_gearChangeFrequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, settings.PedalsShiftIntoNeutralFrequency );
-				_gearChangeAmplitude = settings.PedalsShiftIntoNeutralAmplitude;
-				_gearChangeTimer = settings.PedalsShiftIntoNeutralDuration;
-			}
-			else
+			if ( _testJustStarted || ( app.Simulator.Gear != 0 ) )
 			{
 				_gearChangeFrequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, settings.PedalsShiftIntoGearFrequency );
 				_gearChangeAmplitude = settings.PedalsShiftIntoGearAmplitude;
 				_gearChangeTimer = settings.PedalsShiftIntoGearDuration;
+			}
+			else
+			{
+				_gearChangeFrequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, settings.PedalsShiftIntoNeutralFrequency );
+				_gearChangeAmplitude = settings.PedalsShiftIntoNeutralAmplitude;
+				_gearChangeTimer = settings.PedalsShiftIntoNeutralDuration;
 			}
 		}
 
@@ -174,31 +208,41 @@ public class Pedals
 		(Effect, float)[,] effectConfiguration =
 		{
 			{
-				( settings.PedalsClutchEffect1, settings.PedalsClutchEffect1Strength ),
-				( settings.PedalsClutchEffect2, settings.PedalsClutchEffect2Strength ),
-				( settings.PedalsClutchEffect3, settings.PedalsClutchEffect3Strength )
+				( settings.PedalsClutchEffect1, settings.PedalsClutchStrength1 ),
+				( settings.PedalsClutchEffect2, settings.PedalsClutchStrength2 ),
+				( settings.PedalsClutchEffect3, settings.PedalsClutchStrength3 )
 			},
 			{
-				( settings.PedalsBrakeEffect1, settings.PedalsBrakeEffect1Strength ),
-				( settings.PedalsBrakeEffect2, settings.PedalsBrakeEffect2Strength ),
-				( settings.PedalsBrakeEffect3, settings.PedalsBrakeEffect3Strength )
+				( settings.PedalsBrakeEffect1, settings.PedalsBrakeStrength1 ),
+				( settings.PedalsBrakeEffect2, settings.PedalsBrakeStrength2 ),
+				( settings.PedalsBrakeEffect3, settings.PedalsBrakeStrength3 )
 			},
 			{
-				( settings.PedalsThrottleEffect1, settings.PedalsThrottleEffect1Strength ),
-				( settings.PedalsThrottleEffect2, settings.PedalsThrottleEffect2Strength ),
-				( settings.PedalsThrottleEffect3, settings.PedalsThrottleEffect3Strength )
+				( settings.PedalsThrottleEffect1, settings.PedalsThrottleStrength1 ),
+				( settings.PedalsThrottleEffect2, settings.PedalsThrottleStrength2 ),
+				( settings.PedalsThrottleEffect3, settings.PedalsThrottleStrength3 )
 			}
 		};
 
-		for ( var i = 0; i < 3; i++ )
+		for ( var pedalIndex = 0; pedalIndex < 3; pedalIndex++ )
 		{
+			if ( _testing && ( _testPedalIndex != pedalIndex ) )
+			{
+				continue;
+			}
+
 			var effectActive = false;
 			var frequency = 0f;
 			var amplitude = 0f;
 
-			for ( var j = 0; j < 3; j++ )
+			for ( var effectIndex = 0; effectIndex < 3; effectIndex++ )
 			{
-				(effectActive, frequency, amplitude) = DoEffect( app, effectConfiguration[ i, j ].Item1, effectConfiguration[ i, j ].Item2 );
+				if ( _testing && ( _testEffectIndex != effectIndex ) )
+				{
+					continue;
+				}
+
+				(effectActive, frequency, amplitude) = DoEffect( app, effectConfiguration[ pedalIndex, effectIndex ].Item1, effectConfiguration[ pedalIndex, effectIndex ].Item2 );
 
 				if ( effectActive )
 				{
@@ -210,22 +254,26 @@ public class Pedals
 			{
 				amplitude *= MathF.Pow( frequency / 50f, Misc.CurveToPower( settings.PedalsNoiseDamper ) );
 
-				_hpr.VibratePedal( (HPR.Channel) i, HPR.State.On, frequency, amplitude * 100f );
+				_hpr.VibratePedal( (HPR.Channel) pedalIndex, HPR.State.On, frequency, amplitude * 100f );
 
-				_frequency[ i ] = (int) ( Math.Clamp( frequency, 1f, 50f ) );
-				_amplitude[ i ] = amplitude;
+				_frequency[ pedalIndex ] = (int) ( Math.Clamp( frequency, 1f, 50f ) );
+				_amplitude[ pedalIndex ] = amplitude;
 			}
 			else
 			{
-				_hpr.VibratePedal( (HPR.Channel) i, HPR.State.Off, 0f, 0f );
+				_hpr.VibratePedal( (HPR.Channel) pedalIndex, HPR.State.Off, 0f, 0f );
 
-				app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + i, 0f, 0f );
+				app.Graph.UpdateLayer( Graph.LayerIndex.ClutchPedalHaptics + pedalIndex, 0f, 0f );
 
-				_frequency[ i ] = 0f;
-				_amplitude[ i ] = 0f;
-				_cycles[ i ] = 0f;
+				_frequency[ pedalIndex ] = 0f;
+				_amplitude[ pedalIndex ] = 0f;
+				_cycles[ pedalIndex ] = 0f;
 			}
 		}
+
+		// update test just started
+
+		_testJustStarted = false;
 	}
 
 	private (bool, float, float) DoEffect( App app, Effect effect, float amplitude )
@@ -252,7 +300,7 @@ public class Pedals
 
 	private (bool, float, float) DoABSEngagedEffect( App app, float amplitude )
 	{
-		if ( app.Simulator.BrakeABSactive )
+		if ( _testing || app.Simulator.BrakeABSactive )
 		{
 			var settings = DataContext.DataContext.Instance.Settings;
 
@@ -260,7 +308,7 @@ public class Pedals
 
 			amplitude *= settings.PedalsABSEngagedAmplitude;
 
-			if ( settings.PedalsABSEngagedFadeWithBrakeEnabled )
+			if ( !_testing && settings.PedalsABSEngagedFadeWithBrakeEnabled )
 			{
 				amplitude *= app.Simulator.Brake;
 			}
@@ -279,12 +327,19 @@ public class Pedals
 	{
 		var settings = DataContext.DataContext.Instance.Settings;
 
-		if ( settings.PedalsRPMVibrateInTopGearEnabled || ( app.Simulator.Gear < app.Simulator.NumForwardGears ) )
+		if ( _testing || settings.PedalsRPMVibrateInTopGearEnabled || ( app.Simulator.Gear < app.Simulator.NumForwardGears ) )
 		{
 			var rpm = app.Simulator.RPM;
 
-			var startingRPM = app.Simulator.ShiftLightsShiftRPM * settings.PedalsStartingRPM;
-			var rpmRange = app.Simulator.ShiftLightsShiftRPM - startingRPM;
+			var shiftLightsShiftRPM = app.Simulator.ShiftLightsShiftRPM > 0f ? app.Simulator.ShiftLightsShiftRPM : 8000f;
+
+			if ( _testing )
+			{
+				rpm = _testTimer / TestDuration * shiftLightsShiftRPM;
+			}
+
+			var startingRPM = shiftLightsShiftRPM * settings.PedalsStartingRPM;
+			var rpmRange = shiftLightsShiftRPM - startingRPM;
 
 			if ( rpm >= startingRPM )
 			{
@@ -292,7 +347,7 @@ public class Pedals
 
 				var frequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, MathF.Pow( rpm, Misc.CurveToPower( settings.PedalsFrequencyCurve ) ) );
 
-				if ( settings.PedalsRPMFadeWithThrottleEnabled )
+				if ( !_testing && settings.PedalsRPMFadeWithThrottleEnabled )
 				{
 					amplitude *= app.Simulator.Throttle;
 				}
@@ -312,7 +367,7 @@ public class Pedals
 	{
 		var settings = DataContext.DataContext.Instance.Settings;
 
-		if ( ( app.Simulator.Clutch >= settings.PedalsClutchSlipStart ) && ( app.Simulator.Clutch < settings.PedalsClutchSlipEnd ) )
+		if ( _testing || ( app.Simulator.Clutch >= settings.PedalsClutchSlipStart ) && ( app.Simulator.Clutch < settings.PedalsClutchSlipEnd ) )
 		{
 			var frequency = Misc.Lerp( settings.PedalsMinimumFrequency, settings.PedalsMaximumFrequency, MathF.Pow( settings.PedalsClutchSlipFrequency, Misc.CurveToPower( settings.PedalsFrequencyCurve ) ) );
 
@@ -324,6 +379,18 @@ public class Pedals
 		}
 
 		return (false, 0f, 0f);
+	}
+
+	public void Tick(App app)
+	{
+		_pedalUpdateCounter--;
+
+		if ( _pedalUpdateCounter == 0 )
+		{
+			_pedalUpdateCounter = UpdateInterval;
+
+			Update( app );
+		}
 	}
 }
 

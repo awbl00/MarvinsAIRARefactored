@@ -821,4 +821,8 @@
     <value>Center wheel when not in car</value>
     <comment>Racing wheel</comment>
   </data>
+  <data name="SimpleMode" xml:space="preserve">
+    <value>Enable simple mode</value>
+    <comment>Racing wheel</comment>
+  </data>
 </root>
