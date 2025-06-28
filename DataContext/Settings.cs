@@ -2958,6 +2958,240 @@ public class Settings : INotifyPropertyChanged
 
 	#endregion
 
+	#region Pedals - Wheel lock frequency
+
+	private float _pedalsWheelLockFrequency = 0.5f;
+
+	public float PedalsWheelLockFrequency
+	{
+		get => _pedalsWheelLockFrequency;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _pedalsWheelLockFrequency )
+			{
+				_pedalsWheelLockFrequency = value;
+
+				OnPropertyChanged();
+			}
+
+			PedalsWheelLockFrequencyString = $"{_pedalsWheelLockFrequency * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _pedalsWheelLockFrequencyString = string.Empty;
+
+	[XmlIgnore]
+	public string PedalsWheelLockFrequencyString
+	{
+		get => _pedalsWheelLockFrequencyString;
+
+		set
+		{
+			if ( value != _pedalsWheelLockFrequencyString )
+			{
+				_pedalsWheelLockFrequencyString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelLockFrequencyContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsWheelLockFrequencyPlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsWheelLockFrequencyMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Wheel lock sensitivity
+
+	private float _pedalsWheelLockSensitivity = 0.95f;
+
+	public float PedalsWheelLockSensitivity
+	{
+		get => _pedalsWheelLockSensitivity;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _pedalsWheelLockSensitivity )
+			{
+				_pedalsWheelLockSensitivity = value;
+
+				OnPropertyChanged();
+			}
+
+			PedalsWheelLockSensitivityString = $"{_pedalsWheelLockSensitivity * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _pedalsWheelLockSensitivityString = string.Empty;
+
+	[XmlIgnore]
+	public string PedalsWheelLockSensitivityString
+	{
+		get => _pedalsWheelLockSensitivityString;
+
+		set
+		{
+			if ( value != _pedalsWheelLockSensitivityString )
+			{
+				_pedalsWheelLockSensitivityString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelLockSensitivityContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsWheelLockSensitivityPlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsWheelLockSensitivityMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Wheel lock fade with brake enabled
+
+	private bool _pedalsWheelLockFadeWithBrakeEnabled = true;
+
+	public bool PedalsWheelLockFadeWithBrakeEnabled
+	{
+		get => _pedalsWheelLockFadeWithBrakeEnabled;
+
+		set
+		{
+			if ( value != _pedalsWheelLockFadeWithBrakeEnabled )
+			{
+				_pedalsWheelLockFadeWithBrakeEnabled = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelLockFadeWithBrakeEnabledContextSwitches { get; set; } = new( false, false, false, false, false );
+
+	#endregion
+
+	#region Pedals - Wheel slip frequency
+
+	private float _pedalsWheelSpinFrequency = 0.5f;
+
+	public float PedalsWheelSpinFrequency
+	{
+		get => _pedalsWheelSpinFrequency;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _pedalsWheelSpinFrequency )
+			{
+				_pedalsWheelSpinFrequency = value;
+
+				OnPropertyChanged();
+			}
+
+			PedalsWheelSpinFrequencyString = $"{_pedalsWheelSpinFrequency * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _pedalsWheelSpinFrequencyString = string.Empty;
+
+	[XmlIgnore]
+	public string PedalsWheelSpinFrequencyString
+	{
+		get => _pedalsWheelSpinFrequencyString;
+
+		set
+		{
+			if ( value != _pedalsWheelSpinFrequencyString )
+			{
+				_pedalsWheelSpinFrequencyString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelSpinFrequencyContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsWheelSpinFrequencyPlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsWheelSpinFrequencyMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Wheel slip sensitivity
+
+	private float _pedalsWheelSpinSensitivity = 0.95f;
+
+	public float PedalsWheelSpinSensitivity
+	{
+		get => _pedalsWheelSpinSensitivity;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _pedalsWheelSpinSensitivity )
+			{
+				_pedalsWheelSpinSensitivity = value;
+
+				OnPropertyChanged();
+			}
+
+			PedalsWheelSpinSensitivityString = $"{_pedalsWheelSpinSensitivity * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+		}
+	}
+
+	private string _pedalsWheelSpinSensitivityString = string.Empty;
+
+	[XmlIgnore]
+	public string PedalsWheelSpinSensitivityString
+	{
+		get => _pedalsWheelSpinSensitivityString;
+
+		set
+		{
+			if ( value != _pedalsWheelSpinSensitivityString )
+			{
+				_pedalsWheelSpinSensitivityString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelSpinSensitivityContextSwitches { get; set; } = new( false, false, false, false, false );
+	public ButtonMappings PedalsWheelSpinSensitivityPlusButtonMappings { get; set; } = new();
+	public ButtonMappings PedalsWheelSpinSensitivityMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Pedals - Wheel slip fade with throttle enabled
+
+	private bool _pedalsWheelSpinFadeWithThrottleEnabled = true;
+
+	public bool PedalsWheelSpinFadeWithThrottleEnabled
+	{
+		get => _pedalsWheelSpinFadeWithThrottleEnabled;
+
+		set
+		{
+			if ( value != _pedalsWheelSpinFadeWithThrottleEnabled )
+			{
+				_pedalsWheelSpinFadeWithThrottleEnabled = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches PedalsWheelSpinFadeWithThrottleEnabledContextSwitches { get; set; } = new( false, false, false, false, false );
+
+	#endregion
+
 	#region Pedals - Clutch slip start
 
 	private float _pedalsClutchSlipStart = 0.25f;

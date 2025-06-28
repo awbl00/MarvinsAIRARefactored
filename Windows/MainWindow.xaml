@@ -630,6 +630,42 @@
 
                     </GroupBox>
 
+                    <GroupBox Header="{Binding Localization[WheelLock]}" Margin="0,10,0,0">
+
+                        <Grid Margin="0,10,0,20">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[Frequency]}" Value="{Binding Settings.PedalsWheelLockFrequency, Mode=TwoWay}" ValueString="{Binding Settings.PedalsWheelLockFrequencyString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsWheelLockFrequencyContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsWheelLockFrequencyPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsWheelLockFrequencyMinusButtonMappings}" DefaultValue="0.5"/>
+                            <controls:MairaKnob Grid.Column="1" Margin="10,0,10,0" Title="{Binding Localization[Sensitivity]}" Value="{Binding Settings.PedalsWheelLockSensitivity, Mode=TwoWay}" ValueString="{Binding Settings.PedalsWheelLockSensitivityString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsWheelLockSensitivityContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsWheelLockSensitivityPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsWheelLockSensitivityMinusButtonMappings}" DefaultValue="1"/>
+                            <controls:MairaSwitch Grid.Column="2" Margin="10,0,10,0" IsOn="{Binding Settings.PedalsWheelLockFadeWithBrakeEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeWithBrake]}" ContextSwitches="{Binding Settings.PedalsWheelLockFadeWithBrakeEnabledContextSwitches}" LabelPosition="Top"/>
+
+                        </Grid>
+
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding Localization[WheelSpin]}" Margin="0,10,0,0">
+
+                        <Grid Margin="0,10,0,20">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <controls:MairaKnob Grid.Column="0" Margin="10,0,10,0" Title="{Binding Localization[Frequency]}" Value="{Binding Settings.PedalsWheelSpinFrequency, Mode=TwoWay}" ValueString="{Binding Settings.PedalsWheelSpinFrequencyString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsWheelSpinFrequencyContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsWheelSpinFrequencyPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsWheelSpinFrequencyMinusButtonMappings}" DefaultValue="0.5"/>
+                            <controls:MairaKnob Grid.Column="1" Margin="10,0,10,0" Title="{Binding Localization[Sensitivity]}" Value="{Binding Settings.PedalsWheelSpinSensitivity, Mode=TwoWay}" ValueString="{Binding Settings.PedalsWheelSpinSensitivityString}" SmallValueChangeStep="0.001" LargeValueChangeStep="0.01" RotationMultiplier="10" ContextSwitches="{Binding Settings.PedalsWheelSpinSensitivityContextSwitches}" PlusButtonMappings="{Binding Settings.PedalsWheelSpinSensitivityPlusButtonMappings}" MinusButtonMappings="{Binding Settings.PedalsWheelSpinSensitivityMinusButtonMappings}" DefaultValue="1"/>
+                            <controls:MairaSwitch Grid.Column="2" Margin="10,0,10,0" IsOn="{Binding Settings.PedalsWheelSpinFadeWithThrottleEnabled, Mode=TwoWay}" Title="{Binding Localization[FadeWithThrottle]}" ContextSwitches="{Binding Settings.PedalsWheelSpinFadeWithThrottleEnabledContextSwitches}" LabelPosition="Top"/>
+
+                        </Grid>
+
+                    </GroupBox>
+
                     <GroupBox Header="{Binding Localization[ClutchSlip]}" Margin="0,10,0,0">
 
                         <Grid Margin="0,10,0,20">

@@ -825,4 +825,8 @@
     <value>Enable simple mode</value>
     <comment>Racing wheel</comment>
   </data>
+  <data name="Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+    <comment>Pedals</comment>
+  </data>
 </root>

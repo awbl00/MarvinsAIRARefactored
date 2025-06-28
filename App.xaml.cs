@@ -692,12 +692,12 @@ public partial class App : Application
 
 			if ( CheckMappedButtons( settings.PedalsShiftIntoGearFrequencyPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsShiftIntoGearFrequency += 1f;
+				settings.PedalsShiftIntoGearFrequency += 0.01f;
 			}
 
 			if ( CheckMappedButtons( settings.PedalsShiftIntoGearFrequencyMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsShiftIntoGearFrequency -= 1f;
+				settings.PedalsShiftIntoGearFrequency -= 0.01f;
 			}
 
 			// pedals shift into gear amplitude knob
@@ -728,12 +728,12 @@ public partial class App : Application
 
 			if ( CheckMappedButtons( settings.PedalsShiftIntoNeutralFrequencyPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsShiftIntoNeutralFrequency += 1f;
+				settings.PedalsShiftIntoNeutralFrequency += 0.01f;
 			}
 
 			if ( CheckMappedButtons( settings.PedalsShiftIntoNeutralFrequencyMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsShiftIntoNeutralFrequency -= 1f;
+				settings.PedalsShiftIntoNeutralFrequency -= 0.01f;
 			}
 
 			// pedals shift into neutral amplitude knob
@@ -764,12 +764,12 @@ public partial class App : Application
 
 			if ( CheckMappedButtons( settings.PedalsABSEngagedFrequencyPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsABSEngagedFrequency += 1f;
+				settings.PedalsABSEngagedFrequency += 0.01f;
 			}
 
 			if ( CheckMappedButtons( settings.PedalsABSEngagedFrequencyMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
-				settings.PedalsABSEngagedFrequency -= 1f;
+				settings.PedalsABSEngagedFrequency -= 0.01f;
 			}
 
 			// pedals abs engaged amplitude knob
@@ -794,6 +794,54 @@ public partial class App : Application
 			if ( CheckMappedButtons( settings.PedalsStartingRPMMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
 			{
 				settings.PedalsStartingRPM -= 0.01f;
+			}
+
+			// pedals wheel lock frequency knob
+
+			if ( CheckMappedButtons( settings.PedalsWheelLockFrequencyPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelLockFrequency += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.PedalsWheelLockFrequencyMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelLockFrequency -= 0.01f;
+			}
+
+			// pedals wheel lock sensitivity knob
+
+			if ( CheckMappedButtons( settings.PedalsWheelLockSensitivityPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelLockSensitivity += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.PedalsWheelLockSensitivityMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelLockSensitivity -= 0.01f;
+			}
+
+			// pedals wheel spin frequency knob
+
+			if ( CheckMappedButtons( settings.PedalsWheelSpinFrequencyPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelSpinFrequency += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.PedalsWheelSpinFrequencyMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelSpinFrequency -= 0.01f;
+			}
+
+			// pedals wheel spin sensitivity knob
+
+			if ( CheckMappedButtons( settings.PedalsWheelSpinSensitivityPlusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelSpinSensitivity += 0.01f;
+			}
+
+			if ( CheckMappedButtons( settings.PedalsWheelSpinSensitivityMinusButtonMappings, deviceInstanceGuid, buttonNumber ) )
+			{
+				settings.PedalsWheelSpinSensitivity -= 0.01f;
 			}
 
 			// pedals clutch slip start knob

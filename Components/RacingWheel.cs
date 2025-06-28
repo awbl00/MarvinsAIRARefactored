@@ -549,7 +549,7 @@ public class RacingWheel
 
 			if ( settings.RacingWheelParkedStrength < 1f )
 			{
-				outputTorque *= Misc.Lerp( settings.RacingWheelParkedStrength, 1f, app.Simulator.Velocity / 2.2352f ); // = 5 MPH
+				outputTorque *= Misc.Lerp( settings.RacingWheelParkedStrength, 1f, app.Simulator.Velocity / 2.2352f ); // V <= 5 MPH
 			}
 
 			// add wheel LFE

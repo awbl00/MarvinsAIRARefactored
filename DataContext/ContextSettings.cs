@@ -5,9 +5,8 @@ namespace MarvinsAIRARefactored.DataContext;
 
 public class ContextSettings
 {
-	public Guid RacingWheelSteeringDeviceGuid { get; set; }
 	public bool RacingWheelEnableForceFeedback { get; set; }
-	public float RacingWheelWheelMax { get; set; }
+	public float RacingWheelWheelForce { get; set; }
 	public float RacingWheelStrength { get; set; }
 	public float RacingWheelMaxForce { get; set; }
 	public float RacingWheelAutoMargin { get; set; }
@@ -23,7 +22,6 @@ public class ContextSettings
 	public float RacingWheelOutputMinimum { get; set; }
 	public float RacingWheelOutputMaximum { get; set; }
 	public float RacingWheelOutputCurve { get; set; }
-	public Guid RacingWheelLFERecordingDeviceGuid { get; set; }
 	public float RacingWheelLFEStrength { get; set; }
 	public float RacingWheelCrashProtectionGForce { get; set; }
 	public float RacingWheelCrashProtectionDuration { get; set; }
@@ -66,6 +64,12 @@ public class ContextSettings
 	public float PedalsStartingRPM { get; set; }
 	public bool PedalsVibrateInTopGearEnabled { get; set; }
 	public bool PedalsFadeWithThrottleEnabled { get; set; }
+	public float PedalsWheelLockFrequency { get; set; }
+	public float PedalsWheelLockSensitivity { get; set; }
+	public bool PedalsWheelLockFadeWithBrakeEnabled { get; set; }
+	public float PedalsWheelSpinFrequency { get; set; }
+	public float PedalsWheelSpinSensitivity { get; set; }
+	public bool PedalsWheelSpinFadeWithThrottleEnabled { get; set; }
 	public float PedalsClutchSlipStart { get; set; }
 	public float PedalsClutchSlipEnd { get; set; }
 	public float PedalsClutchSlipFrequency { get; set; }
