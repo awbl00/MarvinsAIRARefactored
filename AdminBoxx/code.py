@@ -54,8 +54,12 @@ def send_to_pc(message):
 # Callback function for button presses
 def on_press(x, y, edge):
     global app_was_connected, force_update_leds
-    if edge and not app_was_connected:
-        force_update_leds = True
+    if edge:
+
+        if app_was_connected:
+            send_to_pc(f":{y},{x}")
+        else:
+            force_update_leds = True
 
 
 def non_blocking_sleep(duration):
