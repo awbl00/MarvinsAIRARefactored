@@ -65,9 +65,9 @@ public partial class AdminBoxx
 
 	private static readonly Color[,] _playbackEnabledColors = new Color[ _numRows, _numColumns ]
 	{
-		{ Green, Red, Red, Red, Cyan,     Cyan,     Green,    Green    },
+		{ Green, Red, Red, Red, Cyan,     Cyan,     Green,    Cyan     },
 		{ Green, Red, Red, Red, Cyan,     Cyan,     Cyan,     Cyan     },
-		{ Green, Red, Red, Red, Green,    Disabled, Cyan,     Cyan     },
+		{ Green, Red, Red, Red, Green,    Disabled, Green,    Green    },
 		{ Green, Red, Red, Red, Disabled, Disabled, Disabled, Disabled }
 	};
 
@@ -112,6 +112,8 @@ public partial class AdminBoxx
 
 	private int _testCounter = 0;
 	private int _testState = 0;
+
+	private int _blinkCounter = 60;
 
 	private float _brightness = 1f;
 
@@ -266,7 +268,7 @@ public partial class AdminBoxx
 
 		// yellow flag / caution flag
 
-		if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Yellow | IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
+		if ( (int) ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
 		{
 			if ( !_shownYellowFlag )
 			{
@@ -662,16 +664,16 @@ public partial class AdminBoxx
 
 			switch ( number )
 			{
-				case 0: SetLEDToColor( 3, 2, Red, false ); break;
-				case 1: SetLEDToColor( 0, 1, Red, false ); break;
-				case 2: SetLEDToColor( 0, 2, Red, false ); break;
-				case 3: SetLEDToColor( 0, 3, Red, false ); break;
-				case 4: SetLEDToColor( 1, 1, Red, false ); break;
-				case 5: SetLEDToColor( 1, 2, Red, false ); break;
-				case 6: SetLEDToColor( 1, 3, Red, false ); break;
-				case 7: SetLEDToColor( 2, 1, Red, false ); break;
-				case 8: SetLEDToColor( 2, 2, Red, false ); break;
-				case 9: SetLEDToColor( 2, 3, Red, false ); break;
+				case 0: SetLEDToColor( 3, 2, Magenta, false ); break;
+				case 1: SetLEDToColor( 0, 1, Magenta, false ); break;
+				case 2: SetLEDToColor( 0, 2, Magenta, false ); break;
+				case 3: SetLEDToColor( 0, 3, Magenta, false ); break;
+				case 4: SetLEDToColor( 1, 1, Magenta, false ); break;
+				case 5: SetLEDToColor( 1, 2, Magenta, false ); break;
+				case 6: SetLEDToColor( 1, 3, Magenta, false ); break;
+				case 7: SetLEDToColor( 2, 1, Magenta, false ); break;
+				case 8: SetLEDToColor( 2, 2, Magenta, false ); break;
+				case 9: SetLEDToColor( 2, 3, Magenta, false ); break;
 			}
 
 			app.AudioManager.Play( $"{number}", DataContext.DataContext.Instance.Settings.AdminBoxxVolume );
@@ -763,7 +765,7 @@ public partial class AdminBoxx
 			}
 			else
 			{
-				SetLEDToColor( 0, 4, Red, false );
+				SetLEDToColor( 0, 4, Cyan, false );
 
 				PlayAudio( "black_flag_stop_and_go" );
 			}
@@ -845,7 +847,32 @@ public partial class AdminBoxx
 		{
 			EnterNumpadMode( ChatCallback, false );
 
+			SetLEDToColor( 0, 7, Cyan, false );
+
 			PlayAudio( "chat_toggle" );
+		}
+		else
+		{
+			_driverChatDisabled.Clear();
+
+			if ( _globalChatEnabled )
+			{
+				app.ChatQueue.SendMessage( "!nchat" );
+
+				_globalChatEnabled = false;
+
+				PlayAudio( "chat_disabled" );
+			}
+			else
+			{
+				app.ChatQueue.SendMessage( "!chat" );
+
+				PlayAudio( "chat_enabled" );
+
+				_globalChatEnabled = true;
+			}
+
+			LeaveNumpadMode( false );
 		}
 
 		app.Logger.WriteLine( "[AdminBoxx] <<< DoChat" );
@@ -1304,6 +1331,8 @@ public partial class AdminBoxx
 
 	public void Tick( App app )
 	{
+		_blinkCounter--;
+
 		if ( _connectCounter > 0 )
 		{
 			_wavingFlagCounter = 0;
@@ -1332,7 +1361,7 @@ public partial class AdminBoxx
 				}
 			}
 		}
-		
+
 		if ( _wavingFlagCounter > 0 )
 		{
 			if ( Interlocked.Decrement( ref _wavingFlagCounter ) == 0 )
@@ -1367,7 +1396,7 @@ public partial class AdminBoxx
 				}
 			}
 		}
-		
+
 		if ( _testCounter > 0 )
 		{
 			if ( Interlocked.Decrement( ref _testCounter ) == 0 )
@@ -1424,13 +1453,38 @@ public partial class AdminBoxx
 				}
 			}
 		}
-		else if ( _replayEnabled && !_inNumpadMode )
+		else if ( _wavingFlagCounter == 0 )
 		{
-			SetLEDToColor( 2, 5, ( app.Simulator.ReplayFrameNumEnd == 1 ) ? Cyan : Disabled, false );
-			SetLEDToColor( 3, 4, app.Simulator.ReplayPlaySlowMotion ? Cyan : Disabled, false );
-			SetLEDToColor( 3, 5, ( app.Simulator.ReplayPlaySpeed < 0 ) ? Cyan : Disabled, false );
-			SetLEDToColor( 3, 6, ( app.Simulator.ReplayPlaySpeed == 1 ) || ( app.Simulator.ReplayPlaySlowMotion && ( app.Simulator.ReplayPlaySpeed > 1 ) ) ? Cyan : Disabled, false );
-			SetLEDToColor( 3, 7, ( app.Simulator.ReplayPlaySpeed > 1 ) && !app.Simulator.ReplayPlaySlowMotion ? Cyan : Disabled, false );
+			if ( !_inNumpadMode && app.Simulator.IsConnected )
+			{
+				if ( ( app.Simulator.SessionFlags & ( IRacingSdkEnum.Flags.Yellow | IRacingSdkEnum.Flags.YellowWaving | IRacingSdkEnum.Flags.Caution | IRacingSdkEnum.Flags.CautionWaving ) ) != 0 )
+				{
+					SetLEDToColor( 0, 0, _blinkCounter >= 30 ? Yellow : Disabled, false );
+				}
+
+				if ( _singleFilePaceMode )
+				{
+					SetLEDToColor( 1, 0, Yellow, false );
+				}
+				else
+				{
+					SetLEDToColor( 1, 0, Green, false );
+				}
+
+				if ( _replayEnabled )
+				{
+					SetLEDToColor( 2, 5, ( app.Simulator.ReplayFrameNumEnd == 1 ) ? Magenta : Disabled, false );
+					SetLEDToColor( 3, 4, app.Simulator.ReplayPlaySlowMotion ? Magenta : Disabled, false );
+					SetLEDToColor( 3, 5, ( app.Simulator.ReplayPlaySpeed < 0 ) ? Magenta : Disabled, false );
+					SetLEDToColor( 3, 6, ( app.Simulator.ReplayPlaySpeed == 1 ) || ( app.Simulator.ReplayPlaySlowMotion && ( app.Simulator.ReplayPlaySpeed > 1 ) ) ? Magenta : Disabled, false );
+					SetLEDToColor( 3, 7, ( app.Simulator.ReplayPlaySpeed > 1 ) && !app.Simulator.ReplayPlaySlowMotion ? Magenta : Disabled, false );
+				}
+			}
+		}
+
+		if ( _blinkCounter == 0 )
+		{
+			_blinkCounter = 60;
 		}
 	}
 }
