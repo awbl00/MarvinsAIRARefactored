@@ -833,4 +833,12 @@
     <value>Slew and Total Compression</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
+  <data name="DiscordModerators" xml:space="preserve">
+    <value>Discord Moderators</value>
+    <comment>Contribute</comment>
+  </data>
+  <data name="DiscordModeratorsText" xml:space="preserve">
+    <value>I want to thank these volunteer moderators for helping answer the many questions posed by MAIRA users, allowing me to have more time to focus on the development of MAIRA!</value>
+    <comment>Contribute</comment>
+  </data>
 </root>

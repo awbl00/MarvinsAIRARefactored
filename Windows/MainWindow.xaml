@@ -1141,6 +1141,46 @@
 
                     </GroupBox>
 
+                    <GroupBox Header="{Binding Localization[DiscordModerators]}" Margin="0,10,0,0">
+
+                        <StackPanel Margin="0,10,0,10">
+
+                            <TextBlock TextWrapping="Wrap">
+                                
+                                <Run Text="{Binding Localization[DiscordModeratorsText], Mode=OneWay}" Foreground="White"/>
+
+                            </TextBlock>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,20,0,10">
+                                
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+                                <Run Text="{Binding Localization[Contributors], Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                                <Run Text="❤️❤️❤️" Foreground="Red"/>
+
+                            </TextBlock>
+
+                            <UniformGrid Columns="2" HorizontalAlignment="Center">
+
+                                <UniformGrid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="DeepSkyBlue" />
+                                    </Style>
+                                </UniformGrid.Resources>
+
+                                <TextBlock Text="Alan Le"/>
+                                <TextBlock Text="Ade Allen"/>
+                                <TextBlock Text="Chad McNeese"/>
+                                <TextBlock Text="Christian Scherf"/>
+                                <TextBlock Text="Matthew Brittle"/>
+                                <TextBlock Text="Robert A Moyer Jr"/>
+                                <TextBlock Text="Stephan Bendt"/>
+
+                            </UniformGrid>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
                 </StackPanel>
 
             </TabItem>
