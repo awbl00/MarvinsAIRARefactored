@@ -86,6 +86,11 @@ public partial class Simulator
 	public float YawNorth { get; private set; } = 0f;
 	public float YawRate { get; private set; } = 0f;
 
+	private float _longitudalGForceA = 0f;
+	private float _longitudalGForceB = 0f;
+	private float _lateralGForceA = 0f;
+	private float _lateralGForceB = 0f;
+
 	private bool _telemetryDataInitialized = false;
 	private bool _waitingForFirstSessionInfo = false;
 
@@ -655,8 +660,8 @@ public partial class Simulator
 
 		// calculate g forces
 
-		LongitudalGForce = MathF.Sqrt( LongAccel * LongAccel ) * MathZ.OneOverG;
-		LateralGForce = MathF.Sqrt( LatAccel * LatAccel ) * MathZ.OneOverG;
+		LongitudalGForce = LongAccel * MathZ.OneOverG;
+		LateralGForce = LatAccel * MathZ.OneOverG;
 
 		// crash protection processing
 
@@ -666,18 +671,30 @@ public partial class Simulator
 			{
 				if ( settings.RacingWheelCrashProtectionLongitudalGForce < 20f )
 				{
-					if ( MathF.Abs( LongitudalGForce ) >= settings.RacingWheelCrashProtectionLongitudalGForce )
+					var longitudalDeltaA = MathF.Abs( LongitudalGForce - _longitudalGForceA );
+					var longitudalDeltaB = MathF.Abs( LongitudalGForce - _longitudalGForceB ) / 2f;
+
+					if ( MathF.Abs( LongitudalGForce ) >= settings.RacingWheelCrashProtectionLongitudalGForce || MathF.Max( longitudalDeltaA, longitudalDeltaB ) >= 4f )
 					{
 						app.RacingWheel.ActivateCrashProtection = true;
 					}
+
+					_longitudalGForceB = _longitudalGForceA;
+					_longitudalGForceA = LongitudalGForce;
 				}
 
 				if ( settings.RacingWheelCrashProtectionLateralGForce < 20f )
 				{
-					if ( MathF.Abs( LateralGForce ) >= settings.RacingWheelCrashProtectionLateralGForce )
+					var lateralDeltaA = MathF.Abs( LateralGForce - _lateralGForceA );
+					var lateralDeltaB = MathF.Abs( LateralGForce - _lateralGForceB ) / 2f;
+
+					if ( MathF.Abs( LateralGForce ) >= settings.RacingWheelCrashProtectionLateralGForce || MathF.Max( lateralDeltaA, lateralDeltaB ) >= 4f )
 					{
 						app.RacingWheel.ActivateCrashProtection = true;
 					}
+
+					_lateralGForceB = _lateralGForceA;
+					_lateralGForceA = LateralGForce;
 				}
 			}
 		}
