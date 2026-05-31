@@ -828,7 +828,17 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition x:Name="OtherFeaturesRowSpacer_RowDefinition"
+                                       Height="20" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <controls:MairaKnob Grid.Column="0"
+                                    Grid.Row="0"
                                     Label="{Binding Localization[SoftLockStrength]}"
                                     Value="{Binding Settings.RacingWheelSoftLockStrength, Mode=TwoWay}"
                                     ValueString="{Binding Settings.RacingWheelSoftLockStrengthString}"
@@ -838,6 +848,7 @@
                                     MinusButtonMappings="{Binding Settings.RacingWheelSoftLockStrengthMinusButtonMappings}"
                                     DefaultValue="0.25" />
                 <controls:MairaKnob Grid.Column="2"
+                                    Grid.Row="0"
                                     Label="{Binding Localization[RacingFriction]}"
                                     Value="{Binding Settings.RacingWheelFriction, Mode=TwoWay}"
                                     ValueString="{Binding Settings.RacingWheelFrictionString}"
@@ -847,6 +858,7 @@
                                     MinusButtonMappings="{Binding Settings.RacingWheelFrictionMinusButtonMappings}"
                                     DefaultValue="0" />
                 <controls:MairaKnob Grid.Column="4"
+                                    Grid.Row="0"
                                     Label="{Binding Localization[WheelCenteringStrength]}"
                                     Value="{Binding Settings.RacingWheelWheelCenteringStrength, Mode=TwoWay}"
                                     ValueString="{Binding Settings.RacingWheelWheelCenteringStrengthString}"
@@ -856,6 +868,37 @@
                                     MinusButtonMappings="{Binding Settings.RacingWheelWheelCenteringStrengthMinusButtonMappings}"
                                     DefaultValue="0.75" />
 
+                <controls:MairaKnob Grid.Column="0"
+                                    Grid.Row="2"
+                                    Label="{Binding Localization[VelocityControlStrength]}"
+                                    Value="{Binding Settings.RacingWheelVelocityControlStrength, Mode=TwoWay}"
+                                    ValueString="{Binding Settings.RacingWheelVelocityControlStrengthString}"
+                                    StepSize="0.01"
+                                    ContextSwitches="{Binding Settings.RacingWheelVelocityControlStrengthContextSwitches}"
+                                    PlusButtonMappings="{Binding Settings.RacingWheelVelocityControlStrengthPlusButtonMappings}"
+                                    MinusButtonMappings="{Binding Settings.RacingWheelVelocityControlStrengthMinusButtonMappings}"
+                                    DefaultValue="0" />
+                <controls:MairaKnob Grid.Column="2"
+                                    Grid.Row="2"
+                                    Label="{Binding Localization[VelocityControlCurve]}"
+                                    Value="{Binding Settings.RacingWheelVelocityControlCurve, Mode=TwoWay}"
+                                    ValueString="{Binding Settings.RacingWheelVelocityControlCurveString}"
+                                    StepSize="0.01"
+                                    ContextSwitches="{Binding Settings.RacingWheelVelocityControlCurveContextSwitches}"
+                                    PlusButtonMappings="{Binding Settings.RacingWheelVelocityControlCurvePlusButtonMappings}"
+                                    MinusButtonMappings="{Binding Settings.RacingWheelVelocityControlCurveMinusButtonMappings}"
+                                    ShowCurve="True"
+                                    DefaultValue="0.35" />
+                <controls:MairaKnob Grid.Column="4"
+                                    Grid.Row="2"
+                                    Label="{Binding Localization[OscillationReductionStrength]}"
+                                    Value="{Binding Settings.RacingWheelOscillationReductionStrength, Mode=TwoWay}"
+                                    ValueString="{Binding Settings.RacingWheelOscillationReductionStrengthString}"
+                                    StepSize="0.01"
+                                    ContextSwitches="{Binding Settings.RacingWheelOscillationReductionStrengthContextSwitches}"
+                                    PlusButtonMappings="{Binding Settings.RacingWheelOscillationReductionStrengthPlusButtonMappings}"
+                                    MinusButtonMappings="{Binding Settings.RacingWheelOscillationReductionStrengthMinusButtonMappings}"
+                                    DefaultValue="0" />
             </Grid>
 
         </controls:MairaGroupBox>

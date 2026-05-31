@@ -1657,4 +1657,16 @@
     <value>(Preset) Reduce Big Bumps</value>
     <comment>Settings to decrease the impact of big bumps</comment>
   </data>
+  <data name="VelocityControlStrength" xml:space="preserve">
+    <value>Impulse Control Strength</value>
+    <comment>Impulse Control Strength</comment>
+  </data>
+  <data name="VelocityControlCurve" xml:space="preserve">
+    <value>Impulse Control Curve</value>
+    <comment>Impulse Control Curve</comment>
+  </data>
+  <data name="OscillationReductionStrength" xml:space="preserve">
+    <value>Oscillation Reduction Strength</value>
+    <comment>Oscillation Reduction Strength</comment>
+  </data>
 </root>
