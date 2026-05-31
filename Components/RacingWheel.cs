@@ -1590,7 +1590,7 @@ public class RacingWheel
 
 			// update recording data
 
-			app.RecordingManager.AddRecordingData( steeringWheelTorque60Hz, steeringWheelTorque500Hz, App.Instance!.DirectInput.ForceFeedbackWheelPosition );
+			app.RecordingManager.AddRecordingData( steeringWheelTorque60Hz, steeringWheelTorque500Hz );
 		}
 		catch ( Exception exception )
 		{
