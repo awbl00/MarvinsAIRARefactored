@@ -206,6 +206,20 @@ public partial class AdminBoxx
 
 		_usbSerialPortHelper.Initialize();
 
+		if ( !_usbSerialPortHelper.DeviceFound )
+		{
+			app.Logger.WriteLine( "[AdminBoxx] Device not found - disabling AdminBoxxConnectOnStartup" );
+
+			var localization = DataContext.DataContext.Instance.Localization;
+
+			app.Dispatcher.Invoke( () =>
+			{
+				MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.IsEnabled = false;
+				MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.ErrorMessage = localization[ "DeviceNotFound" ];
+				MainWindow._adminBoxxPage.RetryDevice_MairaButton.Visibility = System.Windows.Visibility.Visible;
+			} );
+		}
+
 		app.Logger.WriteLine( "[AdminBoxx] <<< Initialize" );
 	}
 
@@ -218,6 +232,33 @@ public partial class AdminBoxx
 		_timer.Stop();
 
 		app.Logger.WriteLine( "[AdminBoxx] <<< Shutdown" );
+	}
+
+	public void RetryDevice()
+	{
+		var app = App.Instance!;
+
+		app.Logger.WriteLine( "[AdminBoxx] RetryDevice >>>" );
+
+		_usbSerialPortHelper.Initialize();
+
+		var localization = DataContext.DataContext.Instance.Localization;
+
+		app.Dispatcher.Invoke( () =>
+		{
+			if ( _usbSerialPortHelper.DeviceFound )
+			{
+				MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.IsEnabled = true;
+				MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.ErrorMessage = string.Empty;
+				MainWindow._adminBoxxPage.RetryDevice_MairaButton.Visibility = System.Windows.Visibility.Collapsed;
+			}
+			else
+			{
+				MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.ErrorMessage = _usbSerialPortHelper.LastErrorMessage;
+			}
+		} );
+
+		app.Logger.WriteLine( "[AdminBoxx] <<< RetryDevice" );
 	}
 
 	public bool Connect()
@@ -251,6 +292,7 @@ public partial class AdminBoxx
 		app.Dispatcher.Invoke( () =>
 		{
 			MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.IsOn = IsConnected;
+			MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.ErrorMessage = IsConnected ? string.Empty : _usbSerialPortHelper.LastErrorMessage;
 		} );
 
 		app.Logger.WriteLine( "[AdminBoxx] <<< Connect" );
@@ -272,6 +314,7 @@ public partial class AdminBoxx
 		{
 			MainWindow._adminBoxxPage.Test.Disabled = true;
 			MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.IsOn = false;
+			MainWindow._adminBoxxPage.ConnectToAdminBoxx_MairaSwitch.ErrorMessage = string.Empty;
 		} );
 
 		app.Logger.WriteLine( "[AdminBoxx] <<< Disconnect" );

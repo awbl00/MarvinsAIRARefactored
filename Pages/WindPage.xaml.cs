@@ -30,7 +30,10 @@ public partial class WindPage : UserControl
 		}
 		else
 		{
-			app.Wind.Disconnect();
+			if ( app.Wind.IsConnected )
+			{
+				app.Wind.Disconnect();
+			}
 		}
 	}
 
@@ -50,6 +53,13 @@ public partial class WindPage : UserControl
 		_testingRight = !_testingRight;
 
 		app.Wind.TestRight( _testingRight );
+	}
+
+	private void RetryDevice_MairaButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.Wind.RetryDevice();
 	}
 
 	#endregion

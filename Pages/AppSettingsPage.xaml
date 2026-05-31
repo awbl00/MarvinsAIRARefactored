@@ -81,6 +81,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <controls:MairaSwitch Grid.Row="0"
@@ -117,6 +118,13 @@
                                       Margin="0,10,0,0"
                                       IsOn="{Binding Settings.AppMinimizeToSystemTray, Mode=TwoWay}"
                                       Label="{Binding Localization[MinimizeToSystemTray]}" />
+
+                <controls:MairaSwitch Grid.Row="5"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="3"
+                                      Margin="0,10,0,0"
+                                      IsOn="{Binding Settings.AppLightThemeEnabled, Mode=TwoWay}"
+                                      Label="{Binding Localization[LightTheme]}" />
 
                 <controls:MairaKnob Grid.Row="0"
                                     Grid.Column="4"
@@ -171,6 +179,16 @@
                 <!-- CPU affinity checkboxes will be dynamically added here -->
 
             </UniformGrid>
+
+        </controls:MairaGroupBox>
+
+        <controls:MairaGroupBox Label="{Binding Localization[Wizard_UC]}"
+                                HelpTopic="advanced/app-settings/#wizard">
+
+            <controls:MairaButton x:Name="LaunchWizard_MairaButton"
+                                  Label="{Binding Localization[LaunchWizard]}"
+                                  Icon="/MarvinsAIRARefactored;component/Artwork/Buttons/set.png"
+                                  Click="LaunchWizard_MairaButton_Click" />
 
         </controls:MairaGroupBox>
 

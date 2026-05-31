@@ -1,4 +1,4 @@
-﻿
+
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -71,6 +71,7 @@ public partial class App : Application
 	public SeatBeltTensioner SeatBeltTensioner { get; private set; } = null!;
 	public HidHotplugMonitor HidHotplugMonitor { get; private set; } = null!;
 	public TradingPaints TradingPaints { get; private set; } = null!;
+	public AppManager AppManager { get; private set; } = null!;
 
 	public GripOMeterWindow? GripOMeterWindow { get; set; }
 	public GapMonitorWindow? GapMonitorWindow { get; set; }
@@ -133,6 +134,7 @@ public partial class App : Application
 		SeatBeltTensioner = new();
 		HidHotplugMonitor = new();
 		TradingPaints = new();
+		AppManager = new();
 
 		_timer.Elapsed += OnTimer;
 	}
@@ -245,7 +247,6 @@ public partial class App : Application
 
 				Logger.Initialize();
 				TopLevelWindow.Initialize();
-				SettingsFile.Initialize();
 				AdminBoxx.Initialize();
 				AudioManager.Initialize();
 				Simulator.Initialize();
@@ -271,9 +272,17 @@ public partial class App : Application
 
 #endif
 
-				DirectInput.OnInput += OnInput;
+				SettingsFile.Initialize();
 
-				DataContext.DataContext.Instance.Settings.UpdateSettings( false );
+				var settings = DataContext.DataContext.Instance.Settings;
+
+				Misc.ForcePropertySetters( settings );
+
+				settings.UpdateSettings( false );
+
+				ApplyTheme( settings.AppLightThemeEnabled );
+
+				DirectInput.OnInput += OnInput;
 
 				Ready = true;
 
@@ -285,11 +294,33 @@ public partial class App : Application
 
 				var showWindow = true;
 
-				if ( DataContext.DataContext.Instance.Settings.AppStartMinimized )
+				var startMinimized = DataContext.DataContext.Instance.Settings.AppStartMinimized;
+				var minimizeToSystemTray = DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray;
+
+				foreach ( var commandLineArgument in e.Args )
+				{
+					var normalizedArgument = commandLineArgument.TrimStart( '-', '/' ).ToLowerInvariant();
+
+					if ( normalizedArgument is "minimized" or "m" )
+					{
+						startMinimized = true;
+
+						Logger.WriteLine( $"[App] Command line argument '{commandLineArgument}' detected - starting minimized." );
+					}
+					else if ( normalizedArgument is "tray" or "t" )
+					{
+						startMinimized = true;
+						minimizeToSystemTray = true;
+
+						Logger.WriteLine( $"[App] Command line argument '{commandLineArgument}' detected - starting minimized to system tray." );
+					}
+				}
+
+				if ( startMinimized )
 				{
 					MainWindow.WindowState = WindowState.Minimized;
 
-					if ( DataContext.DataContext.Instance.Settings.AppMinimizeToSystemTray )
+					if ( minimizeToSystemTray )
 					{
 						showWindow = false;
 					}
@@ -300,9 +331,14 @@ public partial class App : Application
 					MainWindow.Show();
 				}
 
-				if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
+				if ( showWindow && !DataContext.DataContext.Instance.Settings.AppWizardHasRun )
 				{
-					AdminBoxx.Connect();
+					var wizardWindow = new Windows.WizardWindow
+					{
+						Owner = MainWindow
+					};
+
+					wizardWindow.ShowDialog();
 				}
 
 				if ( DataContext.DataContext.Instance.Settings.WindConnectOnStartup )
@@ -310,9 +346,14 @@ public partial class App : Application
 					Wind.Connect();
 				}
 
-				if ( DataContext.DataContext.Instance.Settings.SeatBeltTensionerEnabled )
+				if ( DataContext.DataContext.Instance.Settings.SeatBeltTensionerConnectOnStartup )
 				{
 					SeatBeltTensioner.Connect();
+				}
+
+				if ( DataContext.DataContext.Instance.Settings.AdminBoxxConnectOnStartup )
+				{
+					AdminBoxx.Connect();
 				}
 
 #if !ADMINBOXX
@@ -335,6 +376,43 @@ public partial class App : Application
 		}
 
 		Logger.WriteLine( "[App] <<< App_Startup" );
+	}
+
+	/// <summary>
+	/// Swaps the active theme resource dictionary between dark and light.
+	/// Safe to call from any thread; marshals to the UI dispatcher if needed.
+	/// </summary>
+	public void ApplyTheme( bool lightTheme )
+	{
+		if ( !Dispatcher.CheckAccess() )
+		{
+			Dispatcher.Invoke( () => ApplyTheme( lightTheme ) );
+			return;
+		}
+
+		var themeUri = lightTheme
+			? new Uri( "/MarvinsAIRARefactored;component/Themes/LightTheme.xaml", UriKind.Relative )
+			: new Uri( "/MarvinsAIRARefactored;component/Themes/DarkTheme.xaml", UriKind.Relative );
+
+		var mergedDicts = Current.Resources.MergedDictionaries;
+
+		// Replace the first merged dictionary (the theme slot)
+		if ( mergedDicts.Count > 0 )
+		{
+			mergedDicts[ 0 ] = new ResourceDictionary { Source = themeUri };
+		}
+		else
+		{
+			mergedDicts.Add( new ResourceDictionary { Source = themeUri } );
+		}
+
+		// Update programmatic renderers that cannot use DynamicResource
+		Controls.MairaKnob.UpdateThemeColors( lightTheme );
+
+		if ( Graph != null )
+		{
+			Graph.UpdateThemeColors( lightTheme );
+		}
 	}
 
 	private void App_Exit( object sender, EventArgs e )
@@ -369,6 +447,7 @@ public partial class App : Application
 		VirtualJoystick.Shutdown();
 		Telemetry.Shutdown();
 		TradingPaints.Shutdown();
+		AppManager.Shutdown();
 
 #endif
 

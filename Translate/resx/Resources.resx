@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -293,17 +293,9 @@
     <value>Delta Limiter (Low Latency)</value>
     <comment>Racing wheel algorithms list</comment>
   </data>
-  <data name="CompressionRateUnits" xml:space="preserve">
-    <value>%/Nm</value>
-    <comment>Abbreviation for percent per Newton-meters</comment>
-  </data>
   <data name="Percent" xml:space="preserve">
     <value>%</value>
     <comment>Abbreviation for percent</comment>
-  </data>
-  <data name="CompressionRate" xml:space="preserve">
-    <value>Compression Rate</value>
-    <comment>Racing wheel</comment>
   </data>
   <data name="Device_UC" xml:space="preserve">
     <value>DEVICE</value>
@@ -323,10 +315,6 @@
   </data>
   <data name="CurrentForce" xml:space="preserve">
     <value>Current Force</value>
-    <comment>Racing wheel</comment>
-  </data>
-  <data name="PeakForce" xml:space="preserve">
-    <value>Peak Force</value>
     <comment>Racing wheel</comment>
   </data>
   <data name="AutoMaxForce" xml:space="preserve">
@@ -433,10 +421,6 @@
     <value>Maximum</value>
     <comment>Racing wheel, Pedals, Graph, Seat Belt Tensioner</comment>
   </data>
-  <data name="Neutral" xml:space="preserve">
-    <value>Neutral</value>
-    <comment>Seat Belt Tensioner</comment>
-  </data>
   <data name="Curve" xml:space="preserve">
     <value>Curve</value>
     <comment>Racing wheel, Pedals</comment>
@@ -529,10 +513,6 @@
     <value>Check For Updates On Startup</value>
     <comment>App settings</comment>
   </data>
-  <data name="AutomaticallyDownloadUpdates" xml:space="preserve">
-    <value>Automatically Download Updates</value>
-    <comment>App settings</comment>
-  </data>
   <data name="ConnectToAdminBoxxOnStartup" xml:space="preserve">
     <value>Connect to AdminBoxx on App Startup</value>
     <comment>AdminBoxx</comment>
@@ -543,22 +523,6 @@
   </data>
   <data name="Volume" xml:space="preserve">
     <value>Volume</value>
-    <comment>AdminBoxx</comment>
-  </data>
-  <data name="NoAudioDevicesFound" xml:space="preserve">
-    <value>[No Audio Devices Found]</value>
-    <comment>Audio devices list</comment>
-  </data>
-  <data name="Connection" xml:space="preserve">
-    <value>Connection</value>
-    <comment>AdminBoxx</comment>
-  </data>
-  <data name="Display" xml:space="preserve">
-    <value>Display</value>
-    <comment>AdminBoxx</comment>
-  </data>
-  <data name="Audio" xml:space="preserve">
-    <value>Audio</value>
     <comment>AdminBoxx</comment>
   </data>
   <data name="DeltaLimiterBias" xml:space="preserve">
@@ -576,18 +540,6 @@
   <data name="LFERecordingDevice" xml:space="preserve">
     <value>LFE Recording Device</value>
     <comment>Racing wheel</comment>
-  </data>
-  <data name="Average" xml:space="preserve">
-    <value>Average</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="Variance" xml:space="preserve">
-    <value>Variance</value>
-    <comment>Graph</comment>
-  </data>
-  <data name="StandardDeviation" xml:space="preserve">
-    <value>Standard Deviation</value>
-    <comment>Graph</comment>
   </data>
   <data name="InputTorque60Hz" xml:space="preserve">
     <value>Input Torque (60 Hz)</value>
@@ -675,6 +627,10 @@
   </data>
   <data name="AppWindow_UC" xml:space="preserve">
     <value>APP WINDOW</value>
+    <comment>App settings</comment>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Light Theme</value>
     <comment>App settings</comment>
   </data>
   <data name="UIScale" xml:space="preserve">
@@ -850,7 +806,7 @@
     <comment>Sounds</comment>
   </data>
   <data name="FrequencyRatio" xml:space="preserve">
-    <value>Frequency Ratio</value>
+    <value>Pitch</value>
     <comment>Sounds</comment>
   </data>
   <data name="Fade" xml:space="preserve">
@@ -949,18 +905,6 @@
     <value>Maximum Brake</value>
     <comment>Steering effects</comment>
   </data>
-  <data name="NotCalibrating" xml:space="preserve">
-    <value>Not Calibrating</value>
-    <comment>Steering effects</comment>
-  </data>
-  <data name="ResetCalibration" xml:space="preserve">
-    <value>Reset Calibration</value>
-    <comment>Steering effects</comment>
-  </data>
-  <data name="MakeGripOMeterDraggable" xml:space="preserve">
-    <value>Make the Grip-O-Meter window draggable</value>
-    <comment>Steering effects</comment>
-  </data>
   <data name="GripOMeter_UC" xml:space="preserve">
     <value>GRIP-O-METER</value>
     <comment>Steering effects</comment>
@@ -1028,10 +972,6 @@
   <data name="KPHUnits" xml:space="preserve">
     <value> KPH</value>
     <comment>Abbreviation for kilometers per hour</comment>
-  </data>
-  <data name="CalibrationFileContributors" xml:space="preserve">
-    <value>Calibration File Contributors</value>
-    <comment>Contribute</comment>
   </data>
   <data name="CalibrationFilesText" xml:space="preserve">
     <value>These are the folks who have generously contributed some of their spare time, to run steering effects calibrations on some of their favorite cars, and to upload those calibration files!</value>
@@ -1141,16 +1081,8 @@
     <value>Speech to Text</value>
     <comment>App menu item</comment>
   </data>
-  <data name="Overlay" xml:space="preserve">
-    <value>Overlay</value>
-    <comment>Speech to text</comment>
-  </data>
   <data name="OverlayWindow_UC" xml:space="preserve">
     <value>OVERLAY WINDOW</value>
-    <comment>Speech to text</comment>
-  </data>
-  <data name="ShowOverlayWindow" xml:space="preserve">
-    <value>Show the overlay window</value>
     <comment>Speech to text</comment>
   </data>
   <data name="MakeOverlayWindowDraggable" xml:space="preserve">
@@ -1197,13 +1129,17 @@
     <value>CALIBRATION FILE CONTRIBUTIONS</value>
     <comment>Contribute</comment>
   </data>
-  <data name="Moderators" xml:space="preserve">
-    <value>Moderators</value>
-    <comment>Contribute</comment>
-  </data>
   <data name="AppSettings_UC" xml:space="preserve">
     <value>APP SETTINGS</value>
     <comment>Page title</comment>
+  </data>
+  <data name="Wizard_UC" xml:space="preserve">
+    <value>Wizard</value>
+    <comment>App settings group box header</comment>
+  </data>
+  <data name="LaunchWizard" xml:space="preserve">
+    <value>Launch Wizard</value>
+    <comment>App settings button label</comment>
   </data>
   <data name="Simulator_UC" xml:space="preserve">
     <value>SIMULATOR</value>
@@ -1289,24 +1225,108 @@
     <value>Connect to MAIRA Seat Belt Tensioner on App Startup</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
-  <data name="Tuning_UC" xml:space="preserve">
-    <value>TUNING</value>
+  <data name="MinimumAngle" xml:space="preserve">
+    <value>Minimum Angle</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
-  <data name="SurgeMaxG" xml:space="preserve">
-    <value>Surge Max G</value>
+  <data name="NeutralAngle" xml:space="preserve">
+    <value>Neutral Angle</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
-  <data name="SwayMaxG" xml:space="preserve">
-    <value>Sway Max G</value>
+  <data name="MaximumAngle" xml:space="preserve">
+    <value>Maximum Angle</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
-  <data name="HeaveMaxG" xml:space="preserve">
-    <value>Heave Max G</value>
+  <data name="MaxGForce" xml:space="preserve">
+    <value>Max G Force</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="SubtractGravity" xml:space="preserve">
+    <value>Subtract gravity</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="AxisMode" xml:space="preserve">
+    <value>Mode</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="AxisModeDisabled" xml:space="preserve">
+    <value>Disabled</value>
+    <comment>Seat Belt Tensioner axis mode list</comment>
+  </data>
+  <data name="AxisModeNormal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>Seat Belt Tensioner axis mode list</comment>
+  </data>
+  <data name="AxisModeInverted" xml:space="preserve">
+    <value>Inverted</value>
+    <comment>Seat Belt Tensioner axis mode list</comment>
+  </data>
+  <data name="DeadZone" xml:space="preserve">
+    <value>Dead Zone</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="Smoothing" xml:space="preserve">
+    <value>Smoothing</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="MinG" xml:space="preserve">
+    <value>Min G</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="MaxG" xml:space="preserve">
+    <value>Max G</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="SeatOfPantsEffect_UC" xml:space="preserve">
+    <value>SEAT OF PANTS EFFECT</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="VibrationEffects_UC" xml:space="preserve">
+    <value>VIBRATION EFFECTS</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="ABSWheelLock" xml:space="preserve">
+    <value>ABS / Wheel Lock</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="WheelSlip" xml:space="preserve">
+    <value>Wheel Slip</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="RumbleStrip" xml:space="preserve">
+    <value>Rumble Strip</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="Surge_UC" xml:space="preserve">
+    <value>SURGE</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="Sway_UC" xml:space="preserve">
+    <value>SWAY</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="Heave_UC" xml:space="preserve">
+    <value>HEAVE</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="MotorOutput_UC" xml:space="preserve">
+    <value>MOTOR OUTPUT</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="LeftShoulder" xml:space="preserve">
+    <value>Left Shoulder</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="RightShoulder" xml:space="preserve">
+    <value>Right Shoulder</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
   <data name="MaxMotorSpeed" xml:space="preserve">
     <value>Max Motor Speed</value>
+    <comment>Seat Belt Tensioner</comment>
+  </data>
+  <data name="InvertedArms" xml:space="preserve">
+    <value>Inverted Arms</value>
     <comment>Seat Belt Tensioner</comment>
   </data>
   <data name="ConnectToWindOnStartup" xml:space="preserve">
@@ -1359,7 +1379,11 @@
   </data>
   <data name="DeviceNotFound" xml:space="preserve">
     <value>Device Missing</value>
-    <comment>Racing wheel</comment>
+    <comment>Racing wheel, SBT, AdminBoxx, Wind</comment>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+    <comment>Racing wheel, SBT, AdminBoxx, Wind</comment>
   </data>
   <data name="IRacingPaintFolder" xml:space="preserve">
     <value>iRacing Paint Folder</value>
@@ -1461,6 +1485,18 @@
     <value>CLICK</value>
     <comment>Sounds</comment>
   </data>
+  <data name="AllowSoundsDuringReplays" xml:space="preserve">
+    <value>Allow Sounds During Replays</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="BrakeThrottleWarning_UC" xml:space="preserve">
+    <value>BRAKE + THROTTLE WARNING</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="FfbClipping_UC" xml:space="preserve">
+    <value>FFB CLIPPING</value>
+    <comment>Sounds</comment>
+  </data>
   <data name="PedalsP500" xml:space="preserve">
     <value>Simagic P500 Pedals</value>
     <comment>Pedals device</comment>
@@ -1523,55 +1559,55 @@
   </data>
   <data name="Multi360HzDetail" xml:space="preserve">
     <value>360 Hz Detail</value>
-    <comment>360 Hz Detail Amount</comment>
+    <comment>Racing Wheel</comment>
   </data>
   <data name="SlewPeakMode" xml:space="preserve">
     <value>Peak Aware Slew Reduction</value>
-    <comment>Slew Reduction Peak Aware Mode</comment>
+    <comment>Racing Wheel</comment>
   </data>
   <data name="HybridVariable30" xml:space="preserve">
     <value>360 Hz on 60 Hz, 10-30% Bias</value>
-    <comment>On 60 Hz with variable 10-30% Bias</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="Hybrid10" xml:space="preserve">
     <value>360 Hz on 60 Hz, 10% Bias</value>
-    <comment>On 60 Hz with 10% bias</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="DefaultsNative60Hz" xml:space="preserve">
     <value>(Default Values) Native 60 Hz</value>
-    <comment>Load default values for Native 60 Hz</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="DefaultsHybridVariable30" xml:space="preserve">
     <value>(Default Values) 360 Hz on 60 Hz, 10-30% Bias</value>
-    <comment>Load default values for 360 Hz on 60 Hz, 10-30% Bias</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="DefaultsHybrid10" xml:space="preserve">
     <value>(Default Values) 360 Hz on 60 Hz, 10% Bias</value>
-    <comment>Load default values for 360 Hz on 60 Hz, 10% Bias</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="DefaultsNative360Hz" xml:space="preserve">
     <value>(Default Values) Native 360 Hz</value>
-    <comment>Load default values for Native 360 Hz</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="PresetBasicFFB" xml:space="preserve">
     <value>(Preset) Core tire feedback, minimal surface detail</value>
-    <comment>Settings targeting core tire feedback</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="PresetBalancedFFB" xml:space="preserve">
     <value>(Preset) Core tire feedback, moderate surface detail</value>
-    <comment>Settings targeting a balance between tire feedback and surface detail</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="PresetBoostDetail" xml:space="preserve">
     <value>(Preset) Moderately boost FFB Dynamics</value>
-    <comment>Settings to boost FFB Dynamics</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="PresetReduceDetail" xml:space="preserve">
     <value>(Preset) Moderately reduce FFB dynamics</value>
-    <comment>Settings to decrease FFB dynamics</comment>
+    <comment>Multi adjustment toolkit option list</comment>
   </data>
   <data name="FFBSource" xml:space="preserve">
     <value>FFB Type + Presets</value>
-    <comment>FFB type selection plus preset options</comment>
+    <comment>Racing Wheel</comment>
   </data>
   <data name="LateralGForce" xml:space="preserve">
     <value>Lateral G-Force</value>
@@ -1655,7 +1691,359 @@
   </data>
   <data name="PresetReduceBigBumps" xml:space="preserve">
     <value>(Preset) Reduce Big Bumps</value>
-    <comment>Settings to decrease the impact of big bumps</comment>
+    <comment>Multi adjustment toolkit option list</comment>
+  </data>
+  <data name="AppManager" xml:space="preserve">
+    <value>App Manager</value>
+    <comment>App menu item</comment>
+  </data>
+  <data name="AppManager_UC" xml:space="preserve">
+    <value>APP MANAGER</value>
+    <comment>Page title</comment>
+  </data>
+  <data name="AppsToStart_UC" xml:space="preserve">
+    <value>APPS TO LAUNCH</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="AppsToTerminate_UC" xml:space="preserve">
+    <value>APPS TO TERMINATE</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="ExecutablePath" xml:space="preserve">
+    <value>Executable Path</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="Arguments" xml:space="preserve">
+    <value>Arguments</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="DelayAfterStart" xml:space="preserve">
+    <value>Delay After Start (sec)</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="CpuPriority" xml:space="preserve">
+    <value>CPU Priority</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="AppWindowStyle" xml:space="preserve">
+    <value>Window Style</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="TerminateOnDisconnect" xml:space="preserve">
+    <value>Terminate on Simulator Disconnect</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="AvoidPrimaryCpuCores" xml:space="preserve">
+    <value>Avoid Primary CPU Cores</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="LaunchOnDisconnect" xml:space="preserve">
+    <value>Launch on Simulator Disconnect</value>
+    <comment>App Manager</comment>
+  </data>
+  <data name="CpuPriorityIdle" xml:space="preserve">
+    <value>Idle</value>
+    <comment>App Manager CPU priority level list</comment>
+  </data>
+  <data name="CpuPriorityBelowNormal" xml:space="preserve">
+    <value>Below Normal</value>
+    <comment>App Manager CPU priority level list</comment>
+  </data>
+  <data name="CpuPriorityNormal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>App Manager CPU priority level list</comment>
+  </data>
+  <data name="CpuPriorityAboveNormal" xml:space="preserve">
+    <value>Above Normal</value>
+    <comment>App Manager CPU priority level list</comment>
+  </data>
+  <data name="CpuPriorityHigh" xml:space="preserve">
+    <value>High</value>
+    <comment>App Manager CPU priority level list</comment>
+  </data>
+  <data name="WindowStyleNormal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>App Manager window style list</comment>
+  </data>
+  <data name="WindowStyleMinimized" xml:space="preserve">
+    <value>Minimized</value>
+    <comment>App Manager window style list</comment>
+  </data>
+  <data name="WindowStyleMaximized" xml:space="preserve">
+    <value>Maximized</value>
+    <comment>App Manager window style list</comment>
+  </data>
+  <data name="WindowStyleHidden" xml:space="preserve">
+    <value>Hidden</value>
+    <comment>App Manager window style list</comment>
+  </data>
+  <data name="Wizard_LetsGo" xml:space="preserve">
+    <value>Let's go!</value>
+    <comment>Wizard welcome step button</comment>
+  </data>
+  <data name="Wizard_Skip" xml:space="preserve">
+    <value>Skip</value>
+    <comment>Wizard skip button</comment>
+  </data>
+  <data name="Wizard_Prev" xml:space="preserve">
+    <value>Prev</value>
+    <comment>Wizard previous step button</comment>
+  </data>
+  <data name="Wizard_Next" xml:space="preserve">
+    <value>Next</value>
+    <comment>Wizard next step button</comment>
+  </data>
+  <data name="Wizard_Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Wizard yes button</comment>
+  </data>
+  <data name="Wizard_No" xml:space="preserve">
+    <value>No</value>
+    <comment>Wizard no button</comment>
+  </data>
+  <data name="Wizard_ApplyAndNext" xml:space="preserve">
+    <value>Next</value>
+    <comment>Wizard apply and advance button on Algorithm step</comment>
+  </data>
+  <data name="Wizard_Close" xml:space="preserve">
+    <value>Close</value>
+    <comment>Wizard close button on final step</comment>
+  </data>
+  <data name="Wizard_Step0_Title" xml:space="preserve">
+    <value>Greetings, Racer!</value>
+    <comment>Wizard step 0 title</comment>
+  </data>
+  <data name="Wizard_Step0_Line1" xml:space="preserve">
+    <value>I'm Marvin the Wizard, and I'm here to help you tame the mighty MAIRA!</value>
+    <comment>Wizard step 0 line 1</comment>
+  </data>
+  <data name="Wizard_Step0_Line2" xml:space="preserve">
+    <value>With a wave of my checkered flag, I'll guide you through the most important settings so you can get on track as fast as possible. 🏁✨</value>
+    <comment>Wizard step 0 line 2</comment>
+  </data>
+  <data name="Wizard_Step0_Line3" xml:space="preserve">
+    <value>Shall we begin, or are you an experienced wizard yourself and prefer to configure everything manually?</value>
+    <comment>Wizard step 0 line 3</comment>
+  </data>
+  <data name="Wizard_Step1_Title" xml:space="preserve">
+    <value>App Theme</value>
+    <comment>Wizard step 1 title</comment>
+  </data>
+  <data name="Wizard_Step1_Line1" xml:space="preserve">
+    <value>Choose whether you prefer a light or dark theme. Toggle the switch below to preview the change live.</value>
+    <comment>Wizard step 1 line 1</comment>
+  </data>
+  <data name="Wizard_Step2_Title" xml:space="preserve">
+    <value>Steering Wheel</value>
+    <comment>Wizard step 2 title</comment>
+  </data>
+  <data name="Wizard_Step2_Line1" xml:space="preserve">
+    <value>Select your force-feedback steering wheel from the list below.</value>
+    <comment>Wizard step 2 line 1</comment>
+  </data>
+  <data name="Wizard_Step2_Hint1" xml:space="preserve">
+    <value> Don't see your wheel? Make sure it is powered on and connected, then the list will refresh automatically.</value>
+    <comment>Wizard step 2 hint 1</comment>
+  </data>
+  <data name="Wizard_Step2_Hint2" xml:space="preserve">
+    <value> Fanatec users: Fanatec wheels typically appear as two separate devices in the list. If the one you selected doesn't work, try selecting the other one!</value>
+    <comment>Wizard step 2 hint 2</comment>
+  </data>
+  <data name="Wizard_Step3_Title" xml:space="preserve">
+    <value>Maximum Wheel Force</value>
+    <comment>Wizard step 3 title</comment>
+  </data>
+  <data name="Wizard_Step3_Line1" xml:space="preserve">
+    <value>Enter the maximum force your wheelbase is capable of producing, in Newton-meters (Nm). MAIRA uses this value to correctly scale all force feedback output for your hardware.</value>
+    <comment>Wizard step 3 line 1</comment>
+  </data>
+  <data name="Wizard_Step3_Hint1" xml:space="preserve">
+    <value> We've made our best guess based on your selected wheel — but feel free to adjust it if needed.</value>
+    <comment>Wizard step 3 hint 1</comment>
+  </data>
+  <data name="Wizard_Step3_Hint2" xml:space="preserve">
+    <value> Important: If you have already limited your wheel's maximum torque output inside your wheel manufacturer's software (e.g., Fanatec Wheel Control Panel, Moza Pit House, etc.), enter that reduced value here instead of the hardware's physical maximum. MAIRA needs to know what your wheel will actually deliver, not what it's capable of in theory.</value>
+    <comment>Wizard step 3 hint 2</comment>
+  </data>
+  <data name="Wizard_Step4_Title" xml:space="preserve">
+    <value>Strength Controls</value>
+    <comment>Wizard step 4 title</comment>
+  </data>
+  <data name="Wizard_Step4_Line1" xml:space="preserve">
+    <value>MAIRA lets you bind physical buttons on your wheel or controller to raise and lower the Force Feedback Strength on the fly — without ever leaving the cockpit.</value>
+    <comment>Wizard step 4 line 1</comment>
+  </data>
+  <data name="Wizard_Step4_Line2" xml:space="preserve">
+    <value>Click the - and + buttons below to assign inputs to each one. This step is optional — you can skip it and set up bindings later from the Racing Wheel page.</value>
+    <comment>Wizard step 4 line 2</comment>
+  </data>
+  <data name="Wizard_Step4_Hint1" xml:space="preserve">
+    <value> Once an input is mapped, the button border will turn orange to confirm it.</value>
+    <comment>Wizard step 4 hint 1</comment>
+  </data>
+  <data name="Wizard_Step4_StrengthLabel" xml:space="preserve">
+    <value>Strength</value>
+    <comment>Wizard step 4 centre label between minus and plus buttons</comment>
+  </data>
+  <data name="Wizard_Step5_Title" xml:space="preserve">
+    <value>Auto-Set Max Force</value>
+    <comment>Wizard step 5 title</comment>
+  </data>
+  <data name="Wizard_Step5_Line1" xml:space="preserve">
+    <value>While you are driving on track, MAIRA continuously measures the actual peak torque your wheel produces. It uses that measurement to suggest the ideal Max Force value — one that uses your wheel's full range without ever clipping the signal.</value>
+    <comment>Wizard step 5 line 1</comment>
+  </data>
+  <data name="Wizard_Step5_Line2" xml:space="preserve">
+    <value>With the Auto-Set feature, you can bind a physical button on your wheel or controller to the Set action. Press it at any moment during a session and MAIRA will instantly update Max Force to match your measured peak — no menus, no interruptions.</value>
+    <comment>Wizard step 5 line 2</comment>
+  </data>
+  <data name="Wizard_Step5_Line3" xml:space="preserve">
+    <value>A companion Clear button resets the running measurement so you can start a fresh reading — useful if your car has gone off track or hit something.</value>
+    <comment>Wizard step 5 line 3</comment>
+  </data>
+  <data name="Wizard_Step5_Question" xml:space="preserve">
+    <value>Would you like to set up the Auto-Set feature?</value>
+    <comment>Wizard step 5 yes/no question</comment>
+  </data>
+  <data name="Wizard_Step6_Title" xml:space="preserve">
+    <value>Auto-Set Setup</value>
+    <comment>Wizard step 6 title</comment>
+  </data>
+  <data name="Wizard_Step6_Line1" xml:space="preserve">
+    <value>First, adjust the Auto Target headroom to taste, then map your Set and Clear buttons.</value>
+    <comment>Wizard step 6 line 1</comment>
+  </data>
+  <data name="Wizard_Step6_Hint1" xml:space="preserve">
+    <value> Auto Target sets where in your wheel's force range the measured peak should land. Lower the target to keep more headroom above the peak; raise it to use more of the wheel's range.</value>
+    <comment>Wizard step 6 hint 1</comment>
+  </data>
+  <data name="Wizard_Step7_Title" xml:space="preserve">
+    <value>Algorithm</value>
+    <comment>Wizard step 7 title</comment>
+  </data>
+  <data name="Wizard_Step7_Line1" xml:space="preserve">
+    <value>How do you like your force feedback to feel? Move the slider below to tell MAIRA your preference and it will configure the algorithm, detail and smoothing settings to match.</value>
+    <comment>Wizard step 7 line 1</comment>
+  </data>
+  <data name="Wizard_Step7_Line2" xml:space="preserve">
+    <value>Don't worry — you can always fine-tune everything manually on the Racing Wheel page later.</value>
+    <comment>Wizard step 7 line 2</comment>
+  </data>
+  <data name="Wizard_Step7_SliderLeft" xml:space="preserve">
+    <value>💤 Smooth Feeling</value>
+    <comment>Wizard step 7 slider left label</comment>
+  </data>
+  <data name="Wizard_Step7_SliderCenter" xml:space="preserve">
+    <value>Normal</value>
+    <comment>Wizard step 7 slider center label</comment>
+  </data>
+  <data name="Wizard_Step7_SliderRight" xml:space="preserve">
+    <value>Boost Details ⚡</value>
+    <comment>Wizard step 7 slider right label</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_MaxSmooth_Name" xml:space="preserve">
+    <value>Silky Smooth</value>
+    <comment>Wizard step 7 preset name at -3</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_MaxSmooth_Desc" xml:space="preserve">
+    <value>Heavy delta limiting at 250 Nm/s. Very calm, rounded feedback.</value>
+    <comment>Wizard step 7 preset description at -3</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Smooth_Name" xml:space="preserve">
+    <value>Smooth</value>
+    <comment>Wizard step 7 preset name at -2</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Smooth_Desc" xml:space="preserve">
+    <value>Delta limiting at 500 Nm/s. Softer edges and reduced sharpness.</value>
+    <comment>Wizard step 7 preset description at -2</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_SlightlySmooth_Name" xml:space="preserve">
+    <value>Slightly Smooth</value>
+    <comment>Wizard step 7 preset name at -1</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_SlightlySmooth_Desc" xml:space="preserve">
+    <value>Light delta limiting at 1000 Nm/s. Minor transient softening.</value>
+    <comment>Wizard step 7 preset description at -1</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Normal_Name" xml:space="preserve">
+    <value>Normal</value>
+    <comment>Wizard step 7 preset name at 0</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Normal_Desc" xml:space="preserve">
+    <value>Balanced detail and smoothness.</value>
+    <comment>Wizard step 7 preset description at 0</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_SlightlyBoosted_Name" xml:space="preserve">
+    <value>Slightly Boosted</value>
+    <comment>Wizard step 7 preset name at +1</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_SlightlyBoosted_Desc" xml:space="preserve">
+    <value>Subtle detail enhancement at 50% boost.</value>
+    <comment>Wizard step 7 preset description at +1</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Boosted_Name" xml:space="preserve">
+    <value>Boosted</value>
+    <comment>Wizard step 7 preset name at +2</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_Boosted_Desc" xml:space="preserve">
+    <value>Clear detail enhancement at 100% boost.</value>
+    <comment>Wizard step 7 preset description at +2</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_MaxBoosted_Name" xml:space="preserve">
+    <value>A Lot of Boost</value>
+    <comment>Wizard step 7 preset name at +3</comment>
+  </data>
+  <data name="Wizard_Step7_Preset_MaxBoosted_Desc" xml:space="preserve">
+    <value>Aggressive detail enhancement at 150% boost.</value>
+    <comment>Wizard step 7 preset description at +3</comment>
+  </data>
+  <data name="Wizard_Final_Title" xml:space="preserve">
+    <value>You're all set!</value>
+    <comment>Wizard final step title</comment>
+  </data>
+  <data name="Wizard_Final_Line1" xml:space="preserve">
+    <value>Thank you for trying MAIRA! The wizard is now complete.</value>
+    <comment>Wizard final step line 1</comment>
+  </data>
+  <data name="Wizard_Final_Line2" xml:space="preserve">
+    <value>You can re-run this wizard at any time by visiting the App Settings page and clicking the "Launch Wizard" button.</value>
+    <comment>Wizard final step line 2</comment>
+  </data>
+  <data name="Wizard_Final_DocLinkPrefix" xml:space="preserve">
+    <value>New to MAIRA? Click</value>
+    <comment>Wizard final step documentation link prefix text</comment>
+  </data>
+  <data name="Wizard_Final_DocLinkAnchor" xml:space="preserve">
+    <value>here</value>
+    <comment>Wizard final step documentation hyperlink anchor text</comment>
+  </data>
+  <data name="Wizard_Final_DocLinkSuffix" xml:space="preserve">
+    <value>to open the documentation and learn about the common controls.</value>
+    <comment>Wizard final step documentation link suffix text</comment>
+  </data>
+  <data name="OutputDevice" xml:space="preserve">
+    <value>Output device</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="OutputDevice_UC" xml:space="preserve">
+    <value>OUTPUT DEVICE</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="DefaultWindowsSoundDevice" xml:space="preserve">
+    <value>[Default Windows Sound Device]</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="LoopStart" xml:space="preserve">
+    <value>Loop Start</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="LoopEnd" xml:space="preserve">
+    <value>Loop End</value>
+    <comment>Sounds</comment>
+  </data>
+  <data name="Milliseconds" xml:space="preserve">
+    <value>ms</value>
+    <comment>Abbreviation for milliseconds, used as a unit suffix in value display strings</comment>
   </data>
   <data name="VelocityControlStrength" xml:space="preserve">
     <value>Impulse Control Strength</value>

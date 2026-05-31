@@ -59,11 +59,13 @@ public partial class Wind
 		{
 			app.Logger.WriteLine( "[Wind] Device not found - disabling WindConnectOnStartup" );
 
-			DataContext.DataContext.Instance.Settings.WindConnectOnStartup = false;
+			var localization = DataContext.DataContext.Instance.Localization;
 
 			app.Dispatcher.Invoke( () =>
 			{
 				MainWindow._windPage.ConnectToWind_MairaSwitch.IsEnabled = false;
+				MainWindow._windPage.ConnectToWind_MairaSwitch.ErrorMessage = localization[ "DeviceNotFound" ];
+				MainWindow._windPage.RetryDevice_MairaButton.Visibility = System.Windows.Visibility.Visible;
 			} );
 		}
 
@@ -81,6 +83,31 @@ public partial class Wind
 		app.Logger.WriteLine( "[Wind] <<< Shutdown" );
 	}
 
+	public void RetryDevice()
+	{
+		var app = App.Instance!;
+
+		app.Logger.WriteLine( "[Wind] RetryDevice >>>" );
+
+		_usbSerialPortHelper.Initialize();
+
+		app.Dispatcher.Invoke( () =>
+		{
+			if ( _usbSerialPortHelper.DeviceFound )
+			{
+				MainWindow._windPage.ConnectToWind_MairaSwitch.IsEnabled = true;
+				MainWindow._windPage.ConnectToWind_MairaSwitch.ErrorMessage = string.Empty;
+				MainWindow._windPage.RetryDevice_MairaButton.Visibility = System.Windows.Visibility.Collapsed;
+			}
+			else
+			{
+				MainWindow._windPage.ConnectToWind_MairaSwitch.ErrorMessage = _usbSerialPortHelper.LastErrorMessage;
+			}
+		} );
+
+		app.Logger.WriteLine( "[Wind] <<< RetryDevice" );
+	}
+
 	public bool Connect()
 	{
 		var app = App.Instance!;
@@ -92,6 +119,7 @@ public partial class Wind
 		app.Dispatcher.Invoke( () =>
 		{
 			MainWindow._windPage.ConnectToWind_MairaSwitch.IsOn = IsConnected;
+			MainWindow._windPage.ConnectToWind_MairaSwitch.ErrorMessage = IsConnected ? string.Empty : _usbSerialPortHelper.LastErrorMessage;
 		} );
 
 		app.Logger.WriteLine( "[Wind] <<< Connect" );
@@ -111,6 +139,11 @@ public partial class Wind
 
 		_leftFanRPM = 0;
 		_rightFanRPM = 0;
+
+		app.Dispatcher.Invoke( () =>
+		{
+			MainWindow._windPage.ConnectToWind_MairaSwitch.ErrorMessage = string.Empty;
+		} );
 
 		app.Logger.WriteLine( "[Wind] <<< Disconnect" );
 	}

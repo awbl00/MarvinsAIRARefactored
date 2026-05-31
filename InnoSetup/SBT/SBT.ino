@@ -14,7 +14,7 @@
 //                          yyyy = right tenths-of-a-degree (0000-1800)
 //                          Values are clamped to configured min/max limits.
 //
-//   NLxxxxRyyyy         -> Set neutral positions (used by timeout-to-neutral)
+//   NLxxxxRyyyy         -> Set neutral positions
 //                          Values are clamped to configured min/max limits.
 //
 //   ALxxxxRyyyy         -> Set minimum position limits
@@ -24,35 +24,54 @@
 //   BLxxxxRyyyy         -> Set maximum position limits
 //                          Same re-clamping behavior as the A command.
 //
-//   MLxxxxRyyyy         -> Set maximum movement per update (velocity limiter)
-//                          xxxx = left max tenths-of-a-degree per update (0005-0050)
-//                          yyyy = right max tenths-of-a-degree per update (0005-0050)
-//                          Values are clamped to 5-50 and persisted to EEPROM.
+//   MLxxxxRyyyy         -> Set maximum movement speed (velocity limiter)
+//                          xxxx = left max tenths-of-a-degree per second (0050-5000)
+//                          yyyy = right max tenths-of-a-degree per second (0050-5000)
+//                          (e.g. 2500 = 250 deg/sec)
+//                          Values are clamped to 50-5000 and persisted to EEPROM.
+//
+//   ILxxxxRyyyy         -> Set inverted arms mode
+//                          xxxx = 0001 to enable inverted mode, 0000 to disable
+//                          (left value used; right value is ignored)
+//                          Persisted to EEPROM so it survives power cycles.
+//
+//   ELXXxxRYYyy         -> Set vibration effect
+//                          XX = left effect frequency (00-50)
+//                          xx = left effect amplitude in degrees (00-60)
+//                          YY = right effect frequency (00-50)
+//                          yy = right effect amplitude in degrees (00-60)
+//                          The effect is a sine wave overlay on top of the target position.
+//                          Setting a frequency of 0 turns the effect off for that arm.
 //
 // ---------------------------------------------------------------------------
-// Timeout-to-neutral behavior:
+// Timeout-to-minimum-position behavior:
 //
 //   If no valid S command is received for SERIAL_TIMEOUT_MS milliseconds the
-//   controller automatically targets both servos to their saved neutral
-//   positions. The servos stay at neutral until new S commands arrive.
+//   controller automatically targets both servos to their saved minimum
+//   positions. The servos stay at minimum until new S commands arrive.
 //
 // ---------------------------------------------------------------------------
-// Motion model (velocity-limited):
+// Motion model (sine effect overlay + velocity-limited):
 //
 //   Positions are represented internally in tenths of a degree (0-1800).
+//   A sine wave overlay is added per arm when an E command has set a non-zero
+//   frequency and amplitude for that arm.
+//   The M command stores speed in tenths-of-a-degree per second (50-5000).
 //   Each MOTION_UPDATE_INTERVAL_MS the current position moves toward the
-//   target position by at most MAX_MOVEMENT_PER_UPDATE tenths of a degree.
+//   target position by at most (speedTenthsPerSec * MOTION_UPDATE_INTERVAL_MS / 1000)
+//   tenths of a degree.
 //   This prevents sudden jumps and provides smooth belt tensioning.
 //
 // ---------------------------------------------------------------------------
 
 #include <Servo.h>
 #include <EEPROM.h>
+#include <math.h>
 
 // --- Pin assignments ---
 
-const int LEFT_SERVO_PIN = 10;    // Left servo signal wire on D9
-const int RIGHT_SERVO_PIN = 9;  // Right servo signal wire on D10
+const int LEFT_SERVO_PIN = 10;  // Left servo signal wire on D10
+const int RIGHT_SERVO_PIN = 9;  // Right servo signal wire on D9
 
 // --- Serial settings ---
 
@@ -60,12 +79,12 @@ const long SERIAL_BAUD_RATE = 115200;
 
 // --- Timing constants ---
 
-const unsigned long SERIAL_TIMEOUT_MS = 1000;        // Timeout before returning to neutral
+const unsigned long SERIAL_TIMEOUT_MS = 1000;         // Timeout before returning to min position
 const unsigned long MOTION_UPDATE_INTERVAL_MS = 10;   // Milliseconds between motion updates
 
 // --- Motion defaults ---
 
-const int DEFAULT_MAX_MOVEMENT_PER_UPDATE = 10;  // Default tenths-of-a-degree per motion update
+const int DEFAULT_MAX_MOVEMENT_PER_UPDATE = 18;  // Default tenths-of-a-degree per motion update (= 1800 tenths/sec / 100)
 
 // --- Pulse width mapping constants (microseconds) ---
 
@@ -94,6 +113,7 @@ const int PULSE_US_AT_1800 = 2500; // Pulse width at 1800 tenths (180.0 degrees)
 //   12       2     Right maximum position
 //   14       2     Left max movement per update
 //   16       2     Right max movement per update
+//   18       1     Inverted arms flag (0 = normal, 1 = inverted)
 
 const int EEPROM_ADDR_SIGNATURE       = 0;
 const int EEPROM_ADDR_VERSION         = 1;
@@ -105,21 +125,22 @@ const int EEPROM_ADDR_RIGHT_NEUTRAL   = 10;
 const int EEPROM_ADDR_RIGHT_MAX       = 12;
 const int EEPROM_ADDR_LEFT_MAX_MOVE   = 14;
 const int EEPROM_ADDR_RIGHT_MAX_MOVE  = 16;
+const int EEPROM_ADDR_INVERTED_ARMS   = 18;
 
 const byte EEPROM_SIGNATURE = 0x4D;  // 'M' for MAIRA — identifies this firmware
-const byte EEPROM_VERSION   = 0x02;  // Increment this if the EEPROM layout changes
+const byte EEPROM_VERSION   = 0x05;  // Increment this if the EEPROM layout changes
 
 // --- Default calibration values ---
 //
 //   Applied when EEPROM data is missing, has the wrong signature/version,
 //   or fails the range/ordering validity checks.
 
-const int DEFAULT_LEFT_MIN      = 450;
-const int DEFAULT_LEFT_NEUTRAL  = 600;
-const int DEFAULT_LEFT_MAX      = 1350;
-const int DEFAULT_RIGHT_MIN     = 450;
-const int DEFAULT_RIGHT_NEUTRAL = 600;
-const int DEFAULT_RIGHT_MAX     = 1350;
+const int DEFAULT_LEFT_MIN      = 600;
+const int DEFAULT_LEFT_NEUTRAL  = 900;
+const int DEFAULT_LEFT_MAX      = 1200;
+const int DEFAULT_RIGHT_MIN     = 600;
+const int DEFAULT_RIGHT_NEUTRAL = 900;
+const int DEFAULT_RIGHT_MAX     = 1200;
 
 // --- Servo inversion configuration ---
 //
@@ -137,15 +158,38 @@ enum ServoInversionMode {
 
 const ServoInversionMode servoInversionMode = ServoInversionMode_Left;
 
+// --- Inverted arms state ---
+//
+//   When true, the left and right arm logical roles are swapped before servo
+//   output.  This allows users who have mounted the SBT device inverted on
+//   their sim rig to get the correct belt-tensioning behaviour.
+//   Toggled by the I command and persisted to EEPROM.
+
+bool invertedArms = false;
+
 // --- Servo objects ---
 
 Servo leftServo;
 Servo rightServo;
 
-// --- Velocity limiter state (tenths-of-a-degree per motion update, 5-50) ---
+// --- Velocity limiter state (stored as tenths-of-a-degree per second, 50-5000;
+//     converted to tenths-per-update at use time) ---
 
-int leftMaxMovementPerUpdate  = DEFAULT_MAX_MOVEMENT_PER_UPDATE;
-int rightMaxMovementPerUpdate = DEFAULT_MAX_MOVEMENT_PER_UPDATE;
+int leftMaxSpeedTenthsPerSec  = DEFAULT_MAX_MOVEMENT_PER_UPDATE * 100;  // = 1800
+int rightMaxSpeedTenthsPerSec = DEFAULT_MAX_MOVEMENT_PER_UPDATE * 100;  // = 1800
+
+// --- Vibration effect state ---
+//
+//   Per-arm frequency and half-amplitude (in tenths of a degree).
+//   halfAmplitudeTenths = amplitudeDegrees * 5  (e.g. 10 deg -> 50 tenths -> ±5 deg)
+//   Both are set by the E command; 0 freq means effect is off for that arm.
+
+int   leftEffectFreqHz               = 0;    // 0 = effect off for left arm
+int   rightEffectFreqHz              = 0;    // 0 = effect off for right arm
+int   leftEffectHalfAmplitudeTenths  = 0;    // half-amplitude for left arm
+int   rightEffectHalfAmplitudeTenths = 0;    // half-amplitude for right arm
+float leftEffectPhase                = 0.0f; // radians
+float rightEffectPhase               = 0.0f; // radians
 
 // --- Position state (all in tenths of a degree, 0-1800) ---
 
@@ -158,11 +202,11 @@ int rightMaxPosition = DEFAULT_RIGHT_MAX;
 int leftNeutralPosition = DEFAULT_LEFT_NEUTRAL;
 int rightNeutralPosition = DEFAULT_RIGHT_NEUTRAL;
 
-int leftCurrentPosition = leftNeutralPosition;
-int rightCurrentPosition = rightNeutralPosition;
+int leftCurrentPosition = leftMinPosition;
+int rightCurrentPosition = rightMinPosition;
 
-int leftTargetPosition = leftNeutralPosition;
-int rightTargetPosition = rightNeutralPosition;
+int leftTargetPosition = leftCurrentPosition;
+int rightTargetPosition = rightCurrentPosition;
 
 // --- Timing state ---
 
@@ -215,11 +259,24 @@ int moveToward(int currentValue, int targetValue, int maxStep) {
 // Helper: apply position inversion for a servo side if configured
 // Inversion mirrors the position: 0 becomes 1800, 1800 becomes 0, 900 stays 900
 // All other logic (min, max, neutral, target) stays in logical non-inverted space
+// When invertedArms is true the left and right positions are swapped before
+// the per-servo mirror is applied, correcting for an upside-down rig mounting.
 // ===========================
 
-int applyServoInversion(int logicalPositionTenths, bool isLeftServo) {
-  bool shouldInvert = (servoInversionMode == ServoInversionMode_Left && isLeftServo) ||
-                      (servoInversionMode == ServoInversionMode_Right && !isLeftServo);
+int applyServoInversion(int leftPositionTenths, int rightPositionTenths, bool isLeftServo) {
+  // Swap left/right positions when device is mounted inverted on the rig
+  int logicalPositionTenths = isLeftServo
+    ? (invertedArms ? rightPositionTenths : leftPositionTenths)
+    : (invertedArms ? leftPositionTenths  : rightPositionTenths);
+
+  // When the device is flipped upside-down the physical orientation of each servo
+  // is also reversed, so the servo that normally needs hardware-inversion correction
+  // no longer does (the flip cancels it), and the other servo now needs it instead.
+  // Achieve this by treating the servo identity as flipped when invertedArms is true.
+  bool isEffectiveLeftServo = invertedArms ? !isLeftServo : isLeftServo;
+
+  bool shouldInvert = (servoInversionMode == ServoInversionMode_Left  &&  isEffectiveLeftServo) ||
+                      (servoInversionMode == ServoInversionMode_Right  && !isEffectiveLeftServo);
 
   if (shouldInvert) {
     return 1800 - logicalPositionTenths;
@@ -233,8 +290,8 @@ int applyServoInversion(int logicalPositionTenths, bool isLeftServo) {
 // ===========================
 
 void applyServoOutputs() {
-  int leftMicroseconds = tenthsToMicroseconds(applyServoInversion(leftCurrentPosition, true));
-  int rightMicroseconds = tenthsToMicroseconds(applyServoInversion(rightCurrentPosition, false));
+  int leftMicroseconds  = tenthsToMicroseconds(applyServoInversion(leftCurrentPosition,  rightCurrentPosition, true));
+  int rightMicroseconds = tenthsToMicroseconds(applyServoInversion(leftCurrentPosition,  rightCurrentPosition, false));
 
   leftServo.writeMicroseconds(leftMicroseconds);
   rightServo.writeMicroseconds(rightMicroseconds);
@@ -367,8 +424,9 @@ void saveCalibrationToEEPROM() {
   eepromWriteInt16(EEPROM_ADDR_RIGHT_MIN,      rightMinPosition);
   eepromWriteInt16(EEPROM_ADDR_RIGHT_NEUTRAL,  rightNeutralPosition);
   eepromWriteInt16(EEPROM_ADDR_RIGHT_MAX,      rightMaxPosition);
-  eepromWriteInt16(EEPROM_ADDR_LEFT_MAX_MOVE,  leftMaxMovementPerUpdate);
-  eepromWriteInt16(EEPROM_ADDR_RIGHT_MAX_MOVE, rightMaxMovementPerUpdate);
+  eepromWriteInt16(EEPROM_ADDR_LEFT_MAX_MOVE,  leftMaxSpeedTenthsPerSec);
+  eepromWriteInt16(EEPROM_ADDR_RIGHT_MAX_MOVE, rightMaxSpeedTenthsPerSec);
+  EEPROM.update(EEPROM_ADDR_INVERTED_ARMS,     invertedArms ? 1 : 0);
 }
 
 // ===========================
@@ -427,11 +485,29 @@ void loadCalibrationFromEEPROM() {
   rightMaxPosition     = loadedRightMax;
 
   // Apply max movement values, falling back to defaults if out of range
-  leftMaxMovementPerUpdate  = (loadedLeftMaxMove  >= 5 && loadedLeftMaxMove  <= 50) ? loadedLeftMaxMove  : DEFAULT_MAX_MOVEMENT_PER_UPDATE;
-  rightMaxMovementPerUpdate = (loadedRightMaxMove >= 5 && loadedRightMaxMove <= 50) ? loadedRightMaxMove : DEFAULT_MAX_MOVEMENT_PER_UPDATE;
+  leftMaxSpeedTenthsPerSec  = (loadedLeftMaxMove  >= 50 && loadedLeftMaxMove  <= 5000) ? loadedLeftMaxMove  : DEFAULT_MAX_MOVEMENT_PER_UPDATE * 100;
+  rightMaxSpeedTenthsPerSec = (loadedRightMaxMove >= 50 && loadedRightMaxMove <= 5000) ? loadedRightMaxMove : DEFAULT_MAX_MOVEMENT_PER_UPDATE * 100;
+
+  // Load inverted arms flag
+  invertedArms = (EEPROM.read(EEPROM_ADDR_INVERTED_ARMS) == 1);
 
   // Defensive re-clamp after loading
   reclampAllPositions();
+}
+
+// ===========================
+// Process an inverted-arms toggle command: IL0000R0000 (0) or IL0001R0001 (1)
+// The parsed left value is used as the boolean: 0 = normal, non-zero = inverted.
+// ===========================
+
+void processInvertedArmsCommand(const char* command) {
+  int leftParsedValue  = 0;
+  int rightParsedValue = 0;
+
+  if (!parseLR(command, 1, &leftParsedValue, &rightParsedValue)) return;
+
+  invertedArms = (leftParsedValue != 0);
+  saveCalibrationToEEPROM();
 }
 
 // ===========================
@@ -450,6 +526,12 @@ void processCommand(const char* command) {
 
   if (commandLength < 11) return;
 
+  // --- I command: set inverted arms mode ---
+  if (command[0] == 'I') {
+    processInvertedArmsCommand(command);
+    return;
+  }
+
   char commandType = command[0];
   int leftParsedValue = 0;
   int rightParsedValue = 0;
@@ -462,6 +544,32 @@ void processCommand(const char* command) {
       leftTargetPosition = clampValue(leftParsedValue, leftMinPosition, leftMaxPosition);
       rightTargetPosition = clampValue(rightParsedValue, rightMinPosition, rightMaxPosition);
       lastSetCommandTime = millis();
+      break;
+    }
+
+    // --- E command: set per-arm vibration effect (frequency + amplitude) ---
+    // Format: ELXXxxRYYyy
+    //   XXxx: first 2 digits = frequency Hz (00-50), last 2 digits = amplitude degrees (00-60)
+    //   YYyy: same encoding for right arm
+    case 'E': {
+      int leftFreq  = leftParsedValue  / 100;
+      int leftAmp   = leftParsedValue  % 100;
+      int rightFreq = rightParsedValue / 100;
+      int rightAmp  = rightParsedValue % 100;
+
+      leftFreq  = constrain(leftFreq,  0, 50);
+      leftAmp   = constrain(leftAmp,   0, 60);
+      rightFreq = constrain(rightFreq, 0, 50);
+      rightAmp  = constrain(rightAmp,  0, 60);
+
+      // Reset phase when a new non-zero frequency is set
+      if (leftFreq != leftEffectFreqHz && leftFreq != 0)   leftEffectPhase  = 0.0f;
+      if (rightFreq != rightEffectFreqHz && rightFreq != 0) rightEffectPhase = 0.0f;
+
+      leftEffectFreqHz               = leftFreq;
+      leftEffectHalfAmplitudeTenths  = leftAmp * 5;
+      rightEffectFreqHz              = rightFreq;
+      rightEffectHalfAmplitudeTenths = rightAmp * 5;
       break;
     }
 
@@ -491,10 +599,10 @@ void processCommand(const char* command) {
       break;
     }
 
-    // --- M command: set maximum movement per update (velocity limiter) ---
+    // --- M command: set maximum movement speed (velocity limiter) ---
     case 'M': {
-      leftMaxMovementPerUpdate  = clampValue(leftParsedValue,  5, 50);
-      rightMaxMovementPerUpdate = clampValue(rightParsedValue, 5, 50);
+      leftMaxSpeedTenthsPerSec  = clampValue(leftParsedValue,  50, 5000);
+      rightMaxSpeedTenthsPerSec = clampValue(rightParsedValue, 50, 5000);
       saveCalibrationToEEPROM();
       break;
     }
@@ -536,15 +644,19 @@ void readSerialInput() {
 }
 
 // ===========================
-// Check for serial timeout and target neutral if needed
+// Check for serial timeout and target min position if needed
 // ===========================
 
 void checkSerialTimeout() {
   unsigned long elapsed = millis() - lastSetCommandTime;
 
   if (elapsed >= SERIAL_TIMEOUT_MS) {
-    leftTargetPosition = leftNeutralPosition;
-    rightTargetPosition = rightNeutralPosition;
+    leftTargetPosition              = leftMinPosition;
+    rightTargetPosition             = rightMinPosition;
+    leftEffectFreqHz                = 0;
+    rightEffectFreqHz               = 0;
+    leftEffectHalfAmplitudeTenths   = 0;
+    rightEffectHalfAmplitudeTenths  = 0;
   }
 }
 
@@ -559,10 +671,49 @@ void updateMotion() {
 
   lastMotionUpdateTime = now;
 
-  leftCurrentPosition  = moveToward(leftCurrentPosition,  leftTargetPosition,  leftMaxMovementPerUpdate);
-  rightCurrentPosition = moveToward(rightCurrentPosition, rightTargetPosition, rightMaxMovementPerUpdate);
+  // --- Sine wave effect overlay ---
+  // Advance the phase accumulator and add the sine offset to the target position
+  // *before* the velocity limiter and min/max clamping are applied, so that the
+  // full motion pipeline sees the effect-modified target.
+  const float TWO_PI_F = 6.283185307f;
+  const float DT = 0.01f; // 10 ms
 
-  applyServoOutputs();
+  int leftEffectiveTarget  = leftTargetPosition;
+  int rightEffectiveTarget = rightTargetPosition;
+
+  if (leftEffectFreqHz > 0 && leftEffectHalfAmplitudeTenths > 0) {
+    leftEffectPhase += TWO_PI_F * (float)leftEffectFreqHz * DT;
+    if (leftEffectPhase > TWO_PI_F) leftEffectPhase -= TWO_PI_F;
+    leftEffectiveTarget += (int)(sin(leftEffectPhase) * leftEffectHalfAmplitudeTenths);
+  } else {
+    leftEffectPhase = 0.0f;
+  }
+
+  if (rightEffectFreqHz > 0 && rightEffectHalfAmplitudeTenths > 0) {
+    rightEffectPhase += TWO_PI_F * (float)rightEffectFreqHz * DT;
+    if (rightEffectPhase > TWO_PI_F) rightEffectPhase -= TWO_PI_F;
+    rightEffectiveTarget += (int)(sin(rightEffectPhase) * rightEffectHalfAmplitudeTenths);
+  } else {
+    rightEffectPhase = 0.0f;
+  }
+
+  // Clamp the effect-modified targets to configured min/max bounds
+  leftEffectiveTarget  = constrain(leftEffectiveTarget,  leftMinPosition,  leftMaxPosition);
+  rightEffectiveTarget = constrain(rightEffectiveTarget, rightMinPosition, rightMaxPosition);
+
+  // Velocity-limited motion toward the sine-modified targets
+  int leftMaxStep  = max(1, (int)((long)leftMaxSpeedTenthsPerSec  * MOTION_UPDATE_INTERVAL_MS / 1000));
+  int rightMaxStep = max(1, (int)((long)rightMaxSpeedTenthsPerSec * MOTION_UPDATE_INTERVAL_MS / 1000));
+
+  leftCurrentPosition  = moveToward(leftCurrentPosition,  leftEffectiveTarget,  leftMaxStep);
+  rightCurrentPosition = moveToward(rightCurrentPosition, rightEffectiveTarget, rightMaxStep);
+
+  // Write to servos
+  int leftMicroseconds  = tenthsToMicroseconds(applyServoInversion(leftCurrentPosition,  rightCurrentPosition, true));
+  int rightMicroseconds = tenthsToMicroseconds(applyServoInversion(leftCurrentPosition, rightCurrentPosition, false));
+
+  leftServo.writeMicroseconds(leftMicroseconds);
+  rightServo.writeMicroseconds(rightMicroseconds);
 }
 
 // ===========================
@@ -576,20 +727,20 @@ void setup() {
   loadCalibrationFromEEPROM();
 
   // Initialise current and target positions from the loaded neutral values
-  leftCurrentPosition  = leftNeutralPosition;
-  rightCurrentPosition = rightNeutralPosition;
-  leftTargetPosition   = leftNeutralPosition;
-  rightTargetPosition  = rightNeutralPosition;
+  leftCurrentPosition  = leftMinPosition;
+  rightCurrentPosition = rightMinPosition;
+  leftTargetPosition   = leftMinPosition;
+  rightTargetPosition  = rightMinPosition;
 
   // Attach both servos
   leftServo.attach(LEFT_SERVO_PIN);
   rightServo.attach(RIGHT_SERVO_PIN);
 
-  // Initialize timing so timeout-to-neutral is active from the start
+  // Initialize timing so timeout-to-min-position is active from the start
   lastSetCommandTime = 0;
   lastMotionUpdateTime = millis();
 
-  // Move both servos to neutral immediately
+  // Move both servos to min position immediately
   applyServoOutputs();
 }
 

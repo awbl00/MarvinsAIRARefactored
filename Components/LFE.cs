@@ -98,8 +98,6 @@ public class LFE
 
 		CaptureDeviceList.Clear();
 
-		CaptureDeviceList.Add( Guid.Empty, DataContext.DataContext.Instance.Localization[ "Disabled" ] );
-
 		var deviceInformationList = DirectSoundCapture.GetDevices();
 
 		foreach ( var deviceInformation in deviceInformationList )
@@ -227,7 +225,7 @@ public class LFE
 
 			signalReceived = false;
 		}
-		else if ( app.Simulator.IsOnTrack && !_captureDeviceCreated )
+		else if ( app.Simulator.IsOnTrack && !_captureDeviceCreated && ( _configuredCaptureDeviceGuid != null ) && ( _configuredCaptureDeviceGuid != Guid.Empty ) )
 		{
 			app.Logger.WriteLine( "[LFE] Went on track - creating capture device" );
 

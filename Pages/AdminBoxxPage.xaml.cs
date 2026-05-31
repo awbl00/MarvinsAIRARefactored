@@ -1,5 +1,6 @@
 ﻿
 using System.Windows;
+
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace MarvinsAIRARefactored.Pages;
@@ -26,7 +27,10 @@ public partial class AdminBoxxPage : UserControl
 		}
 		else
 		{
-			app.AdminBoxx.Disconnect();
+			if ( app.AdminBoxx.IsConnected )
+			{
+				app.AdminBoxx.Disconnect();
+			}
 		}
 	}
 
@@ -49,6 +53,13 @@ public partial class AdminBoxxPage : UserControl
 		var app = App.Instance!;
 
 		app.AdminBoxx.StartTestCycle();
+	}
+
+	private void RetryDevice_MairaButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		app.AdminBoxx.RetryDevice();
 	}
 
 	#endregion

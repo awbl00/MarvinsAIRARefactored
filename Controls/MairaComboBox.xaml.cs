@@ -16,14 +16,12 @@ namespace MarvinsAIRARefactored.Controls;
 public partial class MairaComboBox : UserControl
 {
 	private readonly SolidColorBrush _normalSelectedValueBrush = new( (Color) ColorConverter.ConvertFromString( "#ff5b2e" ) );
-	private readonly SolidColorBrush _offSelectedValueBrush = new( (Color) ColorConverter.ConvertFromString( "#eeeeee" ) );
 
 	public MairaComboBox()
 	{
 		InitializeComponent();
 
 		_normalSelectedValueBrush.Freeze();
-		_offSelectedValueBrush.Freeze();
 
 		UpdateSelectedValueVisuals();
 	}
@@ -103,6 +101,8 @@ public partial class MairaComboBox : UserControl
 		{
 			if ( d is MairaComboBox mairaComboBox )
 			{
+				var valueToRestore = mairaComboBox.SelectedValue;
+
 				mairaComboBox.Dispatcher.BeginInvoke( (Action) ( () =>
 				{
 					if ( mairaComboBox.ComboBox is null )
@@ -110,12 +110,27 @@ public partial class MairaComboBox : UserControl
 						return;
 					}
 
-					var selectedValue = mairaComboBox.SelectedValue;
+					// Replacing ItemsSource leaves the inner ComboBox with SelectedValue set but
+					// SelectedItem null (WPF orphaned-SelectedValue state). UpdateTarget() and
+					// re-setting SelectedValue are both no-ops when the value hasn't changed.
+					// Directly find the matching item and set SelectedItem to force the display.
+					if ( mairaComboBox.ComboBox.SelectedItem is null && valueToRestore is not null )
+					{
+						var selectedValuePath = mairaComboBox.ComboBox.SelectedValuePath;
 
-					mairaComboBox.ComboBox.SelectedValue = null;
-					mairaComboBox.ComboBox.SelectedValue = selectedValue;
+						foreach ( var item in mairaComboBox.ComboBox.Items )
+						{
+							var itemKeyValue = item?.GetType().GetProperty( selectedValuePath )?.GetValue( item );
 
-				mairaComboBox.UpdateSelectedValueVisuals();
+							if ( Equals( itemKeyValue, valueToRestore ) )
+							{
+								mairaComboBox.ComboBox.SelectedItem = item;
+								break;
+							}
+						}
+					}
+
+					mairaComboBox.UpdateSelectedValueVisuals();
 				} ), System.Windows.Threading.DispatcherPriority.DataBind );
 			}
 		}
@@ -151,7 +166,7 @@ public partial class MairaComboBox : UserControl
 	{
 		if ( SelectedValue?.ToString() == OffValue?.ToString() )
 		{
-			ComboBox.Foreground = _offSelectedValueBrush;
+			ComboBox.Foreground = (System.Windows.Media.Brush) System.Windows.Application.Current.FindResource( "Brush.Foreground.Muted" );
 		}
 		else
 		{

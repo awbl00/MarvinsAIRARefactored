@@ -18,12 +18,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-  <ItemGroup>
-    <None Remove="Artwork\Buttons\power-blue.png" />
-    <None Remove="Artwork\Flags\hungary_fluttering_flag_64.png" />
-    <None Remove="Artwork\Flags\thailand_fluttering_flag_64.png" />
-    <None Remove="Artwork\Flags\ukraine_fluttering_flag_64.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
@@ -42,10 +36,13 @@
     <Resource Include="Artwork\AppIcon\adminboxx.ico" />
     <Resource Include="Artwork\AppIcon\maira-universal.ico" />
     <Resource Include="Artwork\Buttons\app-menu.png" />
+    <Resource Include="Artwork\Buttons\browse.png" />
     <Resource Include="Artwork\Buttons\clear.png" />
+    <Resource Include="Artwork\Buttons\combo-box-caret.png" />
     <Resource Include="Artwork\Buttons\combo-box-checked.png" />
     <Resource Include="Artwork\Buttons\combo-box-default.png" />
     <Resource Include="Artwork\Buttons\combo-box-hover.png" />
+    <Resource Include="Artwork\Buttons\combo-box-ring.png" />
     <Resource Include="Artwork\Buttons\copy.png" />
     <Resource Include="Artwork\Buttons\drag.png" />
     <Resource Include="Artwork\Buttons\knob-middle-default.png" />
@@ -57,6 +54,7 @@
     <Resource Include="Artwork\Buttons\knob-plus-mapped.png" />
     <Resource Include="Artwork\Buttons\knob-plus-pressed.png" />
     <Resource Include="Artwork\Buttons\minus.png" />
+    <Resource Include="Artwork\Buttons\next.png" />
     <Resource Include="Artwork\Buttons\pedal-maximum.png" />
     <Resource Include="Artwork\Buttons\pedal-minimum.png" />
     <Resource Include="Artwork\Buttons\plus-large.png" />
@@ -68,6 +66,8 @@
     <Resource Include="Artwork\Buttons\power-red.png" />
     <Resource Include="Artwork\Buttons\power-white.png" />
     <Resource Include="Artwork\Buttons\power-yellow.png" />
+    <Resource Include="Artwork\Buttons\prev.png" />
+    <Resource Include="Artwork\Buttons\processes.png" />
     <Resource Include="Artwork\Buttons\record-orange.png" />
     <Resource Include="Artwork\Buttons\record-white.png" />
     <Resource Include="Artwork\Buttons\reset.png" />
@@ -119,11 +119,15 @@
     <Resource Include="Artwork\Misc\orange-stripes.png" />
     <Resource Include="Artwork\Misc\right-drag-handle.png" />
     <Resource Include="Artwork\Misc\trading-paints.png" />
+    <Resource Include="Artwork\Misc\trading-paints-light.png" />
+    <Resource Include="Artwork\Misc\wizard-two-thumbs-up.png" />
+    <Resource Include="Artwork\Misc\wizard.png" />
     <Resource Include="Artwork\Misc\world-wide-web.png" />
     <Resource Include="Artwork\Misc\yellow-stripes.png" />
     <Resource Include="Fonts\Aptos-Narrow-Italic.ttf" />
     <Resource Include="Fonts\Aptos-Narrow.ttf" />
     <Resource Include="Artwork\Misc\simagic-logo.png" />
+    <Resource Include="Artwork\Misc\simagic-logo-light.png" />
     <Resource Include="InnoSetup\STT\app-menu-logo.png" />
     <Resource Include="InnoSetup\STT\favicon.ico" />
   </ItemGroup>
@@ -134,8 +138,8 @@
     <PackageReference Include="Accord.Statistics" Version="3.8.0" />
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="IRSDKSharper" Version="1.1.6" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3800.47" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.269">
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3912.50" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.275">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -145,11 +149,12 @@
     <PackageReference Include="PInvoke.User32" Version="0.7.124" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectSound" Version="4.2.0" />
-    <PackageReference Include="SharpDX.XAudio2" Version="4.2.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="StreamDeckSharp" Version="6.1.0" />
-    <PackageReference Include="System.IO.Ports" Version="10.0.5" />
-    <PackageReference Include="System.Management" Version="10.0.5" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.7" />
+    <PackageReference Include="System.Management" Version="10.0.7" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -174,7 +179,15 @@
     <None Update="vJoyInterfaceWrap.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="fmod.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="fmodL.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
+
 
   <ItemGroup>
     <Folder Include="InnoSetup\Calibration\" />
@@ -193,6 +206,7 @@
     <Exec Command="xcopy /S /D &quot;$(ProjectDir)InnoSetup\Recordings\*.csv&quot; &quot;$(registry:HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders@Personal)\MarvinsAIRA Refactored\Recordings\&quot; /Y /I" />
     <Exec Command="xcopy /S /D &quot;$(ProjectDir)InnoSetup\Calibration\*.csv&quot; &quot;$(registry:HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders@Personal)\MarvinsAIRA Refactored\Calibration\&quot; /Y /I" />
     <Exec Command="xcopy /S /D &quot;$(ProjectDir)InnoSetup\STT\*&quot; &quot;$(registry:HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders@Personal)\MarvinsAIRA Refactored\STT\&quot; /Y /I" />
+    <Exec Command="xcopy /S /D &quot;$(ProjectDir)InnoSetup\SBT\*&quot; &quot;$(registry:HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders@Personal)\MarvinsAIRA Refactored\SBT\&quot; /Y /I" />
   </Target>
 
   <Choose>

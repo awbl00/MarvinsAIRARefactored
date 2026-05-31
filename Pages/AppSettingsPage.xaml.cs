@@ -1,4 +1,4 @@
-﻿
+
 using System.Windows;
 
 using UserControl = System.Windows.Controls.UserControl;
@@ -42,6 +42,18 @@ public partial class AppSettingsPage : UserControl
 		await app.CloudService.CheckForUpdates( true );
 	}
 
+	private void LaunchWizard_MairaButton_Click( object sender, RoutedEventArgs e )
+	{
+		var app = App.Instance!;
+
+		var wizardWindow = new Windows.WizardWindow
+		{
+			Owner = app.MainWindow
+		};
+
+		wizardWindow.ShowDialog();
+	}
+
 	#endregion
 
 	#region Logic
@@ -63,7 +75,6 @@ public partial class AppSettingsPage : UserControl
 
 		app.Logger.WriteLine( "[AppSettingsPage] UpdateDefaultPageOptions >>>" );
 
-		var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
 		var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
 
 		var defaultPageOptions = new Dictionary<MainWindow.AppPage, string>
@@ -76,6 +87,7 @@ public partial class AppSettingsPage : UserControl
 			{ MainWindow.AppPage.Sounds, localization[ "Sounds" ] },
 			{ MainWindow.AppPage.SpeechToText, localization[ "SpeechToText" ] },
 			{ MainWindow.AppPage.TradingPaints, localization[ "TradingPaints" ] },
+			{ MainWindow.AppPage.AppManager, localization[ "AppManager" ] },
 			{ MainWindow.AppPage.Graph, localization[ "Graph" ] },
 			{ MainWindow.AppPage.Simulator, localization[ "Simulator" ] },
 			{ MainWindow.AppPage.AppSettings, localization[ "AppSettings" ] },
@@ -84,7 +96,6 @@ public partial class AppSettingsPage : UserControl
 		};
 
 		DefaultPage_MairaComboBox.ItemsSource = defaultPageOptions.ToList();
-		DefaultPage_MairaComboBox.SelectedValue = settings.AppDefaultPage;
 
 		app.Logger.WriteLine( "[AppSettingsPage] <<< UpdateDefaultPageOptions" );
 	}

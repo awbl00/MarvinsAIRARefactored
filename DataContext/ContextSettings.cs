@@ -197,4 +197,29 @@ public class ContextSettings
 	public float WindCurving { get; set; } = 1f;
 
 	#endregion
+
+	#region Seat Belt Tensioner
+
+	public Components.SeatBeltTensioner.AxisMode SeatBeltTensionerSurgeMode { get; set; } = Components.SeatBeltTensioner.AxisMode.Normal;
+	public bool SeatBeltTensionerSurgeSubtractGravity { get; set; } = false;
+	public float SeatBeltTensionerSurgeMaxG { get; set; } = 10f;
+	public float SeatBeltTensionerSurgeDeadZone { get; set; } = 0f;
+	public float SeatBeltTensionerSurgeSmoothing { get; set; } = 0f;
+	public float SeatBeltTensionerSurgeCurve { get; set; } = 0f;
+	public Components.SeatBeltTensioner.AxisMode SeatBeltTensionerSwayMode { get; set; } = Components.SeatBeltTensioner.AxisMode.Normal;
+	public bool SeatBeltTensionerSwaySubtractGravity { get; set; } = false;
+	public float SeatBeltTensionerSwayMaxG { get; set; } = 10f;
+	public float SeatBeltTensionerSwayDeadZone { get; set; } = 0f;
+	public float SeatBeltTensionerSwaySmoothing { get; set; } = 0f;
+	public float SeatBeltTensionerSwayCurve { get; set; } = 0f;
+	public Components.SeatBeltTensioner.AxisMode SeatBeltTensionerHeaveMode { get; set; } = Components.SeatBeltTensioner.AxisMode.Inverted;
+	public bool SeatBeltTensionerHeaveSubtractGravity { get; set; } = true;
+	public float SeatBeltTensionerHeaveMaxG { get; set; } = 10f;
+	public float SeatBeltTensionerHeaveDeadZone { get; set; } = 0f;
+	public float SeatBeltTensionerHeaveSmoothing { get; set; } = 0f;
+	public float SeatBeltTensionerHeaveCurve { get; set; } = 0f;
+	public Components.SeatBeltTensioner.AxisMode SeatBeltTensionerSeatOfPantsMode { get; set; } = Components.SeatBeltTensioner.AxisMode.Disabled;
+	public float SeatBeltTensionerSeatOfPantsCurve { get; set; } = 0f;
+
+	#endregion
 }

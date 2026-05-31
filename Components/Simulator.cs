@@ -1,4 +1,4 @@
-﻿
+
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -64,6 +64,7 @@ public partial class Simulator
 	public float[] LRShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
 	public int NumForwardGears { get; private set; } = 0;
 	public IRacingSdkEnum.PaceMode PaceMode { get; private set; } = IRacingSdkEnum.PaceMode.NotPacing;
+	public float Pitch { get; private set; } = 0f;
 	public int PlayerCarIdx { get; private set; } = 0;
 	public IRacingSdkEnum.TrkLoc PlayerTrackSurface { get; private set; } = IRacingSdkEnum.TrkLoc.NotInWorld;
 	public IRacingSdkEnum.TrkSurf PlayerTrackSurfaceMaterial { get; private set; } = IRacingSdkEnum.TrkSurf.SurfaceNotInWorld;
@@ -72,6 +73,7 @@ public partial class Simulator
 	public bool ReplayPlaySlowMotion { get; private set; } = false;
 	public int ReplayPlaySpeed { get; private set; } = 1;
 	public float[] RFShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
+	public float Roll { get; private set; } = 0f;
 	public float RPM { get; private set; } = 0f;
 	public float[] RPMSpeedRatios { get; private set; } = new float[ MaxNumGears ];
 	public float[] RRShockVel_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
@@ -91,6 +93,10 @@ public partial class Simulator
 	public float SteeringWheelAngleMax { get; private set; } = 0f;
 	public float[] SteeringWheelTorque_ST { get; private set; } = new float[ SamplesPerFrame360Hz ];
 	public float Throttle { get; private set; } = 0f;
+	public float TireLF_RumblePitch { get; private set; } = 0f;
+	public float TireRF_RumblePitch { get; private set; } = 0f;
+	public float TireLR_RumblePitch { get; private set; } = 0f;
+	public float TireRR_RumblePitch { get; private set; } = 0f;
 	public string TimeOfDay { get; private set; } = string.Empty;
 	public string TrackDisplayName { get; private set; } = string.Empty;
 	public string TrackConfigName { get; private set; } = string.Empty;
@@ -102,6 +108,7 @@ public partial class Simulator
 	public float VertAccel { get; private set; } = 0f;
 	public bool WasOnTrack { get; private set; } = false;
 	public bool WeatherDeclaredWet { get; private set; } = false;
+	public float Yaw { get; private set; } = 0f;
 	public float YawNorth { get; private set; } = 0f;
 	public float YawRate { get; private set; } = 0f;
 
@@ -139,6 +146,7 @@ public partial class Simulator
 	private IRacingSdkDatum? _longAccelDatum = null;
 	private IRacingSdkDatum? _lrShockVel_STDatum = null;
 	private IRacingSdkDatum? _paceModeDatum = null;
+	private IRacingSdkDatum? _pitchDatum = null;
 	private IRacingSdkDatum? _playerCarIdxDatum = null;
 	private IRacingSdkDatum? _playerTrackSurfaceDatum = null;
 	private IRacingSdkDatum? _playerTrackSurfaceMaterialDatum = null;
@@ -146,6 +154,7 @@ public partial class Simulator
 	private IRacingSdkDatum? _replayFrameNumEndDatum = null;
 	private IRacingSdkDatum? _replayPlaySlowMotionDatum = null;
 	private IRacingSdkDatum? _replayPlaySpeedDatum = null;
+	private IRacingSdkDatum? _rollDatum = null;
 	private IRacingSdkDatum? _rfShockVel_STDatum = null;
 	private IRacingSdkDatum? _rpmDatum = null;
 	private IRacingSdkDatum? _rrShockVel_STDatum = null;
@@ -158,10 +167,15 @@ public partial class Simulator
 	private IRacingSdkDatum? _steeringWheelAngleMaxDatum = null;
 	private IRacingSdkDatum? _steeringWheelTorque_STDatum = null;
 	private IRacingSdkDatum? _throttleDatum = null;
+	private IRacingSdkDatum? _tireLF_RumblePitchDatum = null;
+	private IRacingSdkDatum? _tireRF_RumblePitchDatum = null;
+	private IRacingSdkDatum? _tireLR_RumblePitchDatum = null;
+	private IRacingSdkDatum? _tireRR_RumblePitchDatum = null;
 	private IRacingSdkDatum? _velocityXDatum = null;
 	private IRacingSdkDatum? _velocityYDatum = null;
 	private IRacingSdkDatum? _vertAccelDatum = null;
 	private IRacingSdkDatum? _weatherDeclaredWetDatum = null;
+	private IRacingSdkDatum? _yawDatum = null;
 	private IRacingSdkDatum? _yawNorthDatum = null;
 	private IRacingSdkDatum? _yawRateDatum = null;
 
@@ -262,6 +276,7 @@ public partial class Simulator
 #if !ADMINBOXX
 
 		app.SpeechToText.SimulatorConnected();
+		app.AppManager.SimulatorConnected();
 
 #endif
 
@@ -309,6 +324,7 @@ public partial class Simulator
 		LongAccel = 0f;
 		NumForwardGears = 0;
 		PaceMode = IRacingSdkEnum.PaceMode.NotPacing;
+		Pitch = 0f;
 		PlayerCarIdx = 0;
 		PlayerTrackSurface = IRacingSdkEnum.TrkLoc.NotInWorld;
 		PlayerTrackSurfaceMaterial = IRacingSdkEnum.TrkSurf.SurfaceNotInWorld;
@@ -316,6 +332,7 @@ public partial class Simulator
 		ReplayFrameNumEnd = 1;
 		ReplayPlaySlowMotion = false;
 		ReplayPlaySpeed = 1;
+		Roll = 0f;
 		RPM = 0f;
 		SessionFlags = 0;
 		SessionID = 0;
@@ -331,6 +348,10 @@ public partial class Simulator
 		SteeringWheelAngle = 0f;
 		SteeringWheelAngleMax = 0f;
 		Throttle = 0f;
+		TireLF_RumblePitch = 0f;
+		TireRF_RumblePitch = 0f;
+		TireLR_RumblePitch = 0f;
+		TireRR_RumblePitch = 0f;
 		TrackDisplayName = string.Empty;
 		TrackConfigName = string.Empty;
 		TrackLength = 0f;
@@ -341,6 +362,7 @@ public partial class Simulator
 		VertAccel = 0f;
 		WasOnTrack = false;
 		WeatherDeclaredWet = false;
+		Yaw = 0f;
 		YawNorth = 0f;
 		YawRate = 0f;
 
@@ -381,6 +403,8 @@ public partial class Simulator
 
 		app.SteeringEffects.SimulatorDisconnected();
 		app.SpeechToText.SimulatorDisconnected();
+		app.AppManager.SimulatorDisconnected();
+
 		app.TimingMarkers.Reset();
 
 		app.UpdateGripOMeterWindowVisibility();
@@ -563,6 +587,7 @@ public partial class Simulator
 			_loadNumTexturesDatum = _irsdk.Data.TelemetryDataProperties[ "LoadNumTextures" ];
 			_longAccelDatum = _irsdk.Data.TelemetryDataProperties[ "LongAccel" ];
 			_paceModeDatum = _irsdk.Data.TelemetryDataProperties[ "PaceMode" ];
+			_pitchDatum = _irsdk.Data.TelemetryDataProperties[ "Pitch" ];
 			_playerCarIdxDatum = _irsdk.Data.TelemetryDataProperties[ "PlayerCarIdx" ];
 			_playerTrackSurfaceDatum = _irsdk.Data.TelemetryDataProperties[ "PlayerTrackSurface" ];
 			_playerTrackSurfaceMaterialDatum = _irsdk.Data.TelemetryDataProperties[ "PlayerTrackSurfaceMaterial" ];
@@ -570,6 +595,7 @@ public partial class Simulator
 			_replayFrameNumEndDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayFrameNumEnd" ];
 			_replayPlaySlowMotionDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayPlaySlowMotion" ];
 			_replayPlaySpeedDatum = _irsdk.Data.TelemetryDataProperties[ "ReplayPlaySpeed" ];
+			_rollDatum = _irsdk.Data.TelemetryDataProperties[ "Roll" ];
 			_rpmDatum = _irsdk.Data.TelemetryDataProperties[ "RPM" ];
 			_sessionFlagsDatum = _irsdk.Data.TelemetryDataProperties[ "SessionFlags" ];
 			_sessionNumDatum = _irsdk.Data.TelemetryDataProperties[ "SessionNum" ];
@@ -580,10 +606,15 @@ public partial class Simulator
 			_steeringWheelAngleMaxDatum = _irsdk.Data.TelemetryDataProperties[ "SteeringWheelAngleMax" ];
 			_steeringWheelTorque_STDatum = _irsdk.Data.TelemetryDataProperties[ "SteeringWheelTorque_ST" ];
 			_throttleDatum = _irsdk.Data.TelemetryDataProperties[ "Throttle" ];
+			_tireLF_RumblePitchDatum = _irsdk.Data.TelemetryDataProperties[ "TireLF_RumblePitch" ];
+			_tireRF_RumblePitchDatum = _irsdk.Data.TelemetryDataProperties[ "TireRF_RumblePitch" ];
+			_tireLR_RumblePitchDatum = _irsdk.Data.TelemetryDataProperties[ "TireLR_RumblePitch" ];
+			_tireRR_RumblePitchDatum = _irsdk.Data.TelemetryDataProperties[ "TireRR_RumblePitch" ];
 			_velocityXDatum = _irsdk.Data.TelemetryDataProperties[ "VelocityX" ];
 			_velocityYDatum = _irsdk.Data.TelemetryDataProperties[ "VelocityY" ];
 			_vertAccelDatum = _irsdk.Data.TelemetryDataProperties[ "VertAccel" ];
 			_weatherDeclaredWetDatum = _irsdk.Data.TelemetryDataProperties[ "WeatherDeclaredWet" ];
+			_yawDatum = _irsdk.Data.TelemetryDataProperties[ "Yaw" ];
 			_yawNorthDatum = _irsdk.Data.TelemetryDataProperties[ "YawNorth" ];
 			_yawRateDatum = _irsdk.Data.TelemetryDataProperties[ "YawRate" ];
 
@@ -659,6 +690,7 @@ public partial class Simulator
 		LoadNumTextures = _irsdk.Data.GetBool( _loadNumTexturesDatum );
 		LongAccel = _irsdk.Data.GetFloat( _longAccelDatum );
 		PaceMode = (IRacingSdkEnum.PaceMode) _irsdk.Data.GetInt( _paceModeDatum );
+		Pitch = _irsdk.Data.GetFloat( _pitchDatum );
 		PlayerCarIdx = _irsdk.Data.GetInt( _playerCarIdxDatum );
 		PlayerTrackSurface = (IRacingSdkEnum.TrkLoc) _irsdk.Data.GetInt( _playerTrackSurfaceDatum );
 		PlayerTrackSurfaceMaterial = (IRacingSdkEnum.TrkSurf) _irsdk.Data.GetInt( _playerTrackSurfaceMaterialDatum );
@@ -666,6 +698,7 @@ public partial class Simulator
 		ReplayFrameNumEnd = _irsdk.Data.GetInt( _replayFrameNumEndDatum );
 		ReplayPlaySlowMotion = _irsdk.Data.GetBool( _replayPlaySlowMotionDatum );
 		ReplayPlaySpeed = _irsdk.Data.GetInt( _replayPlaySpeedDatum );
+		Roll = _irsdk.Data.GetFloat( _rollDatum );
 		RPM = _irsdk.Data.GetFloat( _rpmDatum );
 		SessionFlags = (IRacingSdkEnum.Flags) _irsdk.Data.GetBitField( _sessionFlagsDatum );
 		SessionNum = _irsdk.Data.GetInt( _sessionNumDatum );
@@ -675,10 +708,15 @@ public partial class Simulator
 		SteeringWheelAngle = _irsdk.Data.GetFloat( _steeringWheelAngleDatum );
 		SteeringWheelAngleMax = _irsdk.Data.GetFloat( _steeringWheelAngleMaxDatum );
 		Throttle = _irsdk.Data.GetFloat( _throttleDatum );
+		TireLF_RumblePitch = _irsdk.Data.GetFloat( _tireLF_RumblePitchDatum );
+		TireRF_RumblePitch = _irsdk.Data.GetFloat( _tireRF_RumblePitchDatum );
+		TireLR_RumblePitch = _irsdk.Data.GetFloat( _tireLR_RumblePitchDatum );
+		TireRR_RumblePitch = _irsdk.Data.GetFloat( _tireRR_RumblePitchDatum );
 		VelocityX = _irsdk.Data.GetFloat( _velocityXDatum );
 		VelocityY = _irsdk.Data.GetFloat( _velocityYDatum );
 		VertAccel = _irsdk.Data.GetFloat( _vertAccelDatum );
 		WeatherDeclaredWet = _irsdk.Data.GetBool( _weatherDeclaredWetDatum );
+		Yaw = _irsdk.Data.GetFloat( _yawDatum );
 		YawNorth = _irsdk.Data.GetFloat( _yawNorthDatum );
 		YawRate = _irsdk.Data.GetFloat( _yawRateDatum );
 

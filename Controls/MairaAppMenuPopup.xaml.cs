@@ -1,9 +1,8 @@
-﻿
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 using static MarvinsAIRARefactored.Windows.MainWindow;
 
@@ -20,6 +19,7 @@ namespace MarvinsAIRARefactored.Controls
 			public AppPage AppPage { get; init; }
 			public UserControl PageUserControl { get; init; } = new UserControl();
 			private string _displayName = string.Empty;
+			private bool _isVisible = true;
 
 			public string DisplayName
 			{
@@ -30,6 +30,21 @@ namespace MarvinsAIRARefactored.Controls
 					if ( _displayName != value )
 					{
 						_displayName = value;
+
+						OnPropertyChanged();
+					}
+				}
+			}
+
+			public bool IsVisible
+			{
+				get => _isVisible;
+
+				set
+				{
+					if ( _isVisible != value )
+					{
+						_isVisible = value;
 
 						OnPropertyChanged();
 					}
@@ -115,6 +130,9 @@ namespace MarvinsAIRARefactored.Controls
 
 				case AppPage.Simulator:
 					return "advanced/simulator/";
+
+				case AppPage.AppManager:
+					return "advanced/app-manager/";
 
 				case AppPage.AppSettings:
 					return "advanced/app-settings/";
@@ -248,6 +266,16 @@ namespace MarvinsAIRARefactored.Controls
 				PageUserControl = _seatBeltTensionerPage
 			} );
 
+#endif
+
+			AppMenuItems.Add( new AppMenuItem
+			{
+				AppPage = AppPage.AdminBoxx,
+				PageUserControl = _adminBoxxPage
+			} );
+
+#if !ADMINBOXX
+
 			AppMenuItems.Add( new AppMenuItem
 			{
 				AppPage = AppPage.Overlays,
@@ -284,14 +312,10 @@ namespace MarvinsAIRARefactored.Controls
 				PageUserControl = _simulatorPage
 			} );
 
-#endif
-
-#if ADMINBOXX
-
 			AppMenuItems.Add( new AppMenuItem
 			{
-				AppPage = AppPage.AdminBoxx,
-				PageUserControl = _adminBoxxPage
+				AppPage = AppPage.AppManager,
+				PageUserControl = _appManagerPage
 			} );
 
 #endif
@@ -338,13 +362,14 @@ namespace MarvinsAIRARefactored.Controls
 				AppPage.Pedals => _pedalsPage,
 				AppPage.Wind => _windPage,
 				AppPage.SeatBeltTensioner => _seatBeltTensionerPage,
+				AppPage.AdminBoxx => _adminBoxxPage,
 				AppPage.Overlays => _overlaysPage,
 				AppPage.Sounds => _soundsPage,
 				AppPage.SpeechToText => _speechToTextPage,
 				AppPage.TradingPaints => _tradingPaintsPage,
 				AppPage.Graph => _graphPage,
 				AppPage.Simulator => _simulatorPage,
-				AppPage.AdminBoxx => _adminBoxxPage,
+				AppPage.AppManager => _appManagerPage,
 				AppPage.AppSettings => _appSettingsPage,
 				AppPage.Contribute => _contributePage,
 				AppPage.Donate => _donatePage,
@@ -364,6 +389,8 @@ namespace MarvinsAIRARefactored.Controls
 		public void RelocalizeAppMenuItems()
 		{
 			var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
+			var settings = MarvinsAIRARefactored.DataContext.DataContext.Instance.Settings;
+			var isEnglish = settings.AppCurrentLanguageCode == "default";
 
 			foreach ( var menuItem in AppMenuItems )
 			{
@@ -393,6 +420,11 @@ namespace MarvinsAIRARefactored.Controls
 						menuItem.DisplayName = localization[ "SeatBeltTensioner" ];
 						break;
 
+					case AppPage.AdminBoxx:
+						menuItem.DisplayName = localization[ "AdminBoxx" ];
+						menuItem.IsVisible = isEnglish;
+						break;
+
 					case AppPage.Overlays:
 						menuItem.DisplayName = localization[ "Overlays" ];
 						break;
@@ -417,8 +449,8 @@ namespace MarvinsAIRARefactored.Controls
 						menuItem.DisplayName = localization[ "Simulator" ];
 						break;
 
-					case AppPage.AdminBoxx:
-						menuItem.DisplayName = localization[ "AdminBoxx" ];
+					case AppPage.AppManager:
+						menuItem.DisplayName = localization[ "AppManager" ];
 						break;
 
 					case AppPage.AppSettings:
@@ -472,6 +504,10 @@ namespace MarvinsAIRARefactored.Controls
 					SelectedAppPageText = localization[ "SeatBeltTensioner_UC" ];
 					break;
 
+				case AppPage.AdminBoxx:
+					SelectedAppPageText = localization[ "AdminBoxx_UC" ];
+					break;
+
 				case AppPage.Overlays:
 					SelectedAppPageText = localization[ "Overlays_UC" ];
 					break;
@@ -487,7 +523,6 @@ namespace MarvinsAIRARefactored.Controls
 				case AppPage.TradingPaints:
 					SelectedAppPageText = localization[ "TradingPaints_UC" ];
 					break;
-
 				case AppPage.Graph:
 					SelectedAppPageText = localization[ "Graph_UC" ];
 					break;
@@ -496,9 +531,10 @@ namespace MarvinsAIRARefactored.Controls
 					SelectedAppPageText = localization[ "Simulator_UC" ];
 					break;
 
-				case AppPage.AdminBoxx:
-					SelectedAppPageText = localization[ "AdminBoxx_UC" ];
+				case AppPage.AppManager:
+					SelectedAppPageText = localization[ "AppManager_UC" ];
 					break;
+
 
 				case AppPage.AppSettings:
 					SelectedAppPageText = localization[ "AppSettings_UC" ];
