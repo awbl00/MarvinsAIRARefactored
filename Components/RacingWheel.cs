@@ -78,6 +78,8 @@ public class RacingWheel
 	private const float TestSignalTimeMS = 2000f;
 	private const float CrashProtectionRecoveryTime = 1000f;
 
+	private const float _epsilonGuard = 1e-6f;
+
 	private Guid? _currentRacingWheelGuid = null;
 
 	private bool _isSuspended = true;
@@ -111,6 +113,14 @@ public class RacingWheel
 	private float _seatOfPantsEffectTimerMS = 0f;
 	private float _vibrateOnGearChangeTimerMS = 0f;
 	private float _vibrateOnABSTimerMS = 0f;
+	private float _lastWheelPosition = 0f;
+	private float[] _lastWheelVelocity = new float[2];
+	private float _lastWheelVelocityScalar = 0f;
+	private int _oscillationNonPeakCount = 0;
+	private bool _oscillationMonitorActive = false;
+	private bool _oscillationPreventionActive = false;
+	private float _oscillationPeak = 0f;
+	private float _oscillationScalar = 0f;
 
 	private readonly float[] _steeringWheelTorque360Hz = new float[ Simulator.SamplesPerFrame360Hz + 2 ];
 
@@ -118,6 +128,8 @@ public class RacingWheel
 	private readonly Algorithm[] _lastAlgorithm = new Algorithm[ 2 ];
 
 	private float _outputTorque = 0f;
+	private float _lastVelocityOutputTorque = 0f;
+	private float _lastPreVelocityOutputTorque = _epsilonGuard;
 	private float _peakTorque = 0f;
 	private float _autoTorque = 0f;
 
@@ -481,7 +493,7 @@ public class RacingWheel
 
 				var normalizedHybridTorque = hybridTorque / settings.RacingWheelMaxForce;
 
-				var normalizedCompressedTorque = normalizedHybridTorque;
+                var normalizedCompressedTorque = normalizedHybridTorque;
 				var compressionAmount = settings.RacingWheelMultiTorqueCompression;
 				if ( compressionAmount > 0f )
 				{
@@ -541,15 +553,13 @@ public class RacingWheel
 				var detailGain = MathZ.Lerp( 1f + settings.RacingWheelMultiDetailGain, 1f, curbProtectionLerpFactor );
 				if ( detailGain != 1f )
 				{
-					const float epsilonGuard = 1e-6f;
-
 					var normalizedLastDetailGainLpfTorque = _algorithmProperties[ algorithmPropertyIndex, indexNormalizedLastDetailGainLpfTorque ];
 					normalizedDetailGainLpfTorque = MathZ.Lerp( normalizedLastDetailGainLpfTorque, normalizedSlewReducedTorque, 0.11809f );
 					var currentDeviation = normalizedSlewReducedTorque - normalizedDetailGainLpfTorque;
 					var lastDeviation = normalizedLastSlewReducedTorque - normalizedDetailGainLpfTorque;
 					var priorDeviation = normalizedLastSlewReducedTorque - normalizedLastDetailGainLpfTorque;
 
-					if ( MathF.Abs( currentDeviation ) > MathF.Abs( lastDeviation ) || MathF.Sign( currentDeviation ) != MathF.Sign( priorDeviation ) || MathF.Abs( lastDeviation ) < epsilonGuard )
+					if ( MathF.Abs( currentDeviation ) > MathF.Abs( lastDeviation ) || MathF.Sign( currentDeviation ) != MathF.Sign( priorDeviation ) || MathF.Abs( lastDeviation ) < _epsilonGuard )
 					{
 						if ( currentDeviation > 0f )
 						{
@@ -603,6 +613,137 @@ public class RacingWheel
 		// remember the last algorithm used
 
 		_lastAlgorithm[ algorithmPropertyIndex ] = settings.RacingWheelAlgorithm;
+
+		// apply oscillation reduction and wheel impulse control after core output is generated but before all other post-processing
+		var velocityControlStrength = settings.RacingWheelVelocityControlStrength;
+		var oscillationReduction = settings.RacingWheelOscillationReductionStrength;
+		if ( velocityControlStrength != 0f || oscillationReduction != 0f )
+		{
+			var wheelPosition = App.Instance!.DirectInput.ForceFeedbackWheelPosition;
+			var signPosition = MathF.Sign( wheelPosition );
+			var wheelVelocity = App.Instance!.DirectInput.ForceFeedbackWheelVelocity;
+			var signVelocity = MathF.Sign( wheelVelocity );
+			var lastWheelVelocity = 0f;
+			if ( wheelPosition != _lastWheelPosition )
+			{
+				lastWheelVelocity = _lastWheelVelocity[1];
+				_lastWheelVelocity[0] = _lastWheelVelocity[1];
+			}
+			else
+			{
+				lastWheelVelocity = _lastWheelVelocity[0];
+			}
+			var signLastVelocity = MathF.Sign( lastWheelVelocity );
+			var velocityControlCurve = settings.RacingWheelVelocityControlCurve;
+			var signOutput = MathF.Sign( steeringWheelTorque60Hz );
+			var oscillationScalar = 0f;
+			if ( oscillationReduction != 0f )
+			{
+				var oscillationScalarExp = 1f - 0.99f * oscillationReduction;
+
+				if ( signVelocity != signOutput && wheelPosition != _lastWheelPosition )
+				{
+					_oscillationNonPeakCount = 0;
+
+					if ( signVelocity != signLastVelocity && signPosition != signVelocity )
+					{
+
+						if ( _oscillationMonitorActive )
+						{
+							if ( signPosition != MathF.Sign( _oscillationPeak ) )
+							{
+								_oscillationPreventionActive = true;
+							}
+							else
+							{
+								_oscillationPreventionActive = false;
+								_oscillationScalar = 0f;
+								_oscillationNonPeakCount = 0;
+							}
+						}
+						else if ( _lastWheelPosition != wheelPosition )
+						{
+							_oscillationMonitorActive = true;
+							_oscillationPreventionActive = false;
+							_oscillationScalar = 0f;
+							_oscillationNonPeakCount = 0;
+						}
+
+						_oscillationPeak = wheelPosition;
+
+					}
+
+					if ( _oscillationPreventionActive )
+					{
+						_oscillationScalar = Math.Clamp( MathF.Pow( MathF.Abs( wheelPosition / _oscillationPeak ), oscillationScalarExp ) * 0.9f, 0f, 0.9f );
+					}
+				}
+				else
+				{
+					if ( signVelocity == signOutput && signVelocity == MathF.Sign( _lastPreVelocityOutputTorque ) )
+					{
+						if ( _oscillationNonPeakCount < 25 )
+						{
+							_oscillationNonPeakCount++;
+						}
+					}
+
+					if ( _oscillationNonPeakCount == 25 )
+					{
+						_oscillationMonitorActive = false;
+						_oscillationPreventionActive = false;
+						_oscillationScalar = 0f;
+					}
+				}
+
+				oscillationScalar = _oscillationScalar * MathF.Pow( 1f - _oscillationNonPeakCount / 25f, oscillationScalarExp );
+			}
+			else
+			{
+				_oscillationMonitorActive = false;
+				_oscillationPreventionActive = false;
+				_oscillationScalar = 0f;
+			}
+
+			var velocityControlScalar = 0f;
+			if ( velocityControlStrength != 0f && signVelocity != signOutput )
+			{
+				var relativeVelocity = MathF.Min( MathF.Abs( wheelVelocity ) / ( 1.5f - 0.5f * velocityControlStrength ) / 3f, 1f );
+				var damperExp = velocityControlCurve switch
+				{
+					> 0f => 1f + 1.5f * velocityControlCurve,
+					< 0f => 1f + 0.6f * velocityControlCurve,
+					_ => 1f
+				};
+				velocityControlScalar = MathF.Min( MathF.Max( MathF.Pow( relativeVelocity, damperExp ), MathF.Abs( outputTorque / _lastPreVelocityOutputTorque ) - 1f ), 0.9f );
+			}
+
+			if ( steeringWheelTorque60Hz != 0f )
+			{
+				_lastPreVelocityOutputTorque = steeringWheelTorque60Hz;
+			}
+			else
+			{
+				_lastPreVelocityOutputTorque = _epsilonGuard;
+			}
+
+			var scaledVelocityFactor = MathF.Max( velocityControlScalar, oscillationScalar );
+			var adjustedOutputTorque = outputTorque * ( 1f - scaledVelocityFactor );
+
+			if ( _lastWheelVelocityScalar != 0f && MathF.Sign( lastWheelVelocity ) != signVelocity && !_oscillationPreventionActive )
+			{
+				outputTorque = MathZ.Lerp( _lastVelocityOutputTorque, adjustedOutputTorque, 0.9f );
+			}
+			else
+			{
+				outputTorque = adjustedOutputTorque;
+			}
+
+			_lastWheelPosition = wheelPosition;
+			_lastWheelVelocity[1] = wheelVelocity;
+			_lastWheelVelocityScalar = scaledVelocityFactor;
+			_lastVelocityOutputTorque = outputTorque;
+		}
 
 		// apply output curve
 
@@ -1448,7 +1589,7 @@ public class RacingWheel
 
 			// update recording data
 
-			app.RecordingManager.AddRecordingData( steeringWheelTorque60Hz, steeringWheelTorque500Hz );
+			app.RecordingManager.AddRecordingData( steeringWheelTorque60Hz, steeringWheelTorque500Hz, App.Instance!.DirectInput.ForceFeedbackWheelPosition );
 		}
 		catch ( Exception exception )
 		{

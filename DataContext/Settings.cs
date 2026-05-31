@@ -580,7 +580,17 @@ public class Settings : INotifyPropertyChanged
 
 	public RacingWheel.PredictionMode RacingWheelPredictionMode
 	{
-		get => _racingWheelPredictionMode;
+		get
+		{
+			if ( RacingWheelAlgorithm == RacingWheel.Algorithm.DeltaLimiterOn60Hz || RacingWheelAlgorithm == RacingWheel.Algorithm.DetailBoosterOn60Hz )
+			{
+				return _racingWheelPredictionMode;
+			}
+			else
+			{
+				return RacingWheel.PredictionMode.Disabled;
+			}
+		}
 
 		set
 		{
@@ -2314,6 +2324,161 @@ public class Settings : INotifyPropertyChanged
 	public ContextSwitches RacingWheelFrictionContextSwitches { get; set; } = new( true, false, false, false, false );
 	public ButtonMappings RacingWheelFrictionPlusButtonMappings { get; set; } = new();
 	public ButtonMappings RacingWheelFrictionMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Velocity Control Curve
+
+	private float _racingWheelVelocityControlCurve = 0.35f;
+
+	public float RacingWheelVelocityControlCurve
+	{
+		get => _racingWheelVelocityControlCurve;
+
+		set
+		{
+			value = Math.Clamp( value, -1f, 1f );
+
+			if ( value != _racingWheelVelocityControlCurve )
+			{
+				_racingWheelVelocityControlCurve = value;
+
+				OnPropertyChanged();
+			}
+
+			RacingWheelVelocityControlCurveString = $"{_racingWheelVelocityControlCurve * 100f:F0}{DataContext.Instance.Localization["Percent"]}";
+		}
+	}
+
+	private string _racingWheelVelocityControlCurveString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelVelocityControlCurveString
+	{
+		get => _racingWheelVelocityControlCurveString;
+
+		set
+		{
+			if ( value != _racingWheelVelocityControlCurveString )
+			{
+				_racingWheelVelocityControlCurveString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelVelocityControlCurveContextSwitches { get; set; } = new(true, false, false, false, false);
+	public ButtonMappings RacingWheelVelocityControlCurvePlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelVelocityControlCurveMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Velocity Control
+
+	private float _racingWheelVelocityControlStrength = 0f;
+
+	public float RacingWheelVelocityControlStrength
+	{
+		get => _racingWheelVelocityControlStrength;
+
+		set
+		{
+			value = MathZ.Saturate(value);
+
+			if ( value != _racingWheelVelocityControlStrength )
+			{
+				_racingWheelVelocityControlStrength = value;
+
+				OnPropertyChanged();
+			}
+
+			if ( _racingWheelVelocityControlStrength == 0f )
+			{
+				RacingWheelVelocityControlStrengthString = DataContext.Instance.Localization["OFF"];
+			}
+			else
+			{
+				RacingWheelVelocityControlStrengthString = $"{_racingWheelVelocityControlStrength * 100f:F0}{DataContext.Instance.Localization["Percent"]}";
+			}
+		}
+	}
+
+	private string _racingWheelVelocityControlStrengthString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelVelocityControlStrengthString
+	{
+		get => _racingWheelVelocityControlStrengthString;
+
+		set
+		{
+			if ( value != _racingWheelVelocityControlStrengthString )
+			{
+				_racingWheelVelocityControlStrengthString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelVelocityControlStrengthContextSwitches { get; set; } = new(true, false, false, false, false);
+	public ButtonMappings RacingWheelVelocityControlStrengthPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelVelocityControlStrengthMinusButtonMappings { get; set; } = new();
+
+	#endregion
+
+	#region Racing wheel - Oscillation Reduction Strength
+
+	private float _racingWheelOscillationReductionStrength = 0f;
+
+	public float RacingWheelOscillationReductionStrength
+	{
+		get => _racingWheelOscillationReductionStrength;
+
+		set
+		{
+			value = MathZ.Saturate( value );
+
+			if ( value != _racingWheelOscillationReductionStrength )
+			{
+				_racingWheelOscillationReductionStrength = value;
+
+				OnPropertyChanged();
+			}
+
+			if ( _racingWheelOscillationReductionStrength == 0f )
+			{
+				RacingWheelOscillationReductionStrengthString = DataContext.Instance.Localization["OFF"];
+			}
+			else
+			{
+				RacingWheelOscillationReductionStrengthString = $"{_racingWheelOscillationReductionStrength * 100f:F0}{DataContext.Instance.Localization["Percent"]}";
+			}
+		}
+	}
+
+	private string _racingWheelOscillationReductionStrengthString = string.Empty;
+
+	[XmlIgnore]
+	public string RacingWheelOscillationReductionStrengthString
+	{
+		get => _racingWheelOscillationReductionStrengthString;
+
+		set
+		{
+			if ( value != _racingWheelOscillationReductionStrengthString )
+			{
+				_racingWheelOscillationReductionStrengthString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	public ContextSwitches RacingWheelOscillationReductionStrengthContextSwitches { get; set; } = new( true, false, false, false, false );
+	public ButtonMappings RacingWheelOscillationReductionStrengthPlusButtonMappings { get; set; } = new();
+	public ButtonMappings RacingWheelOscillationReductionStrengthMinusButtonMappings { get; set; } = new();
 
 	#endregion
 
