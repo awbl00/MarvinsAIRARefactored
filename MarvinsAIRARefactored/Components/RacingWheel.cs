@@ -1,7 +1,9 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows.Interop;
 using CsvHelper;
 
 using MarvinsAIRARefactored.Classes;
@@ -120,9 +122,12 @@ public class RacingWheel
 	private bool _oscillationMonitorActive = false;
 	private bool _oscillationPreventionActive = false;
 	private float _oscillationMonitorStart = 0f;
+	private float _oscillationLastPeakAngle = 0f;
 	private float _oscillationLastPeak = 0f;
+	private int _oscillationTickCount = 0;
 	private float _oscillationScalar = 0f;
 	private bool _velocityControlActive = false;
+	private int _velocityControlTickCount = 0;
 
 	private readonly float[] _steeringWheelTorque360Hz = new float[ Simulator.SamplesPerFrame360Hz + 2 ];
 
@@ -130,8 +135,6 @@ public class RacingWheel
 	private readonly Algorithm[] _lastAlgorithm = new Algorithm[ 2 ];
 
 	private float _outputTorque = 0f;
-	private float _lastVelocityOutputTorque = 0f;
-	private float _lastPreVelocityOutputTorque = _epsilonGuard;
 	private float _peakTorque = 0f;
 	private float _autoTorque = 0f;
 
@@ -692,6 +695,7 @@ public class RacingWheel
 
 			if ( oscillationReduction != 0f && wheelPositionUpdated )
 			{
+				var wheelAngle = App.Instance!.Simulator.SteeringWheelAngle;
 
 				if ( signVelocity != signOutput )
 				{
@@ -713,7 +717,7 @@ public class RacingWheel
 								_oscillationPreventionActive = true;
 							}
 
-							_oscillationLastPeak = wheelVelocity;
+							_oscillationLastPeak = _lastWheelPosition;
 						}
 						else
 						{
@@ -721,22 +725,32 @@ public class RacingWheel
 							_oscillationPreventionActive = false;
 							_oscillationScalar = 0f;
 						}
+
+						_oscillationTickCount = 0;
+						_oscillationLastPeakAngle = wheelAngle;
+					}
+
+					_oscillationTickCount++;
+					if ( MathF.Abs( wheelAngle / _oscillationLastPeakAngle - 1f ) > 0.5f && _oscillationTickCount <= 2 && !_oscillationPreventionActive )
+					{
+						_oscillationMonitorActive = true;
+						_oscillationPreventionActive = true;
 					}
 
 					if ( _oscillationPreventionActive )
 					{
-						_oscillationNonPeakCount = 0;
-						_oscillationScalar = Math.Clamp( MathF.Pow( MathF.Abs( wheelPosition / _oscillationMonitorStart ), oscillationScalarExp ) * 0.9f, 0f, 0.9f );
-						System.Diagnostics.Debug.WriteLine( $"Prevention Active: {_oscillationMonitorStart} | {_oscillationLastPeak} | {wheelPosition} | {_oscillationScalar} | {outputTorque}" );
+						var oscillationReference = MathF.Max( MathF.Abs( _oscillationMonitorStart ), MathF.Abs( _oscillationLastPeak ) );
+						_oscillationScalar = MathF.Min( MathF.Pow( MathF.Abs( wheelPosition / oscillationReference - 1f ), oscillationScalarExp ) * 0.9f, 0.9f );
 					}
 				}
 				else
 				{
-					_oscillationNonPeakCount = Math.Clamp( ++_oscillationNonPeakCount, 0, oscillationWindDownCount );
+					_oscillationNonPeakCount = Math.Min( _oscillationNonPeakCount + 1, oscillationWindDownCount );
 
 					if ( _oscillationNonPeakCount >= oscillationWindDownCount / 2 )
 					{
 						_oscillationPreventionActive = false;
+						_oscillationTickCount = 99;
 					}
 
 					if ( _oscillationNonPeakCount == oscillationWindDownCount )
@@ -765,39 +779,28 @@ public class RacingWheel
 					< 0f => 1f + 0.6f * velocityControlCurve,
 					_ => 1f
 				};
+				_velocityControlTickCount = Math.Min( ++_velocityControlTickCount, 5 );
 				velocityControlScalar = MathF.Min( MathF.Pow( relativeVelocity, damperExp ), 0.9f );
 				_velocityControlActive = true;
 			}
 			else
 			{
 				_velocityControlActive = false;
-			}
-
-			if ( steeringWheelTorque60Hz != 0f )
-			{
-				_lastPreVelocityOutputTorque = steeringWheelTorque60Hz;
-			}
-			else
-			{
-				_lastPreVelocityOutputTorque = _epsilonGuard;
+				_velocityControlTickCount = 0;
 			}
 
 			var scaledVelocityFactor = MathF.Max( velocityControlScalar, oscillationScalar );
-			var adjustedOutputTorque = outputTorque * ( 1f - scaledVelocityFactor );
 
-			if ( _lastScaledVelocityFactor != 0f && MathF.Sign( lastWheelVelocity ) != signVelocity && !_oscillationPreventionActive && !_velocityControlActive)
+			if ( _lastScaledVelocityFactor != 0f && scaledVelocityFactor == 0f && !_velocityControlActive && !_oscillationPreventionActive )
 			{
-				scaledVelocityFactor = MathZ.Lerp( _lastScaledVelocityFactor, scaledVelocityFactor, 0.85f );
+				scaledVelocityFactor = MathZ.Lerp( _lastScaledVelocityFactor, scaledVelocityFactor, 0.75f );
 			}
-			else
-			{
-				outputTorque = adjustedOutputTorque;
-			}
+
+			outputTorque = outputTorque * ( 1f - scaledVelocityFactor );
 
 			_lastWheelPosition = wheelPosition;
 			_lastWheelVelocity[1] = wheelVelocity;
 			_lastScaledVelocityFactor = scaledVelocityFactor;
-			_lastVelocityOutputTorque = outputTorque;
 		}
 
 		// apply output curve
