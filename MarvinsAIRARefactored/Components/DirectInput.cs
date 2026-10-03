@@ -76,6 +76,10 @@ public class DirectInput
 
 	private bool _joystickInfoListNeedsToBeUpdated = false;
 
+	// set when the hot-plug monitor saw the steering device itself arrive or leave - a replug keeps the same
+	// instance guid, so the next rescan has to re-open force feedback explicitly (see EnumerateDevices)
+	private volatile bool _steeringDeviceWasReplugged = false;
+
 	// the steering device's joystick info, resolved on each poll - the accessibility passthrough samples this one
 	// device from the 360 Hz playout thread (TrySampleSteeringWheelPosition), so its Poll/GetCurrentState calls
 	// are serialized against PollDevices by locking the JoystickInfo itself, and the sample goes into a private
@@ -639,8 +643,13 @@ public class DirectInput
 	}
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	private void OnDeviceListMightHaveChanged( object? sender, EventArgs e )
+	private void OnDeviceListMightHaveChanged( object? sender, DeviceListChangedEventArgs e )
 	{
+		if ( e.SteeringDeviceChanged )
+		{
+			_steeringDeviceWasReplugged = true;
+		}
+
 		_joystickInfoListNeedsToBeUpdated = true;
 	}
 
@@ -665,6 +674,11 @@ public class DirectInput
 		{
 			throw new Exception( "Top level window handle has not been created." );
 		}
+
+		// taken up front so a replug reported while this rescan runs is kept for the follow-up rescan
+		var steeringDeviceWasReplugged = _steeringDeviceWasReplugged;
+
+		_steeringDeviceWasReplugged = false;
 
 		foreach ( var joystickInfo in _joystickInfoDictionary )
 		{
@@ -769,6 +783,15 @@ public class DirectInput
 		}
 		else if ( _forceFeedbackDeviceInstanceGuid != settings.RacingWheelSteeringDeviceGuid )
 		{
+			app.RacingWheel.NextRacingWheelGuid = settings.RacingWheelSteeringDeviceGuid;
+		}
+		else if ( steeringDeviceWasReplugged && ForceFeedbackDeviceList.ContainsKey( settings.RacingWheelSteeringDeviceGuid ) )
+		{
+			// the steering device is back under the same instance guid, and the force feedback device we hold
+			// still points at the handle that died with the unplug - open it again (only once the device is
+			// present; an unplug alone has nothing to re-open yet, the arrival brings us back here)
+			app.Logger.WriteLine( "[DirectInput] Steering device was replugged, requesting force feedback re-initialization" );
+
 			app.RacingWheel.NextRacingWheelGuid = settings.RacingWheelSteeringDeviceGuid;
 		}
 

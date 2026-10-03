@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Interop;
 
 using Windows.Win32;
@@ -8,7 +9,13 @@ using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace MarvinsAIRARefactored.Components;
 
-public sealed class HidHotPlugMonitor : IDisposable
+// SteeringDeviceChanged = one of the device paths that arrived or left carries the steering device's USB ids
+public sealed class DeviceListChangedEventArgs( bool steeringDeviceChanged ) : EventArgs
+{
+	public bool SteeringDeviceChanged { get; } = steeringDeviceChanged;
+}
+
+public sealed partial class HidHotPlugMonitor : IDisposable
 {
 	private HwndSource? _hwndSource;
 	private HDEVNOTIFY _deviceNotifyHandle;
@@ -16,7 +23,18 @@ public sealed class HidHotPlugMonitor : IDisposable
 
 	private System.Timers.Timer? _debounceTimer;
 
-	public event EventHandler? DeviceListMightHaveChanged;
+	// Device paths that arrived or left since the last time DeviceListMightHaveChanged was raised. A rescan
+	// runs on the telemetry thread right before the FFB burst and stalls it, so while the player is racing
+	// the rescan is held back unless one of these paths is the steering device (see OnDebounceElapsed).
+	private readonly List<string> _pendingDevicePaths = [];
+	private bool _rescanDeferred = false;
+
+	// USB paths carry "VID_xxxx&PID_xxxx"; Bluetooth paths carry "VID&ssssxxxx_PID&xxxx", where the first
+	// four digits of the vendor field are the id source and the last four are the vendor id
+	[GeneratedRegex( @"VID[_&]([0-9A-F]{4,8})[_&]PID[_&]([0-9A-F]{4})", RegexOptions.IgnoreCase )]
+	private static partial Regex VendorAndProductIdRegex();
+
+	public event EventHandler<DeviceListChangedEventArgs>? DeviceListMightHaveChanged;
 
 	public void Initialize()
 	{
@@ -166,17 +184,86 @@ public sealed class HidHotPlugMonitor : IDisposable
 		{
 			_debounceTimer = new System.Timers.Timer( 2000 ) { AutoReset = false };
 
-			_debounceTimer.Elapsed += ( _, __ ) =>
-			{
-				app.Logger.WriteLine( "[HidHotPlugMonitor] Device change debounce elapsed. Raising DeviceListMightHaveChanged." );
-
-				DeviceListMightHaveChanged?.Invoke( this, EventArgs.Empty );
-			};
+			_debounceTimer.Elapsed += ( _, __ ) => OnDebounceElapsed();
 
 			app.Logger.WriteLine( "[HidHotPlugMonitor] Device change debounce timer created." );
 		}
 
 		app.Logger.WriteLine( "[HidHotPlugMonitor] <<< SetupForHwnd" );
+	}
+
+	private void OnDebounceElapsed()
+	{
+		var app = App.Instance!;
+
+		bool steeringDeviceChanged;
+		bool steeringDeviceIdsKnown;
+
+		lock ( _pendingDevicePaths )
+		{
+			steeringDeviceChanged = PendingChangesIncludeSteeringDevice( app, out steeringDeviceIdsKnown );
+		}
+
+		// without the steering device's USB ids we cannot rule it out, so the rescan goes ahead
+		if ( app.RacingWheel.IsDrivingWithForceFeedback && steeringDeviceIdsKnown && !steeringDeviceChanged )
+		{
+			if ( !_rescanDeferred )
+			{
+				_rescanDeferred = true;
+
+				app.Logger.WriteLine( "[HidHotPlugMonitor] Device change does not involve the steering device and the player is driving with force feedback. Deferring the device rescan until the player is off the track." );
+			}
+
+			// check again after another debounce interval
+			_debounceTimer?.Start();
+
+			return;
+		}
+
+		lock ( _pendingDevicePaths )
+		{
+			_pendingDevicePaths.Clear();
+		}
+
+		_rescanDeferred = false;
+
+		app.Logger.WriteLine( $"[HidHotPlugMonitor] Device change debounce elapsed (steering device changed = {steeringDeviceChanged}). Raising DeviceListMightHaveChanged." );
+
+		DeviceListMightHaveChanged?.Invoke( this, new DeviceListChangedEventArgs( steeringDeviceChanged ) );
+	}
+
+	// caller holds the _pendingDevicePaths lock
+	private bool PendingChangesIncludeSteeringDevice( App app, out bool steeringDeviceIdsKnown )
+	{
+		var steeringDeviceGuid = DataContext.DataContext.Instance.Settings.RacingWheelSteeringDeviceGuid;
+
+		steeringDeviceIdsKnown = app.DirectInput.TryGetUsbIds( steeringDeviceGuid, out var steeringVendorId, out var steeringProductId );
+
+		if ( !steeringDeviceIdsKnown )
+		{
+			// no USB ids to compare against (nothing selected yet, or a virtual device)
+			return false;
+		}
+
+		foreach ( var devicePath in _pendingDevicePaths )
+		{
+			var match = VendorAndProductIdRegex().Match( devicePath );
+
+			if ( match.Success )
+			{
+				var vendorDigits = match.Groups[ 1 ].Value;
+
+				var vendorId = Convert.ToUInt16( vendorDigits[ ^4.. ], 16 );
+				var productId = Convert.ToUInt16( match.Groups[ 2 ].Value, 16 );
+
+				if ( ( vendorId == steeringVendorId ) && ( productId == steeringProductId ) )
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private IntPtr WndProc( IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled )
@@ -211,6 +298,11 @@ public sealed class HidHotPlugMonitor : IDisposable
 
 					var namePtr = IntPtr.Add( lParam, nameOffset );
 					var devicePath = Marshal.PtrToStringUni( namePtr ) ?? string.Empty;
+
+					lock ( _pendingDevicePaths )
+					{
+						_pendingDevicePaths.Add( devicePath );
+					}
 
 					if ( eventType == PInvoke.DBT_DEVICEREMOVECOMPLETE )
 					{

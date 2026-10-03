@@ -115,6 +115,10 @@ public class RacingWheel
 	public bool CurbProtectionIsActive { get => _liveEngine.CurbProtectionActive; }
 	public bool FadingIsActive { get => _fadeTimerMS > 0f; }
 
+	// the player is on track (the same switch that drives the torque fade in/out) and force feedback is live -
+	// the device check also covers the torque switch staying latched after a disconnect (no frames clear it)
+	public bool IsDrivingWithForceFeedback { get => _usingSteeringWheelTorqueData && App.Instance!.DirectInput.ForceFeedbackInitialized; }
+
 	private float _unsuspendTimerMS = 0f;
 	private float _fadeTimerMS = 0f;
 	private float _testSignalTimerMS = 0f;
