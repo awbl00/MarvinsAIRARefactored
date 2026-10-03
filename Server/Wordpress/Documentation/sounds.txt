@@ -259,7 +259,7 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Plays a looping sound whenever your racing wheel force feedback is clipping — that is, whenever the force MAIRA wants to send has hit the ceiling set by your Max force. It is a handy audible cue that detail is being lost at the top of the signal, and it is the same condition the <a href="https://mairapp.com/home/documentation/advanced/graph/" data-type="page" data-id="178">Graph</a> page flashes red for.</p>
+<p>Plays a looping sound whenever your racing wheel force feedback is clipping — that is, whenever the force MAIRA wants to send has hit the ceiling set by your Max force. It is a handy audible cue that detail is being lost at the top of the signal, and it is the same condition the <a href="https://mairapp.com/home/documentation/advanced/overlays/#graph" data-type="page" data-id="860">Graph</a> overlay flashes red for.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph {"className":"default"} -->

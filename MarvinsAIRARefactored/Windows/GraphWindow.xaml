@@ -1,0 +1,157 @@
+<Window x:Class="MarvinsAIRARefactored.Windows.GraphWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MarvinsAIRARefactored.Windows"
+        xmlns:datacontext="clr-namespace:MarvinsAIRARefactored.DataContext"
+        xmlns:converters="clr-namespace:MarvinsAIRARefactored.Converters"
+        mc:Ignorable="d"
+        Title="MAIRA - Graph"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        LocationChanged="Window_LocationChanged"
+        PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+        PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp"
+        MouseMove="Window_MouseMove">
+
+    <Window.Resources>
+        <converters:BooleanToVisibilityHiddenConverter x:Key="BoolToVis" />
+        <converters:ColorAndOpacityToBrushConverter x:Key="ColorAndOpacityToBrush" />
+        <!-- GraphWindow forces light text colors regardless of theme (background is dark by default) -->
+        <SolidColorBrush x:Key="Brush.Foreground.Primary" Color="#ffffff" />
+        <SolidColorBrush x:Key="Brush.Foreground.Secondary" Color="#eeeeee" />
+    </Window.Resources>
+
+    <Window.DataContext>
+        <Binding Source="{x:Static datacontext:DataContext.Instance}" />
+    </Window.DataContext>
+
+    <!-- Force the graph to stay LTR even under RTL languages: time scrolls from right (newest) to left, and the
+         edit-mode icons are pinned to the right edge, so mirroring would reverse the graph and misplace the controls. -->
+    <Grid FlowDirection="LeftToRight">
+
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="RootScaleTransform"
+                            ScaleX="{Binding Settings.OverlaysGraphWindowScale}"
+                            ScaleY="{Binding Settings.OverlaysGraphWindowScale}" />
+        </Grid.LayoutTransform>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="Graph_Title"
+                   Style="{StaticResource MairaTextBlockStyle}"
+                   Grid.Row="0"
+                   Text="{Binding Localization[Graph]}"
+                   Visibility="{Binding Settings.OverlaysShowGraphTitle, Converter={StaticResource BoolToVis}}"
+                   HorizontalAlignment="Center"
+                   FontSize="30" />
+
+        <Border Grid.Row="1"
+                BorderThickness="2"
+                BorderBrush="White"
+                CornerRadius="10"
+                Padding="6">
+
+            <Border.Background>
+                <MultiBinding Converter="{StaticResource ColorAndOpacityToBrush}">
+                    <Binding Path="Settings.OverlaysGraphWindowBackgroundColor" />
+                    <Binding Path="Settings.OverlaysGraphWindowBackgroundOpacity" />
+                </MultiBinding>
+            </Border.Background>
+
+            <Image x:Name="Image"
+                   Width="1080"
+                   Height="401"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+
+        </Border>
+
+        <Border x:Name="GearIcon"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Margin="0,0,90,6"
+                Padding="4"
+                CornerRadius="6"
+                Background="Black"
+                BorderBrush="#ff5b2e"
+                BorderThickness="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="Hand"
+                Visibility="Collapsed">
+            <Grid Width="28"
+                  Height="28"
+                  IsHitTestVisible="False">
+                <Viewbox Width="21"
+                         Height="21"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <TextBlock Text="&#xE713;"
+                               FontFamily="Segoe MDL2 Assets"
+                               Foreground="#ff5b2e" />
+                </Viewbox>
+            </Grid>
+        </Border>
+
+        <Border x:Name="DragIcon"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Margin="0,0,48,6"
+                Padding="4"
+                CornerRadius="6"
+                Background="Black"
+                BorderBrush="#ff5b2e"
+                BorderThickness="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeAll"
+                Visibility="Collapsed">
+            <Grid Width="28"
+                  Height="28"
+                  IsHitTestVisible="False">
+                <Viewbox Width="24"
+                         Height="24"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <Path Data="M16,1 L22,7 L17.5,7 L17.5,14.5 L25,14.5 L25,10 L31,16 L25,22 L25,17.5 L17.5,17.5 L17.5,25 L22,25 L16,31 L10,25 L14.5,25 L14.5,17.5 L7,17.5 L7,22 L1,16 L7,10 L7,14.5 L14.5,14.5 L14.5,7 L10,7 Z"
+                          Fill="#ff5b2e" />
+                </Viewbox>
+            </Grid>
+        </Border>
+
+        <Border x:Name="ScaleIcon"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Margin="0,0,6,6"
+                Padding="4"
+                CornerRadius="6"
+                Background="Black"
+                BorderBrush="#ff5b2e"
+                BorderThickness="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Cursor="SizeNWSE"
+                Visibility="Collapsed">
+            <Rectangle Width="28"
+                       Height="28"
+                       Fill="#ff5b2e"
+                       IsHitTestVisible="False"
+                       RenderOptions.BitmapScalingMode="HighQuality">
+                <Rectangle.OpacityMask>
+                    <ImageBrush ImageSource="/MarvinsAIRARefactored;component/Artwork/Buttons/solo.png" />
+                </Rectangle.OpacityMask>
+            </Rectangle>
+        </Border>
+
+    </Grid>
+
+</Window>

@@ -20,5 +20,8 @@ public class OverlayLayoutSettings
 	public Rectangle SpeechToTextWindowPosition { get; set; } = Rectangle.Empty;
 	public float SpeechToTextWindowScale { get; set; } = 1f;
 
+	public Rectangle GraphWindowPosition { get; set; } = Rectangle.Empty;
+	public float GraphWindowScale { get; set; } = 1f;
+
 	public OverlayLayoutSettings Clone() => (OverlayLayoutSettings) MemberwiseClone();
 }

@@ -89,6 +89,15 @@ public class GraphBase
 	/// preview draws a viewport-sized window of a much wider virtual graph).</summary>
 	public void Initialize( Image image, int bitmapWidth, int bitmapHeight )
 	{
+		Initialize( bitmapWidth, bitmapHeight );
+
+		image.Source = _writeableBitmap;
+	}
+
+	/// <summary>Sizes the bitmap without showing it anywhere yet - for graphs whose image element comes and goes
+	/// (the graph overlay window); show it later with <see cref="AttachImage"/>.</summary>
+	public void Initialize( int bitmapWidth, int bitmapHeight )
+	{
 		BitmapWidth = Math.Max( 1, bitmapWidth );
 		BitmapHeight = Math.Max( 1, bitmapHeight );
 
@@ -103,7 +112,11 @@ public class GraphBase
 
 		_columnTemplate = new uint[ BitmapHeight ];
 		_columnTemplateDirty = true;
+	}
 
+	/// <summary>Shows the graph's bitmap in the given image element.</summary>
+	public void AttachImage( Image image )
+	{
 		image.Source = _writeableBitmap;
 	}
 

@@ -4,7 +4,7 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>The current build includes four overlays:</p>
+<p>The current build includes five overlays:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:list -->
@@ -22,6 +22,10 @@
 
 <!-- wp:list-item -->
 <li><strong>Captions</strong> &ndash; live captions of iRacing voice chat (see <a href="https://mairapp.com/home/documentation/advanced/captions/" data-type="page">Captions</a>)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Graph</strong> &ndash; a live scrolling waveform of the force feedback torque, pedal haptics, and timer jitter</li>
 <!-- /wp:list-item --></ul>
 <!-- /wp:list -->
 
@@ -59,7 +63,7 @@
 <!-- /wp:list-item -->
 
 <!-- wp:list-item -->
-<li><strong>Settings (gear)</strong> &ndash; opens a small window to adjust the overlay's appearance, or reset it. For the box overlays (Gap monitor, Delta monitor, and Captions) you can set the background color &ndash; using a #RRGGBB hex code or the separate Red, Green, and Blue knobs &ndash; along with the opacity. The Grip-O-Meter has no background color, so its window offers the opacity control only.</li>
+<li><strong>Settings (gear)</strong> &ndash; opens a small window to adjust the overlay's appearance, or reset it. For the box overlays (Gap monitor, Delta monitor, Captions, and Graph) you can set the background color &ndash; using a #RRGGBB hex code or the separate Red, Green, and Blue knobs &ndash; along with the opacity. The Grip-O-Meter has no background color, so its window offers the opacity control only.</li>
 <!-- /wp:list-item --></ul>
 <!-- /wp:list -->
 
@@ -313,6 +317,194 @@
 
 <!-- wp:paragraph {"className":"default"} -->
 <p class="default">Default: ON</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"section"} -->
+<p class="section" id="graph">Graph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>The Graph overlay is a live scrolling waveform of several internal signals, showing the last three seconds. What you see depends on which of the eight layer switches you turn on. It is meant for at-a-glance monitoring while you drive and tune, and it only records and draws while the overlay is showing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>This is a live view of what is happening right now. If you want to stop and study a stretch of force feedback in detail &ndash; scrub through it, zoom in, compare it against the track &ndash; record it and use the preview graph on the <a href="https://mairapp.com/home/documentation/advanced/racing-wheel/" data-type="page" data-id="164">Racing Wheel</a> page instead.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Enabled</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Turns the Graph overlay on/off. When ON, MAIRA automatically shows the overlay while connected to iRacing and on track.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Show the overlay window title</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows or hides the title text at the top of the overlay window.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: ON</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Each of the remaining switches turns on a layer in the graph. Layers are drawn on top of each other, so turning on only the one or two you care about is usually easier to read than turning on all eight.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Input torque</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows the 360 Hz steering torque iRacing is providing (the input the FFB graph receives), drawn in red. This is the raw signal before any of your FFB graph modules touch it.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: ON</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Output torque</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows the final force value MAIRA is sending to your wheel after the FFB graph has run &ndash; every module in the graph, plus the fades MAIRA applies when it starts, stops, or hands control back. Drawn in cyan. Comparing this against Input torque is the quickest way to see what your graph is actually doing to the signal.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: ON</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Input torque (60 Hz)</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows the 60 Hz steering torque iRacing is providing, drawn in red. This is one value per telemetry frame, held for the whole frame, so it looks like a staircase next to the 360 Hz trace.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Input LFE</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows the current low-frequency-effect magnitude MAIRA is producing, drawn in blue. More information about Wheel LFE can be found here &ndash; <a href="https://mairapp.com/home/documentation/advanced/racing-wheel/#wheel-lfe" data-type="page" data-id="164">Wheel LFE</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Clutch pedal haptics</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows the current clutch haptics waveform MAIRA is generating (a live sine-based signal), drawn in blue.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Brake pedal haptics</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Same concept as clutch, but for the brake haptics waveform, drawn in red.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Throttle pedal haptics</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Same concept as clutch and brake, but for the throttle haptics waveform, drawn in green.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Timer jitter</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Shows timing jitter in the playout timer loop &ndash; how stable MAIRA's 360 Hz timing is &ndash; drawn in green. Each tick is plotted as how far it landed from the ideal 2.78 ms period, so a flat line on the center is perfect timing and the full height of the graph is one whole period late or early.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>A little fuzz here is normal. Large, repeated spikes mean something on your PC is starving the timer thread, which is worth chasing down because it shows up in the wheel as roughness.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"default"} -->
+<p class="default">Default: OFF</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Reading the graph</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li>The vertical center is zero, and up/down is positive/negative depending on the signal.</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The top and bottom edges of the graph are full scale. For the torque traces that is your <strong>Max force</strong> setting on the Racing wheel page &ndash; a trace touching the edge is a force as large as your wheel is set to produce.</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Horizontal grid lines mark every 25% of full scale, with the two halfway lines picked out in a lighter color so you have something to judge against.</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>The intensity of the line increases with magnitude.</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph {"className":"setting"} -->
+<p class="setting">Background flashes</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Instead of drawing anything extra on the waveform, the graph tints its own background while something notable is happening. The tint is painted column by column as the graph scrolls, so you get a colored band that lines up with exactly when the event happened:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul class="wp-block-list"><!-- wp:list-item -->
+<li><strong>Red</strong> &ndash; output torque is clipping. The graph asked for more force than your wheel is set to deliver, so the peaks are being flattened. This is the one to care about: it means detail is being thrown away.</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Orange</strong> &ndash; crash protection is active.</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li><strong>Yellow</strong> &ndash; curb protection is active.</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Only one color shows at a time. Clipping wins over crash protection, which wins over curb protection. Crash protection and curb protection are FFB graph modules on the <a href="https://mairapp.com/home/documentation/advanced/racing-wheel/" data-type="page" data-id="164">Racing Wheel</a> page &ndash; if your graph does not include those modules, you will never see their colors here.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:group {"layout":{"type":"constrained"}} -->

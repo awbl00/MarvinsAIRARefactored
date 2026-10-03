@@ -42,7 +42,7 @@ public partial class MainWindow : Window
 		Commentary,
 		TradingPaints,
 		Accessibility,
-		Graph,
+		Graph, // retired (the graph is an overlay now) - kept so settings files that saved it as the default page still load
 		Simulator,
 		GameBridge,
 		AppManager,
@@ -67,7 +67,6 @@ public partial class MainWindow : Window
 	public static readonly CommentaryPage _commentary = new();
 	public static readonly TradingPaintsPage _tradingPaintsPage = new();
 	public static readonly AccessibilityPage _accessibilityPage = new();
-	public static readonly GraphPage _graphPage = new();
 	public static readonly SimulatorPage _simulatorPage = new();
 	public static readonly GameBridgePage _gameBridgePage = new();
 	public static readonly AdminBoxxPage _adminBoxxPage = new();

@@ -184,6 +184,6 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Next page: <a href="https://mairapp.com/home/documentation/advanced/graph/" data-type="page" data-id="178">Graph</a></p>
+<p>Next page: <a href="https://mairapp.com/home/documentation/other-stuff/troubleshooting/" data-type="page" data-id="152">Troubleshooting</a></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:group -->

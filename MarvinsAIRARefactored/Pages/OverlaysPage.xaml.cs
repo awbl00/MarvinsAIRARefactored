@@ -13,7 +13,8 @@ public partial class OverlaysPage : UserControl
 		GapMonitor,
 		DeltaMonitor,
 		GripOMeter,
-		SpeechToText
+		SpeechToText,
+		Graph
 	}
 
 	public OverlaysPage()
@@ -32,12 +33,14 @@ public partial class OverlaysPage : UserControl
 		settings.OverlaysDeltaMonitorWindowScale = 1f;
 		settings.OverlaysGripOMeterWindowScale = 1f;
 		settings.OverlaysSpeechToTextWindowScale = 1f;
+		settings.OverlaysGraphWindowScale = 1f;
 
 		// reset all overlay window positions to 0,0 (persisted for windows that aren't currently open)
 		settings.OverlaysGapMonitorWindowPosition = System.Drawing.Rectangle.Empty;
 		settings.OverlaysDeltaMonitorWindowPosition = System.Drawing.Rectangle.Empty;
 		settings.OverlaysGripOMeterWindowPosition = System.Drawing.Rectangle.Empty;
 		settings.OverlaysSpeechToTextWindowPosition = System.Drawing.Rectangle.Empty;
+		settings.OverlaysGraphWindowPosition = System.Drawing.Rectangle.Empty;
 
 		// reset all overlay window background colors and opacities to their defaults
 		settings.OverlaysGapMonitorWindowBackgroundColor = "#000000";
@@ -47,12 +50,15 @@ public partial class OverlaysPage : UserControl
 		settings.OverlaysSpeechToTextWindowBackgroundColor = "#000000";
 		settings.OverlaysSpeechToTextWindowBackgroundOpacity = 0.9f;
 		settings.OverlaysGripOMeterWindowOpacity = 1f;
+		settings.OverlaysGraphWindowBackgroundColor = "#000000";
+		settings.OverlaysGraphWindowBackgroundOpacity = 1f;
 
 		// move any open windows to 0,0 immediately
 		app.GapMonitorWindow?.ResetWindow();
 		app.DeltaMonitorWindow?.ResetWindow();
 		app.GripOMeterWindow?.ResetWindow();
 		app.SpeechToTextWindow?.ResetWindow();
+		app.GraphWindow?.ResetWindow();
 	}
 
 	private void MakeAllOverlaysDraggable_MairaSwitch_Toggled( object sender, EventArgs e )
@@ -65,6 +71,7 @@ public partial class OverlaysPage : UserControl
 		app.UpdateDeltaMonitorWindowVisibility();
 		app.UpdateGripOMeterWindowVisibility();
 		app.UpdateSpeechToTextWindowVisibility();
+		app.UpdateGraphWindowVisibility();
 	}
 
 	public void ScrollToSection( ScrollViewer scrollViewer, OverlaySection section )
@@ -75,6 +82,7 @@ public partial class OverlaysPage : UserControl
 			OverlaySection.DeltaMonitor => DeltaMonitor_MairaGroupBox,
 			OverlaySection.GripOMeter => GripOMeter_MairaGroupBox,
 			OverlaySection.SpeechToText => SpeechToText_MairaGroupBox,
+			OverlaySection.Graph => Graph_MairaGroupBox,
 			_ => null
 		};
 

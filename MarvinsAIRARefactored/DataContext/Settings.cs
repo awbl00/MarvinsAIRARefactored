@@ -13241,6 +13241,7 @@ public partial class Settings : INotifyPropertyChanged
 			app.UpdateGapMonitorWindowVisibility();
 			app.UpdateDeltaMonitorWindowVisibility();
 			app.UpdateGripOMeterWindowVisibility();
+			app.UpdateGraphWindowVisibility();
 		}
 	}
 
@@ -13268,6 +13269,7 @@ public partial class Settings : INotifyPropertyChanged
 			app.UpdateGapMonitorWindowVisibility();
 			app.UpdateDeltaMonitorWindowVisibility();
 			app.UpdateGripOMeterWindowVisibility();
+			app.UpdateGraphWindowVisibility();
 		}
 	}
 
@@ -13310,13 +13312,14 @@ public partial class Settings : INotifyPropertyChanged
 	// into OverlaysNonCarLayout, so users upgrading from a version without per-car overlays keep their layout.
 	public bool OverlaysLayoutMigrated { get; set; } = false;
 
-	// The eight live overlay position/scale properties that participate in the per-car layout system.
+	// The live overlay position/scale properties that participate in the per-car layout system.
 	private static readonly HashSet<string> OverlayLayoutPropertyNames = new()
 	{
 		nameof( OverlaysGapMonitorWindowPosition ), nameof( OverlaysGapMonitorWindowScale ),
 		nameof( OverlaysDeltaMonitorWindowPosition ), nameof( OverlaysDeltaMonitorWindowScale ),
 		nameof( OverlaysGripOMeterWindowPosition ), nameof( OverlaysGripOMeterWindowScale ),
 		nameof( OverlaysSpeechToTextWindowPosition ), nameof( OverlaysSpeechToTextWindowScale ),
+		nameof( OverlaysGraphWindowPosition ), nameof( OverlaysGraphWindowScale ),
 	};
 
 	// Returns the layout store the overlays should currently read from / write to. With per-car enabled and a car
@@ -13372,6 +13375,8 @@ public partial class Settings : INotifyPropertyChanged
 		OverlaysGripOMeterWindowScale = layout.GripOMeterWindowScale;
 		OverlaysSpeechToTextWindowPosition = layout.SpeechToTextWindowPosition;
 		OverlaysSpeechToTextWindowScale = layout.SpeechToTextWindowScale;
+		OverlaysGraphWindowPosition = layout.GraphWindowPosition;
+		OverlaysGraphWindowScale = layout.GraphWindowScale;
 
 		_updateSettingsPassActiveOnThread = wasSuppressed;
 
@@ -13397,10 +13402,11 @@ public partial class Settings : INotifyPropertyChanged
 		app.DeltaMonitorWindow?.ApplyPositionFromSettings();
 		app.GripOMeterWindow?.ApplyPositionFromSettings();
 		app.SpeechToTextWindow?.ApplyPositionFromSettings();
+		app.GraphWindow?.ApplyPositionFromSettings();
 	}
 
-	// Copies the live overlay properties into the active layout store. Called whenever one of the eight live
-	// overlay layout properties changes (drag / scale / reset).
+	// Copies the live overlay properties into the active layout store. Called whenever one of the live overlay
+	// layout properties changes (drag / scale / reset).
 	private void SaveActiveOverlayLayout()
 	{
 		var layout = GetActiveOverlayLayout();
@@ -13413,6 +13419,8 @@ public partial class Settings : INotifyPropertyChanged
 		layout.GripOMeterWindowScale = OverlaysGripOMeterWindowScale;
 		layout.SpeechToTextWindowPosition = OverlaysSpeechToTextWindowPosition;
 		layout.SpeechToTextWindowScale = OverlaysSpeechToTextWindowScale;
+		layout.GraphWindowPosition = OverlaysGraphWindowPosition;
+		layout.GraphWindowScale = OverlaysGraphWindowScale;
 
 		App.Instance!.SettingsFile.QueueForSerialization = true;
 	}
@@ -13434,6 +13442,8 @@ public partial class Settings : INotifyPropertyChanged
 		OverlaysNonCarLayout.GripOMeterWindowScale = OverlaysGripOMeterWindowScale;
 		OverlaysNonCarLayout.SpeechToTextWindowPosition = OverlaysSpeechToTextWindowPosition;
 		OverlaysNonCarLayout.SpeechToTextWindowScale = OverlaysSpeechToTextWindowScale;
+		OverlaysNonCarLayout.GraphWindowPosition = OverlaysGraphWindowPosition;
+		OverlaysNonCarLayout.GraphWindowScale = OverlaysGraphWindowScale;
 
 		OverlaysLayoutMigrated = true;
 
@@ -14057,6 +14067,363 @@ public partial class Settings : INotifyPropertyChanged
 			if ( value != _overlaysSpeechToTextWindowBackgroundOpacity )
 			{
 				_overlaysSpeechToTextWindowBackgroundOpacity = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Overlays - Show Graph window
+
+	private bool _overlaysShowGraphWindow = false;
+
+	public bool OverlaysShowGraphWindow
+	{
+		get => _overlaysShowGraphWindow;
+
+		set
+		{
+			if ( value != _overlaysShowGraphWindow )
+			{
+				_overlaysShowGraphWindow = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.UpdateGraphWindowVisibility();
+		}
+	}
+
+	#endregion
+
+	#region Overlays - Show Graph title
+
+	private bool _overlaysShowGraphTitle = true;
+
+	public bool OverlaysShowGraphTitle
+	{
+		get => _overlaysShowGraphTitle;
+
+		set
+		{
+			if ( value != _overlaysShowGraphTitle )
+			{
+				_overlaysShowGraphTitle = value;
+
+				OnPropertyChanged();
+			}
+
+			var app = App.Instance!;
+
+			app.UpdateGraphWindowVisibility();
+		}
+	}
+
+	#endregion
+
+	#region Overlays - Graph window scale
+
+	private float _overlaysGraphWindowScale = 1f;
+
+	public float OverlaysGraphWindowScale
+	{
+		get => _overlaysGraphWindowScale;
+
+		set
+		{
+			value = Math.Clamp( value, 0.5f, 2f );
+
+			if ( value != _overlaysGraphWindowScale )
+			{
+				_overlaysGraphWindowScale = value;
+
+				OnPropertyChanged();
+			}
+
+			UpdateOverlaysGraphWindowScaleString();
+		}
+	}
+
+	private string _overlaysGraphWindowScaleString = string.Empty;
+
+	[XmlIgnore]
+	public string OverlaysGraphWindowScaleString
+	{
+		get => _overlaysGraphWindowScaleString;
+
+		set
+		{
+			if ( value != _overlaysGraphWindowScaleString )
+			{
+				_overlaysGraphWindowScaleString = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	private string FormatOverlaysGraphWindowScaleString( float? value = null )
+	{
+		return $"{( value ?? _overlaysGraphWindowScale ) * 100f:F0}{DataContext.Instance.Localization[ "Percent" ]}";
+	}
+
+	private void UpdateOverlaysGraphWindowScaleString()
+	{
+		OverlaysGraphWindowScaleString = FormatOverlaysGraphWindowScaleString();
+	}
+
+	#endregion
+
+	#region Overlays - Graph window position
+
+	private Rectangle _overlaysGraphWindowPosition = Rectangle.Empty;
+
+	public Rectangle OverlaysGraphWindowPosition
+	{
+		get => _overlaysGraphWindowPosition;
+
+		set
+		{
+			if ( value != _overlaysGraphWindowPosition )
+			{
+				_overlaysGraphWindowPosition = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Overlays - Graph window background color
+
+	private string _overlaysGraphWindowBackgroundColor = "#000000";
+
+	public string OverlaysGraphWindowBackgroundColor
+	{
+		get => _overlaysGraphWindowBackgroundColor;
+
+		set
+		{
+			if ( value != _overlaysGraphWindowBackgroundColor )
+			{
+				_overlaysGraphWindowBackgroundColor = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Overlays - Graph window background opacity
+
+	private float _overlaysGraphWindowBackgroundOpacity = 1f;
+
+	public float OverlaysGraphWindowBackgroundOpacity
+	{
+		get => _overlaysGraphWindowBackgroundOpacity;
+
+		set
+		{
+			value = Math.Clamp( value, 0f, 1f );
+
+			if ( value != _overlaysGraphWindowBackgroundOpacity )
+			{
+				_overlaysGraphWindowBackgroundOpacity = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Statistics
+
+	private Graph.LayerIndex _graphStatisticsLayerIndex = Graph.LayerIndex.TimerJitter;
+
+	public Graph.LayerIndex GraphStatisticsLayerIndex
+	{
+		get => _graphStatisticsLayerIndex;
+
+		set
+		{
+			if ( value != _graphStatisticsLayerIndex )
+			{
+				_graphStatisticsLayerIndex = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Input torque
+
+	private bool _graphInputTorque = true;
+
+	public bool GraphInputTorque
+	{
+		get => _graphInputTorque;
+
+		set
+		{
+			if ( value != _graphInputTorque )
+			{
+				_graphInputTorque = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Output torque
+
+	private bool _graphOutputTorque = true;
+
+	public bool GraphOutputTorque
+	{
+		get => _graphOutputTorque;
+
+		set
+		{
+			if ( value != _graphOutputTorque )
+			{
+				_graphOutputTorque = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Input torque (60 Hz)
+
+	private bool _graphInputTorque60Hz = false;
+
+	public bool GraphInputTorque60Hz
+	{
+		get => _graphInputTorque60Hz;
+
+		set
+		{
+			if ( value != _graphInputTorque60Hz )
+			{
+				_graphInputTorque60Hz = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Input LFE
+
+	private bool _graphInputLFE = false;
+
+	public bool GraphInputLFE
+	{
+		get => _graphInputLFE;
+
+		set
+		{
+			if ( value != _graphInputLFE )
+			{
+				_graphInputLFE = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Clutch pedal haptics
+
+	private bool _graphClutchPedalHaptics = false;
+
+	public bool GraphClutchPedalHaptics
+	{
+		get => _graphClutchPedalHaptics;
+
+		set
+		{
+			if ( value != _graphClutchPedalHaptics )
+			{
+				_graphClutchPedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Brake pedal haptics
+
+	private bool _graphBrakePedalHaptics = false;
+
+	public bool GraphBrakePedalHaptics
+	{
+		get => _graphBrakePedalHaptics;
+
+		set
+		{
+			if ( value != _graphBrakePedalHaptics )
+			{
+				_graphBrakePedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Throttle pedal haptics
+
+	private bool _graphThrottlePedalHaptics = false;
+
+	public bool GraphThrottlePedalHaptics
+	{
+		get => _graphThrottlePedalHaptics;
+
+		set
+		{
+			if ( value != _graphThrottlePedalHaptics )
+			{
+				_graphThrottlePedalHaptics = value;
+
+				OnPropertyChanged();
+			}
+		}
+	}
+
+	#endregion
+
+	#region Graph - Timer jitter
+
+	private bool _graphTimerJitter = false;
+
+	public bool GraphTimerJitter
+	{
+		get => _graphTimerJitter;
+
+		set
+		{
+			if ( value != _graphTimerJitter )
+			{
+				_graphTimerJitter = value;
 
 				OnPropertyChanged();
 			}
@@ -17707,195 +18074,6 @@ public partial class Settings : INotifyPropertyChanged
 		return string.Format( localization[ ( roundedAngleDegrees > 0f ) ? "AngleLeftFormat" : "AngleRightFormat" ], MathF.Abs( roundedAngleDegrees ) );
 	}
 
-	#region Graph - Statistics
-
-	private Graph.LayerIndex _graphStatisticsLayerIndex = Graph.LayerIndex.TimerJitter;
-
-	public Graph.LayerIndex GraphStatisticsLayerIndex
-	{
-		get => _graphStatisticsLayerIndex;
-
-		set
-		{
-			if ( value != _graphStatisticsLayerIndex )
-			{
-				_graphStatisticsLayerIndex = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Input torque
-
-	private bool _graphInputTorque = true;
-
-	public bool GraphInputTorque
-	{
-		get => _graphInputTorque;
-
-		set
-		{
-			if ( value != _graphInputTorque )
-			{
-				_graphInputTorque = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Output torque
-
-	private bool _graphOutputTorque = true;
-
-	public bool GraphOutputTorque
-	{
-		get => _graphOutputTorque;
-
-		set
-		{
-			if ( value != _graphOutputTorque )
-			{
-				_graphOutputTorque = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Input torque (60 Hz)
-
-	private bool _graphInputTorque60Hz = false;
-
-	public bool GraphInputTorque60Hz
-	{
-		get => _graphInputTorque60Hz;
-
-		set
-		{
-			if ( value != _graphInputTorque60Hz )
-			{
-				_graphInputTorque60Hz = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Input LFE
-
-	private bool _graphInputLFE = false;
-
-	public bool GraphInputLFE
-	{
-		get => _graphInputLFE;
-
-		set
-		{
-			if ( value != _graphInputLFE )
-			{
-				_graphInputLFE = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Clutch pedal haptics
-
-	private bool _graphClutchPedalHaptics = false;
-
-	public bool GraphClutchPedalHaptics
-	{
-		get => _graphClutchPedalHaptics;
-
-		set
-		{
-			if ( value != _graphClutchPedalHaptics )
-			{
-				_graphClutchPedalHaptics = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Brake pedal haptics
-
-	private bool _graphBrakePedalHaptics = false;
-
-	public bool GraphBrakePedalHaptics
-	{
-		get => _graphBrakePedalHaptics;
-
-		set
-		{
-			if ( value != _graphBrakePedalHaptics )
-			{
-				_graphBrakePedalHaptics = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Throttle pedal haptics
-
-	private bool _graphThrottlePedalHaptics = false;
-
-	public bool GraphThrottlePedalHaptics
-	{
-		get => _graphThrottlePedalHaptics;
-
-		set
-		{
-			if ( value != _graphThrottlePedalHaptics )
-			{
-				_graphThrottlePedalHaptics = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
-	#region Graph - Timer jitter
-
-	private bool _graphTimerJitter = false;
-
-	public bool GraphTimerJitter
-	{
-		get => _graphTimerJitter;
-
-		set
-		{
-			if ( value != _graphTimerJitter )
-			{
-				_graphTimerJitter = value;
-
-				OnPropertyChanged();
-			}
-		}
-	}
-
-	#endregion
-
 	#region Game bridge - Le Mans Ultimate enabled
 
 	private bool _gameBridgeLeMansUltimateEnabled = false;
@@ -18173,6 +18351,12 @@ public partial class Settings : INotifyPropertyChanged
 
 		set
 		{
+			// the graph page became the graph overlay, so a saved "graph" default page now opens the overlays page
+			if ( value == MainWindow.AppPage.Graph )
+			{
+				value = MainWindow.AppPage.Overlays;
+			}
+
 			if ( value != _appDefaultPage )
 			{
 				_appDefaultPage = value;

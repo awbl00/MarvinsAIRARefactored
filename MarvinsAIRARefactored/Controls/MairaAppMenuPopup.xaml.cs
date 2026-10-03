@@ -279,9 +279,6 @@ namespace MarvinsAIRARefactored.Controls
 				case AppPage.Accessibility:
 					return "advanced/accessibility/";
 
-				case AppPage.Graph:
-					return "advanced/graph/";
-
 				case AppPage.Simulator:
 					return "advanced/simulator/";
 
@@ -461,7 +458,6 @@ namespace MarvinsAIRARefactored.Controls
 			Add( AppMenuItemsColumn2, AppPage.ControllerProfiles, _controllerProfilesPage );
 			Add( AppMenuItemsColumn2, AppPage.Simulator, _simulatorPage );
 			Add( AppMenuItemsColumn2, AppPage.GameBridge, _gameBridgePage );
-			Add( AppMenuItemsColumn2, AppPage.Graph, _graphPage );
 
 #endif
 
@@ -581,10 +577,6 @@ namespace MarvinsAIRARefactored.Controls
 						menuItem.DisplayName = localization[ "Accessibility" ];
 						break;
 
-					case AppPage.Graph:
-						menuItem.DisplayName = localization[ "Graph" ];
-						break;
-
 					case AppPage.Simulator:
 						menuItem.DisplayName = localization[ "Simulator" ];
 						break;
@@ -697,10 +689,6 @@ namespace MarvinsAIRARefactored.Controls
 
 				case AppPage.Accessibility:
 					SelectedAppPageText = localization.Upper[ "Accessibility" ];
-					break;
-
-				case AppPage.Graph:
-					SelectedAppPageText = localization.Upper[ "Graph" ];
 					break;
 
 				case AppPage.Simulator:

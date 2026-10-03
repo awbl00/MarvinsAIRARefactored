@@ -1,15 +1,19 @@
-﻿
+
 using System.Runtime.CompilerServices;
 
 using MarvinsAIRARefactored.Classes;
-using MarvinsAIRARefactored.Controls;
-using MarvinsAIRARefactored.Windows;
+
+using Image = System.Windows.Controls.Image;
 
 namespace MarvinsAIRARefactored.Components;
 
 public class Graph : GraphBase
 {
 	private const int UpdateInterval = 6;
+
+	// the graph overlay window's bitmap - one column per playout tick, so 1080 columns is 3 seconds of history at 360 Hz
+	public const int OverlayBitmapWidth = 1080;
+	public const int OverlayBitmapHeight = 401;
 
 	public enum LayerIndex
 	{
@@ -28,13 +32,17 @@ public class Graph : GraphBase
 
 	private int _updateCounter = UpdateInterval + 2;
 
+	// true while the graph overlay window is open - the layers are only recorded and drawn while someone can see them
+	// (written on the UI thread, read on the playout thread)
+	private volatile bool _isShown = false;
+
 	public void Initialize()
 	{
 		var app = App.Instance!;
 
 		app.Logger.WriteLine( "[Graph] Initialize >>>" );
 
-		Initialize( MainWindow._graphPage.Image );
+		Initialize( OverlayBitmapWidth, OverlayBitmapHeight );
 
 		for ( var layerIndex = 0; layerIndex < (int) LayerIndex.Count; layerIndex++ )
 		{
@@ -42,6 +50,20 @@ public class Graph : GraphBase
 		}
 
 		app.Logger.WriteLine( "[Graph] <<< Initialize" );
+	}
+
+	// called by the graph overlay window when it opens
+	public void Show( Image image )
+	{
+		AttachImage( image );
+
+		_isShown = true;
+	}
+
+	// called by the graph overlay window when it closes
+	public void Hide()
+	{
+		_isShown = false;
 	}
 
 	public void SetLayerColors( LayerIndex layerIndex, float r, float g, float b )
@@ -56,7 +78,7 @@ public class Graph : GraphBase
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public void UpdateLayer( LayerIndex layerIndex, float normalizedValue )
 	{
-		if ( MairaAppMenuPopup.CurrentAppPage == MainWindow.AppPage.Graph )
+		if ( _isShown )
 		{
 			_layerArray[ (int) layerIndex ].value = normalizedValue;
 		}
@@ -65,7 +87,7 @@ public class Graph : GraphBase
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public void Update()
 	{
-		if ( MairaAppMenuPopup.CurrentAppPage == MainWindow.AppPage.Graph )
+		if ( _isShown )
 		{
 			var settings = DataContext.DataContext.Instance.Settings;
 
@@ -98,7 +120,7 @@ public class Graph : GraphBase
 
 	public void Tick( App app )
 	{
-		if ( MairaAppMenuPopup.CurrentAppPage == MainWindow.AppPage.Graph )
+		if ( _isShown )
 		{
 			WritePixels();
 

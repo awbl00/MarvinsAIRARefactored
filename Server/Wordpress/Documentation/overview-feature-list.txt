@@ -373,12 +373,24 @@
 <!-- /wp:list -->
 
 <!-- wp:paragraph {"className":"section"} -->
-<p class="section">Graph</p>
+<p class="section">Overlays</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:list -->
 <ul class="wp-block-list"><!-- wp:list-item -->
-<li>Shows real time data graphs for -<!-- wp:list -->
+<li>Gap monitor - movable/scalable overlay displaying real-time gap information to cars ahead and behind</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Delta monitor - movable/scalable overlay showing lap time and delta versus your last lap and versus the leader</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Grip-O-Meter - movable/scalable overlay showing real-time grip usage (under/oversteer and seat-of-pants forces)</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>Graph - movable/scalable overlay showing real time data graphs for -<!-- wp:list -->
 <ul class="wp-block-list"><!-- wp:list-item -->
 <li>Input torque from iRacing (360 Hz and 60 Hz)</li>
 <!-- /wp:list-item -->
@@ -399,24 +411,6 @@
 <li>Timer jitter</li>
 <!-- /wp:list-item --></ul>
 <!-- /wp:list --></li>
-<!-- /wp:list-item --></ul>
-<!-- /wp:list -->
-
-<!-- wp:paragraph {"className":"section"} -->
-<p class="section">Overlays</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:list -->
-<ul class="wp-block-list"><!-- wp:list-item -->
-<li>Gap monitor - movable/scalable overlay displaying real-time gap information to cars ahead and behind</li>
-<!-- /wp:list-item -->
-
-<!-- wp:list-item -->
-<li>Delta monitor - movable/scalable overlay showing lap time and delta versus your last lap and versus the leader</li>
-<!-- /wp:list-item -->
-
-<!-- wp:list-item -->
-<li>Grip-O-Meter - movable/scalable overlay showing real-time grip usage (under/oversteer and seat-of-pants forces)</li>
 <!-- /wp:list-item -->
 
 <!-- wp:list-item -->

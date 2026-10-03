@@ -1438,7 +1438,7 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Underneath the node graph is a preview of your graph running over a recorded lap. It is not a live meter — the live one lives on the <a href="https://mairapp.com/home/documentation/advanced/graph/" data-type="page" data-id="178">Graph</a> page. This one replays a recording through a second copy of your FFB graph, so you can stop, scrub, zoom in on one bump, turn a knob and watch what changes. Everything a module needs is replayed with it, so effects, protections and vibrations behave exactly as they did in the car.</p>
+<p>Underneath the node graph is a preview of your graph running over a recorded lap. It is not a live meter — the live one is the <a href="https://mairapp.com/home/documentation/advanced/overlays/#graph" data-type="page" data-id="860">Graph</a> overlay. This one replays a recording through a second copy of your FFB graph, so you can stop, scrub, zoom in on one bump, turn a knob and watch what changes. Everything a module needs is replayed with it, so effects, protections and vibrations behave exactly as they did in the car.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph {"className":"setting"} -->

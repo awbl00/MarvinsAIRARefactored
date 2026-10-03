@@ -202,6 +202,7 @@ public partial class App : Application
 	public GapMonitorWindow? GapMonitorWindow { get; set; }
 	public DeltaMonitorWindow? DeltaMonitorWindow { get; set; }
 	public SpeechToTextWindow? SpeechToTextWindow { get; set; }
+	public GraphWindow? GraphWindow { get; set; }
 
 	// Transient (not persisted) - when true, all overlay windows are made visible and draggable
 	public bool OverlaysDraggable { get; set; } = false;
@@ -691,11 +692,6 @@ public partial class App : Application
 
 		// Update programmatic renderers that cannot use DynamicResource
 		Controls.MairaKnob.UpdateThemeColors( lightTheme );
-
-		if ( Graph != null )
-		{
-			Graph.UpdateThemeColors( lightTheme );
-		}
 	}
 
 	private void App_Exit( object sender, EventArgs e )
@@ -717,6 +713,7 @@ public partial class App : Application
 		GripOMeterWindow?.Close();
 		GapMonitorWindow?.Close();
 		DeltaMonitorWindow?.Close();
+		GraphWindow?.Close();
 
 		_ = SpeechToText.DisableAsync();
 		TextToSpeech.Dispose();
@@ -1153,6 +1150,44 @@ public partial class App : Application
 		} );
 	}
 
+	public void EnsureGraphWindowExists()
+	{
+		var app = App.Instance!;
+
+		app.Dispatcher.InvokeAsync( () =>
+		{
+			if ( GraphWindow == null )
+			{
+				Dispatcher.Invoke( () =>
+				{
+					Logger.WriteLine( "[App] Creating GraphWindow" );
+
+					GraphWindow = new();
+				} );
+			}
+		} );
+	}
+
+	public void DestroyGraphWindow()
+	{
+		var app = App.Instance!;
+
+		app.Dispatcher.InvokeAsync( () =>
+		{
+			if ( GraphWindow != null )
+			{
+				Dispatcher.Invoke( () =>
+				{
+					Logger.WriteLine( "[App] Destroying GraphWindow" );
+
+					GraphWindow.Close();
+
+					GraphWindow = null;
+				} );
+			}
+		} );
+	}
+
 	public void UpdateGripOMeterWindowVisibility()
 	{
 		var app = App.Instance!;
@@ -1233,6 +1268,27 @@ public partial class App : Application
 			else
 			{
 				DestroySpeechToTextWindow();
+			}
+		} );
+	}
+
+	public void UpdateGraphWindowVisibility()
+	{
+		var app = App.Instance!;
+
+		app.Dispatcher.InvokeAsync( () =>
+		{
+			var settings = DataContext.DataContext.Instance.Settings;
+
+			if ( settings.OverlaysShowGraphWindow && ( OverlaysDraggable || ( Simulator.IsConnected && ( Simulator.IsOnTrack || settings.OverlaysShowWhenOffTrack ) && ( !Simulator.IsReplayPlaying || settings.OverlaysShowInReplayMode ) ) ) )
+			{
+				EnsureGraphWindowExists();
+
+				GraphWindow?.MakeDraggable();
+			}
+			else
+			{
+				DestroyGraphWindow();
 			}
 		} );
 	}

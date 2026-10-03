@@ -122,7 +122,6 @@ public partial class AppSettingsPage : UserControl
 			{ MainWindow.AppPage.TradingPaints, localization[ "TradingPaints" ] },
 			{ MainWindow.AppPage.Accessibility, localization[ "Accessibility" ] },
 			{ MainWindow.AppPage.AppManager, localization[ "AppManager" ] },
-			{ MainWindow.AppPage.Graph, localization[ "Graph" ] },
 			{ MainWindow.AppPage.Simulator, localization[ "Simulator" ] },
 			{ MainWindow.AppPage.AppSettings, localization[ "AppSettings" ] },
 			{ MainWindow.AppPage.Contribute, localization[ "Contribute" ] },

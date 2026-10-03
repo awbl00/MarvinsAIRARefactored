@@ -593,6 +593,7 @@ public partial class Simulator
 		app.UpdateSpeechToTextWindowVisibility();
 		app.UpdateGapMonitorWindowVisibility();
 		app.UpdateDeltaMonitorWindowVisibility();
+		app.UpdateGraphWindowVisibility();
 
 #endif
 
@@ -1373,6 +1374,7 @@ public partial class Simulator
 			app.UpdateGripOMeterWindowVisibility();
 			app.UpdateGapMonitorWindowVisibility();
 			app.UpdateDeltaMonitorWindowVisibility();
+			app.UpdateGraphWindowVisibility();
 		}
 
 		// update steering effects

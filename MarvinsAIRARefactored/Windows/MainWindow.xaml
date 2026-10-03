@@ -63,7 +63,6 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Tag="HideWhenGraphIsSoloed"
               Margin="20">
 
             <Grid.ColumnDefinitions>
