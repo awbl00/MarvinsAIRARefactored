@@ -8,17 +8,11 @@ public partial class EditDescriptionWindow : Window
 	public bool Confirmed { get; private set; } = false;
 	public string DescriptionText { get; private set; } = string.Empty;
 
-	public EditDescriptionWindow( string initialText, string? title = null )
+	public EditDescriptionWindow( string initialText )
 	{
 		InitializeComponent();
 
 		Classes.WindowScaler.ApplyAppUIScale( this );
-
-		// reused as the node name editor, which passes its own title
-		if ( title != null )
-		{
-			Title = title;
-		}
 
 		Description_MairaTextBox.Value = initialText;
 

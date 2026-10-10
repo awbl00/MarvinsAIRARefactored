@@ -1048,18 +1048,15 @@ public partial class RacingWheelPage : UserControl
 		{
 			var app = App.Instance!;
 
-			var localization = MarvinsAIRARefactored.DataContext.DataContext.Instance.Localization;
-
 			// the editor is seeded with the custom name without its "(2)" duplicate suffix (or the automatic name when
 			// the node has no override yet); clearing it — or leaving the automatic name as is — keeps the automatic name
-			var window = new EditDescriptionWindow( moduleViewModel.EditableNodeName, localization[ "EditNameTitle" ] ) { Owner = app.MainWindow };
+			var window = new EditNodeNameWindow( moduleViewModel.EditableNodeName ) { Owner = app.MainWindow };
 
 			window.ShowDialog();
 
 			if ( window.Confirmed )
 			{
-				// a name is single-line — fold any line breaks the multi-line editor allowed
-				moduleViewModel.NodeName = string.Join( " ", window.DescriptionText.Split( [ '\r', '\n' ], StringSplitOptions.RemoveEmptyEntries ) ).Trim();
+				moduleViewModel.NodeName = window.NodeName;
 			}
 		}
 	}

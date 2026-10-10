@@ -16,6 +16,9 @@ public class Telemetry
 	private const string MemoryMappedFileName = "Local\\MAIRARefactoredTelemetry";
 	private const int MaxStringLengthInBytes = 256;
 	private const int MaxGraphParameters = 50;
+	private const int MaxGraphParameterStringLengthInBytes = 64;
+
+	private const int MemoryMappedFileRetryIntervalInMilliseconds = 5000;
 
 	private const string GraphParameterTrueValue = "true";
 	private const string GraphParameterFalseValue = "false";
@@ -90,11 +93,14 @@ public class Telemetry
 
 		public int graphParameterCount;
 
-		public fixed byte graphParameterNodeNames[ MaxGraphParameters * MaxStringLengthInBytes ];
-		public fixed byte graphParameterNodeModuleTypes[ MaxGraphParameters * MaxStringLengthInBytes ];
-		public fixed byte graphParameterNames[ MaxGraphParameters * MaxStringLengthInBytes ];
-		public fixed byte graphParameterRawValues[ MaxGraphParameters * MaxStringLengthInBytes ];
-		public fixed byte graphParameterFormattedValues[ MaxGraphParameters * MaxStringLengthInBytes ];
+		// the per-parameter strings are short (names and values), so they use a smaller slot than the other strings
+		// to keep the buffer small - longer text is cut at a character boundary (see WriteString)
+
+		public fixed byte graphParameterNodeNames[ MaxGraphParameters * MaxGraphParameterStringLengthInBytes ];
+		public fixed byte graphParameterNodeModuleTypes[ MaxGraphParameters * MaxGraphParameterStringLengthInBytes ];
+		public fixed byte graphParameterNames[ MaxGraphParameters * MaxGraphParameterStringLengthInBytes ];
+		public fixed byte graphParameterRawValues[ MaxGraphParameters * MaxGraphParameterStringLengthInBytes ];
+		public fixed byte graphParameterFormattedValues[ MaxGraphParameters * MaxGraphParameterStringLengthInBytes ];
 
 		// string setters
 
@@ -128,7 +134,7 @@ public class Telemetry
 
 			fixed ( byte* bytePtr = graphParameterNodeNames )
 			{
-				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxGraphParameterStringLengthInBytes, value );
 			}
 		}
 
@@ -138,7 +144,7 @@ public class Telemetry
 
 			fixed ( byte* bytePtr = graphParameterNodeModuleTypes )
 			{
-				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxGraphParameterStringLengthInBytes, value );
 			}
 		}
 
@@ -148,7 +154,7 @@ public class Telemetry
 
 			fixed ( byte* bytePtr = graphParameterNames )
 			{
-				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxGraphParameterStringLengthInBytes, value );
 			}
 		}
 
@@ -158,7 +164,7 @@ public class Telemetry
 
 			fixed ( byte* bytePtr = graphParameterRawValues )
 			{
-				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxGraphParameterStringLengthInBytes, value );
 			}
 		}
 
@@ -168,7 +174,7 @@ public class Telemetry
 
 			fixed ( byte* bytePtr = graphParameterFormattedValues )
 			{
-				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxGraphParameterStringLengthInBytes, value );
 			}
 		}
 
@@ -187,6 +193,16 @@ public class Telemetry
 			var bytes = Encoding.UTF8.GetBytes( value );
 
 			var length = Math.Min( bytes.Length, capacity - 1 );
+
+			// when the text is cut, back off to the start of the cut character so a multi-byte UTF-8 sequence is never
+			// left half-written (continuation bytes are 10xxxxxx)
+			if ( length < bytes.Length )
+			{
+				while ( ( length > 0 ) && ( ( bytes[ length ] & 0xC0 ) == 0x80 ) )
+				{
+					length--;
+				}
+			}
 
 			Marshal.Copy( bytes, 0, (IntPtr) bytePtr + offset, length );
 
@@ -222,34 +238,59 @@ public class Telemetry
 	private MemoryMappedFile? _memoryMappedFile = null;
 	private MemoryMappedViewAccessor? _memoryMappedFileViewAccessor = null;
 
+	private long _nextMemoryMappedFileAttemptTickCount = 0;
+	private bool _memoryMappedFileTooSmallLogged = false;
+
 	public void Initialize()
 	{
 		var app = App.Instance!;
 
 		app.Logger.WriteLine( "[Telemetry] Initialize >>>" );
 
+		TryOpenMemoryMappedFile( app );
+
+		app.Logger.WriteLine( "[Telemetry] <<< Initialize" );
+	}
+
+	private void TryOpenMemoryMappedFile( App app )
+	{
+		_nextMemoryMappedFileAttemptTickCount = Environment.TickCount64 + MemoryMappedFileRetryIntervalInMilliseconds;
+
 		// Unsafe.SizeOf (the managed layout) is what MemoryMappedViewAccessor.Write actually copies - Marshal.SizeOf
 		// can't size this struct (the marshaler rejects the nested large buffers) and would over-count bools as 4 bytes
 		var sizeOfTelemetryData = Unsafe.SizeOf<DataStruct>();
 
-		_memoryMappedFile = MemoryMappedFile.CreateOrOpen( MemoryMappedFileName, sizeOfTelemetryData );
-		_memoryMappedFileViewAccessor = _memoryMappedFile.CreateViewAccessor();
+		var memoryMappedFile = MemoryMappedFile.CreateOrOpen( MemoryMappedFileName, sizeOfTelemetryData );
+		var memoryMappedFileViewAccessor = memoryMappedFile.CreateViewAccessor();
 
 		// CreateOrOpen returns the EXISTING mapping when another process (e.g. SimHub) still holds one open from an
-		// older, smaller layout - it can't be resized, so writing our struct would run past its end. Disable the
-		// telemetry output for this session instead of throwing every tick; restarting that process fixes it.
-		if ( _memoryMappedFileViewAccessor.Capacity < sizeOfTelemetryData )
+		// older, smaller layout - it can't be resized, so writing our struct would run past its end. Let go of it and
+		// try again every few seconds (from Tick) - the SimHub plugin releases a mapping that is too small for it, so
+		// once nothing holds the old one open, the next attempt creates a fresh mapping of the right size.
+		if ( memoryMappedFileViewAccessor.Capacity < sizeOfTelemetryData )
 		{
-			app.Logger.WriteLine( $"[Telemetry] Existing memory mapped file is too small ({_memoryMappedFileViewAccessor.Capacity} < {sizeOfTelemetryData} bytes) - another process has an older layout open; telemetry output is disabled until it is restarted" );
+			if ( !_memoryMappedFileTooSmallLogged )
+			{
+				app.Logger.WriteLine( $"[Telemetry] Existing memory mapped file is too small ({memoryMappedFileViewAccessor.Capacity} < {sizeOfTelemetryData} bytes) - another process has an older layout open; retrying every {MemoryMappedFileRetryIntervalInMilliseconds / 1000} seconds" );
 
-			_memoryMappedFileViewAccessor.Dispose();
-			_memoryMappedFile.Dispose();
+				_memoryMappedFileTooSmallLogged = true;
+			}
 
-			_memoryMappedFileViewAccessor = null;
-			_memoryMappedFile = null;
+			memoryMappedFileViewAccessor.Dispose();
+			memoryMappedFile.Dispose();
+
+			return;
 		}
 
-		app.Logger.WriteLine( "[Telemetry] <<< Initialize" );
+		if ( _memoryMappedFileTooSmallLogged )
+		{
+			app.Logger.WriteLine( "[Telemetry] Memory mapped file opened after retrying" );
+
+			_memoryMappedFileTooSmallLogged = false;
+		}
+
+		_memoryMappedFile = memoryMappedFile;
+		_memoryMappedFileViewAccessor = memoryMappedFileViewAccessor;
 	}
 
 	public void Shutdown()
@@ -372,6 +413,11 @@ public class Telemetry
 
 		_data.version = Version;
 		_data.bufferIndex = _currentBufferIndex;
+
+		if ( ( _memoryMappedFileViewAccessor == null ) && ( Environment.TickCount64 >= _nextMemoryMappedFileAttemptTickCount ) )
+		{
+			TryOpenMemoryMappedFile( app );
+		}
 
 		_memoryMappedFileViewAccessor?.Write( 0, ref _data );
 	}
