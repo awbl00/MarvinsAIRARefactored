@@ -15,11 +15,10 @@ public class Telemetry
 
 	private const string MemoryMappedFileName = "Local\\MAIRARefactoredTelemetry";
 	private const int MaxStringLengthInBytes = 256;
-	private const int MaxGraphNodes = 20;
-	private const int MaxGraphNodeParameters = 6;
+	private const int MaxGraphParameters = 50;
 
-	private const string GraphNodeParameterTrueValue = "true";
-	private const string GraphNodeParameterFalseValue = "false";
+	private const string GraphParameterTrueValue = "true";
+	private const string GraphParameterFalseValue = "false";
 
 	[StructLayout( LayoutKind.Sequential, Pack = 4 )]
 	public unsafe struct DataBufferStruct
@@ -84,28 +83,18 @@ public class Telemetry
 		public bool soundsWheelSpinIsPlaying;
 		public float soundsWheelSpinVolume;
 
-		// ffb graph settings telemetry (pinned settings of the active graph, grouped by node)
-		// node n is at index n; parameter p of node n is at index ( n * MaxGraphNodeParameters + p )
+		// ffb graph settings telemetry (pinned settings of the active graph as a flat list, in the display order of
+		// the FFB graph settings section) - parameter i of every array below is at index i
 
 		public fixed byte graphName[ MaxStringLengthInBytes ];
 
-		public int graphNodeCount;
-		public fixed int graphNodeParameterCounts[ MaxGraphNodes ];
+		public int graphParameterCount;
 
-		public fixed byte graphNodeNames[ MaxGraphNodes * MaxStringLengthInBytes ];
-		public fixed byte graphNodeTypes[ MaxGraphNodes * MaxStringLengthInBytes ];
-		public fixed byte graphNodeParameterNames[ MaxGraphNodes * MaxGraphNodeParameters * MaxStringLengthInBytes ];
-		public fixed byte graphNodeParameterValues[ MaxGraphNodes * MaxGraphNodeParameters * MaxStringLengthInBytes ];
-		public fixed byte graphNodeParameterTexts[ MaxGraphNodes * MaxGraphNodeParameters * MaxStringLengthInBytes ];
-
-		// graph node count setters
-
-		public void SetGraphNodeParameterCount( int nodeIndex, int value )
-		{
-			if ( nodeIndex < 0 || nodeIndex >= MaxGraphNodes ) return;
-
-			graphNodeParameterCounts[ nodeIndex ] = value;
-		}
+		public fixed byte graphParameterNodeNames[ MaxGraphParameters * MaxStringLengthInBytes ];
+		public fixed byte graphParameterNodeModuleTypes[ MaxGraphParameters * MaxStringLengthInBytes ];
+		public fixed byte graphParameterNames[ MaxGraphParameters * MaxStringLengthInBytes ];
+		public fixed byte graphParameterRawValues[ MaxGraphParameters * MaxStringLengthInBytes ];
+		public fixed byte graphParameterFormattedValues[ MaxGraphParameters * MaxStringLengthInBytes ];
 
 		// string setters
 
@@ -133,59 +122,54 @@ public class Telemetry
 			}
 		}
 
-		public void SetGraphNodeName( int nodeIndex, string? value )
+		public void SetGraphParameterNodeName( int parameterIndex, string? value )
 		{
-			if ( nodeIndex < 0 || nodeIndex >= MaxGraphNodes ) return;
+			if ( parameterIndex < 0 || parameterIndex >= MaxGraphParameters ) return;
 
-			fixed ( byte* bytePtr = graphNodeNames )
+			fixed ( byte* bytePtr = graphParameterNodeNames )
 			{
-				WriteString( bytePtr, nodeIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
 			}
 		}
 
-		public void SetGraphNodeType( int nodeIndex, string? value )
+		public void SetGraphParameterNodeModuleType( int parameterIndex, string? value )
 		{
-			if ( nodeIndex < 0 || nodeIndex >= MaxGraphNodes ) return;
+			if ( parameterIndex < 0 || parameterIndex >= MaxGraphParameters ) return;
 
-			fixed ( byte* bytePtr = graphNodeTypes )
+			fixed ( byte* bytePtr = graphParameterNodeModuleTypes )
 			{
-				WriteString( bytePtr, nodeIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
 			}
 		}
 
-		public void SetGraphNodeParameterName( int nodeIndex, int parameterIndex, string? value )
+		public void SetGraphParameterName( int parameterIndex, string? value )
 		{
-			if ( !IsValidGraphNodeParameter( nodeIndex, parameterIndex ) ) return;
+			if ( parameterIndex < 0 || parameterIndex >= MaxGraphParameters ) return;
 
-			fixed ( byte* bytePtr = graphNodeParameterNames )
+			fixed ( byte* bytePtr = graphParameterNames )
 			{
-				WriteString( bytePtr, nodeIndex * MaxGraphNodeParameters + parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
 			}
 		}
 
-		public void SetGraphNodeParameterValue( int nodeIndex, int parameterIndex, string? value )
+		public void SetGraphParameterRawValue( int parameterIndex, string? value )
 		{
-			if ( !IsValidGraphNodeParameter( nodeIndex, parameterIndex ) ) return;
+			if ( parameterIndex < 0 || parameterIndex >= MaxGraphParameters ) return;
 
-			fixed ( byte* bytePtr = graphNodeParameterValues )
+			fixed ( byte* bytePtr = graphParameterRawValues )
 			{
-				WriteString( bytePtr, nodeIndex * MaxGraphNodeParameters + parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
 			}
 		}
 
-		public void SetGraphNodeParameterText( int nodeIndex, int parameterIndex, string? value )
+		public void SetGraphParameterFormattedValue( int parameterIndex, string? value )
 		{
-			if ( !IsValidGraphNodeParameter( nodeIndex, parameterIndex ) ) return;
+			if ( parameterIndex < 0 || parameterIndex >= MaxGraphParameters ) return;
 
-			fixed ( byte* bytePtr = graphNodeParameterTexts )
+			fixed ( byte* bytePtr = graphParameterFormattedValues )
 			{
-				WriteString( bytePtr, nodeIndex * MaxGraphNodeParameters + parameterIndex, MaxStringLengthInBytes, value );
+				WriteString( bytePtr, parameterIndex, MaxStringLengthInBytes, value );
 			}
-		}
-
-		private static bool IsValidGraphNodeParameter( int nodeIndex, int parameterIndex )
-		{
-			return ( nodeIndex >= 0 ) && ( nodeIndex < MaxGraphNodes ) && ( parameterIndex >= 0 ) && ( parameterIndex < MaxGraphNodeParameters );
 		}
 
 		public static unsafe void WriteString( byte* bytePtr, int index, int capacity, string? value )
@@ -381,7 +365,7 @@ public class Telemetry
 
 			// ffb graph settings telemetry
 
-			UpdateGraphNodeTelemetry( ref dataBuffer );
+			UpdateGraphParameterTelemetry( ref dataBuffer );
 		}
 
 		// let SimHub know this buffer is ready for reading
@@ -392,7 +376,7 @@ public class Telemetry
 		_memoryMappedFileViewAccessor?.Write( 0, ref _data );
 	}
 
-	private static void UpdateGraphNodeTelemetry( ref DataBufferStruct dataBuffer )
+	private static void UpdateGraphParameterTelemetry( ref DataBufferStruct dataBuffer )
 	{
 		var graphViewModel = DataContext.DataContext.Instance.RacingWheelGraphViewModel;
 
@@ -400,56 +384,56 @@ public class Telemetry
 
 		dataBuffer.SetGraphName( FFBGraphViewModel.GraphDisplayName( graphViewModel.GraphName, graphViewModel.IsFFBGraphBuiltIn ) );
 
-		// blank every slot first so nodes / parameters that no longer exist (or were unpinned) don't linger
+		// blank every slot first so parameters that no longer exist (or were unpinned) don't linger
 
-		dataBuffer.graphNodeCount = 0;
-
-		for ( var nodeIndex = 0; nodeIndex < MaxGraphNodes; nodeIndex++ )
+		for ( var parameterIndex = 0; parameterIndex < MaxGraphParameters; parameterIndex++ )
 		{
-			dataBuffer.SetGraphNodeParameterCount( nodeIndex, 0 );
-			dataBuffer.SetGraphNodeName( nodeIndex, null );
-			dataBuffer.SetGraphNodeType( nodeIndex, null );
-
-			for ( var parameterIndex = 0; parameterIndex < MaxGraphNodeParameters; parameterIndex++ )
-			{
-				dataBuffer.SetGraphNodeParameterName( nodeIndex, parameterIndex, null );
-				dataBuffer.SetGraphNodeParameterValue( nodeIndex, parameterIndex, null );
-				dataBuffer.SetGraphNodeParameterText( nodeIndex, parameterIndex, null );
-			}
+			dataBuffer.SetGraphParameterNodeName( parameterIndex, null );
+			dataBuffer.SetGraphParameterNodeModuleType( parameterIndex, null );
+			dataBuffer.SetGraphParameterName( parameterIndex, null );
+			dataBuffer.SetGraphParameterRawValue( parameterIndex, null );
+			dataBuffer.SetGraphParameterFormattedValue( parameterIndex, null );
 		}
 
 		// PinnedGroups is exactly what the FFB graph settings section shows (whether or not it is currently visible):
-		// only nodes with pins, in display order, each with its pinned entries in display order (a pinned Enabled toggle first)
+		// only nodes with pins, in display order, each with its pinned entries in display order (a pinned Enabled
+		// toggle first) - flattened here into one list, stopping once MaxGraphParameters is reached. Nodes whose
+		// output doesn't reach the Output module are skipped, even when they have pinned settings.
 
-		var pinnedGroups = graphViewModel.PinnedGroups;
+		var contributingModuleIds = graphViewModel.ModuleIdsContributingToOutput();
 
-		var nodeCount = Math.Min( pinnedGroups.Count, MaxGraphNodes );
+		var parameterCount = 0;
 
-		dataBuffer.graphNodeCount = nodeCount;
-
-		for ( var nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++ )
+		foreach ( var pinnedGroup in graphViewModel.PinnedGroups )
 		{
-			var pinnedGroup = pinnedGroups[ nodeIndex ];
-
-			dataBuffer.SetGraphNodeName( nodeIndex, pinnedGroup.Module.NodeName );
-			dataBuffer.SetGraphNodeType( nodeIndex, pinnedGroup.Module.ModuleTypeName );
-
-			var parameterCount = Math.Min( pinnedGroup.Settings.Count, MaxGraphNodeParameters );
-
-			dataBuffer.SetGraphNodeParameterCount( nodeIndex, parameterCount );
-
-			for ( var parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++ )
+			if ( !contributingModuleIds.Contains( pinnedGroup.Module.ModuleId ) )
 			{
-				var (parameterName, parameterValue, parameterText) = DescribePinnedEntry( pinnedGroup.Settings[ parameterIndex ] );
+				continue;
+			}
 
-				dataBuffer.SetGraphNodeParameterName( nodeIndex, parameterIndex, parameterName );
-				dataBuffer.SetGraphNodeParameterValue( nodeIndex, parameterIndex, parameterValue );
-				dataBuffer.SetGraphNodeParameterText( nodeIndex, parameterIndex, parameterText );
+			foreach ( var pinnedEntry in pinnedGroup.Settings )
+			{
+				if ( parameterCount >= MaxGraphParameters )
+				{
+					break;
+				}
+
+				var (parameterName, parameterRawValue, parameterFormattedValue) = DescribePinnedEntry( pinnedEntry );
+
+				dataBuffer.SetGraphParameterNodeName( parameterCount, pinnedGroup.Module.NodeName );
+				dataBuffer.SetGraphParameterNodeModuleType( parameterCount, pinnedGroup.Module.ModuleTypeName );
+				dataBuffer.SetGraphParameterName( parameterCount, parameterName );
+				dataBuffer.SetGraphParameterRawValue( parameterCount, parameterRawValue );
+				dataBuffer.SetGraphParameterFormattedValue( parameterCount, parameterFormattedValue );
+
+				parameterCount++;
 			}
 		}
+
+		dataBuffer.graphParameterCount = parameterCount;
 	}
 
-	private static (string Name, string Value, string Text) DescribePinnedEntry( object pinnedEntry )
+	private static (string Name, string RawValue, string FormattedValue) DescribePinnedEntry( object pinnedEntry )
 	{
 		switch ( pinnedEntry )
 		{
@@ -482,7 +466,7 @@ public class Telemetry
 		}
 	}
 
-	private static string FormatBooleanValue( bool value ) => value ? GraphNodeParameterTrueValue : GraphNodeParameterFalseValue;
+	private static string FormatBooleanValue( bool value ) => value ? GraphParameterTrueValue : GraphParameterFalseValue;
 
 	private static string FormatBooleanText( bool value ) => value ? FFBDisplayNames.Localize( "ON", "ON" ) : FFBDisplayNames.Localize( "OFF", "OFF" );
 }

@@ -1190,6 +1190,10 @@ public sealed class FFBGraphViewModel : INotifyPropertyChanged
 	/// their built-in node-description localization keys.</summary>
 	public string GraphName => _graph?.Name ?? string.Empty;
 
+	/// <summary>Ids of the selected graph's modules that actually contribute to the Output (see
+	/// <see cref="FFBGraphTopology.ContributingToOutput"/>); empty when no graph is selected.</summary>
+	public HashSet<string> ModuleIdsContributingToOutput() => ( _graph != null ) ? FFBGraphTopology.ContributingToOutput( _graph ) : [];
+
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private void OnPropertyChanged( [CallerMemberName] string? propertyName = null ) => PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
