@@ -19,6 +19,7 @@ public static class FFBModuleRegistry
 	public const string SourceLFEType = "SourceLFE";
 	public const string SourceWheelVelocityType = "SourceWheelVelocity";
 	public const string SourceFrictionType = "SourceFriction";
+	public const string SourceDynamicDampingType = "SourceDynamicDamping";
 	public const string SourceSoftLockType = "SourceSoftLock";
 	public const string SourceWheelCenteringType = "SourceWheelCentering";
 	public const string OutputType = "Output";
@@ -139,7 +140,7 @@ public static class FFBModuleRegistry
 	}
 
 	private static FFBModuleDescriptor Descriptor( string typeKey, int signalInputCount, Func<FFBModule> createRuntime, FFBSettingDescriptor[] settings,
-		bool isGenerator = false, bool isSource = false, bool isOutput = false, bool canTest = false, string? inputA = null, string? inputB = null,
+		bool isGenerator = false, bool isSource = false, bool isOutput = false, bool isSideChain = false, bool canTest = false, string? inputA = null, string? inputB = null,
 		FFBModuleCategory category = FFBModuleCategory.GenericDSP )
 	{
 		// sources and the Output module derive their category from their family flags; the main-chain modules
@@ -169,6 +170,7 @@ public static class FFBModuleRegistry
 			IsGenerator = isGenerator,
 			IsSource = isSource,
 			IsOutput = isOutput,
+			IsSideChain = isSideChain,
 			CanTest = canTest,
 			Settings = settings,
 			CreateRuntime = createRuntime
@@ -179,7 +181,7 @@ public static class FFBModuleRegistry
 	{
 		return
 		[
-			// ---- sources (7) ----
+			// ---- sources (8) ----
 			Descriptor( Source60HzType, 0, () => new Source60HzModule(), isSource: true, settings: [] ),
 
 			Descriptor( Source360HzType, 0, () => new Source360HzModule(), isSource: true, settings: [] ),
@@ -203,6 +205,28 @@ public static class FFBModuleRegistry
 			[
 				Knob( "Strength", 0f, 10f, 1f, 0.1f, F.WithOff( F.Number( 1, "TorqueUnits" ) ) ),
 				Knob( "StickRegion", 0.5f, 60f, 25f, 0.5f, F.Number( 1, "Degrees" ) )
+			] ),
+
+			// listed with the sources (it emits its own signal), but structurally a 1-input main-chain module: it is
+			// not one-per-graph, it sorts after whatever feeds input A, and it is a side chain (see IsSideChain)
+			Descriptor( SourceDynamicDampingType, 1, () => new SourceDynamicDampingModule(), isSideChain: true, category: FFBModuleCategory.Source, settings:
+			[
+				Knob( "Strength", 0f, 10f, 5f, 0.1f, F.WithOff( F.Number( 1, "TorqueUnits" ) ) ),
+				Knob( "Coefficient", 0f, 10f, 1f, 0.05f, F.WithOff( F.Number( 2, "TorqueUnits" ) ) ),
+				Knob( "AcceleratingWithTorque", 0f, 1f, 1f, 0.01f, F.WithOff( F.Percent() ), breakRow: true ),
+				Knob( "DeceleratingWithTorque", 0f, 1f, 0.6f, 0.01f, F.WithOff( F.Percent() ) ),
+				Knob( "AcceleratingAgainstTorque", 0f, 1f, 0.25f, 0.01f, F.WithOff( F.Percent() ) ),
+				Knob( "DeceleratingAgainstTorque", 0f, 1f, 0f, 0.01f, F.WithOff( F.Percent() ) ),
+
+				// TEMPORARY tuning knobs — become constants in SourceDynamicDampingModule once finalized
+				Knob( "VelocitySmoothing", 5f, 100f, 20f, 1f, F.Number( 0, "MillisecondsUnits" ), breakRow: true ),
+				Knob( "OutputSmoothing", 0f, 50f, 5f, 1f, F.WithOff( F.Number( 0, "MillisecondsUnits" ) ) ),
+				Knob( "TorqueSmoothing", 0f, 100f, 20f, 1f, F.WithOff( F.Number( 0, "MillisecondsUnits" ) ) ),
+				Knob( "TorqueBand", 0f, 5f, 0.5f, 0.05f, F.WithOff( F.Number( 2, "TorqueUnits" ) ) ),
+				Knob( "AccelerationSmoothing", 0f, 200f, 30f, 1f, F.WithOff( F.Number( 0, "MillisecondsUnits" ) ), breakRow: true ),
+				Knob( "AccelerationThreshold", 0f, 10000f, 1000f, 50f, F.WithOff( F.Number( 0 ) ) ),   // deg/s²
+				Knob( "Attack", 0f, 200f, 10f, 1f, F.WithOff( F.Number( 0, "MillisecondsUnits" ) ) ),
+				Knob( "Release", 0f, 1000f, 150f, 5f, F.WithOff( F.Number( 0, "MillisecondsUnits" ) ) )
 			] ),
 
 			Descriptor( SourceWheelCenteringType, 0, () => new SourceWheelCenteringModule(), isSource: true, settings:
